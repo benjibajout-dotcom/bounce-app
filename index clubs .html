@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bounce</title>
+<meta name="description" content="Find a game near you, fill a spot when a team is one short, or host your own. Pickleball, basketball, futsal, tennis, running and more.">
+<meta name="theme-color" content="#1F5C4A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bounce">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta property="og:title" content="Bounce: find a game">
+<meta property="og:description" content="Join pickup games, fill a spot when a team is one short, or host your own.">
+<meta property="og:image" content="icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ===== Bounce settings: paste your two Supabase values here ===== */
+var CONFIG = {
+  SUPABASE_URL: 'https://kwpahyaxwgfhbnipsxdx.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cGFoeWF4d2dmaGJuaXBzeGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTMxMzcsImV4cCI6MjEwNzk2OTEzN30.M3fXwGmLMUkomS0THF3fgoAQTK6V4qRKgNbiykENO5M',
+  SHOW_GOOGLE: false,  // set to true once Google sign-in is switched on in Supabase (see the launch guide)
+  SHOW_APPLE: false,   // set to true once Sign in with Apple is set up
+  EMAIL_CODE: false    // set to true once the sign-in email includes the 6-digit code (needs a custom email sender)
+};
+</script>
+<style>
+/* Layout: one phone-width app column (side menu on wide screens), header band, scrolling content, tab bar. */
+:root{
+  --bg:#F4F2EC; --surface:#FFFFFF; --line:#E3DFD4; --line-strong:#CFCABD;
+  --ink:#0F1F1A; --muted:#55615B;
+  --brand:#1F5C4A; --on-brand:#F5F3EE; --brand-text:#1F5C4A; --brand-soft:#E2EEE8;
+  --accent:#FF8A3D; --on-accent:#1A0E05; --accent-soft:#FFEEDF; --accent-text:#8A3A08;
+  --hero-bg:#0F1F1A; --hero-fg:#F5F3EE; --hero-muted:#BCC8C1; --hero-line:#3A4D45;
+  --danger:#B42318; --focus:#2563EB; --shadow:0 1px 2px rgba(15,31,26,.06);
+  --display:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+  --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0C1814; --surface:#14241F; --line:#24372F; --line-strong:#364D43;
+  --ink:#EEF1EC; --muted:#A3B0A9;
+  --brand:#7FC4A8; --on-brand:#0C1814; --brand-text:#8FD3B6; --brand-soft:#1C3229;
+  --accent:#FF9A55; --on-accent:#1A0E05; --accent-soft:#3A2416; --accent-text:#FFC59C;
+  --hero-bg:#1E3A30; --hero-fg:#F5F3EE; --hero-muted:#B9C9C1; --hero-line:#3F5F53;
+  --danger:#FF8A80; --focus:#8AB4FF; --shadow:none; color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:var(--display);font-weight:800;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:28px;line-height:1.1}
+h2{font-size:19px;line-height:1.2}
+p{margin:0}
+a{color:var(--brand-text)}
+img{max-width:100%}
+[hidden]{display:none!important}
+code{font-size:.9em;background:var(--brand-soft);padding:1px 5px;border-radius:5px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+#app{height:100%;height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;background:var(--bg)}
+@media (min-width:600px){#app{border-inline:1px solid var(--line)}}
+.top{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:calc(8px + env(safe-area-inset-top,0px));padding-bottom:8px;border-bottom:1px solid var(--line)}
+.wordmark{display:flex;align-items:center;gap:4px;min-height:44px;font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.035em;color:var(--ink);text-decoration:none}
+.top-right{display:flex;align-items:center;gap:10px;min-width:0}
+.where{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me-btn{display:block;border-radius:50%;box-shadow:0 0 0 1px var(--line-strong);text-decoration:none}
+
+main{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.inner{padding-block:16px 28px;display:flex;flex-direction:column;gap:18px}
+
+.tabs{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{position:relative;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);text-decoration:none}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--ink);font-weight:800}
+.tab[aria-current="page"]::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.tab .plus{width:34px;height:30px;border-radius:10px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center}
+.tab .plus svg{width:18px;height:18px}
+
+.btn{min-height:46px;padding:0 18px;border-radius:12px;font:inherit;font-weight:700;font-size:15px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;white-space:nowrap}
+.btn:disabled{cursor:not-allowed;opacity:.55}
+.btn-sm{min-height:40px;padding:0 14px;font-size:14px}
+.btn-accent{background:var(--accent);color:var(--on-accent)}
+.btn-brand{background:var(--brand);color:var(--on-brand)}
+.btn-line{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+.btn-danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+.btn-wide{flex:1}
+.btn-icon{width:46px;padding:0}
+.btn svg{width:18px;height:18px}
+.btn-google{background:#FFFFFF;color:#1F1F1F;border-color:#747775;min-height:52px;font-size:16px}
+.btn-apple{background:#000000;color:#FFFFFF;min-height:52px;font-size:16px}
+@media (prefers-color-scheme: dark){.btn-apple{background:#FFFFFF;color:#000000}}
+.self-start{align-self:flex-start}
+
+.hello{display:flex;flex-direction:column;gap:4px}
+.meta{font-size:13px;color:var(--muted)}
+.search{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;background:var(--surface);border:1px solid var(--line-strong);border-radius:14px}
+.search svg{width:18px;height:18px;color:var(--muted);flex:none}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink)}
+.scroller{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.scroller::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.day{flex:none;width:58px;min-height:56px;border-radius:14px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.day small{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.day b{font-family:var(--display);font-size:18px}
+.day[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.day[aria-pressed="true"] small{color:var(--on-brand);opacity:.85}
+.day.all{width:auto;padding:0 14px;font-weight:700;font-size:13px}
+
+.alert{background:var(--hero-bg);color:var(--hero-fg);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.alert .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flag{background:var(--accent);color:var(--on-accent);font-weight:800;font-size:11.5px;letter-spacing:.07em;padding:4px 8px;border-radius:6px}
+.alert .sub{font-size:13px;color:var(--hero-muted)}
+.alert h2{font-size:21px}
+.alert .btn-line{border-color:var(--hero-line);color:var(--hero-fg)}
+.alert .actions{display:flex;gap:10px}
+
+.list-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.list{display:flex;flex-direction:column;gap:10px}
+.group-label{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.list .group-label,.list .list-head{grid-column:1/-1}
+.game{display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:inherit;box-shadow:var(--shadow)}
+.when{align-self:stretch;border-radius:12px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;text-align:center}
+.when small{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.when b{font-family:var(--display);font-size:16px;font-variant-numeric:tabular-nums}
+.gbody{min-width:0;display:flex;flex-direction:column;gap:3px}
+.sport{font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--brand-text);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:1px 6px;border-radius:5px;border:1px solid var(--line-strong);color:var(--muted)}
+.tag-accent{border-color:var(--accent);color:var(--accent-text)}
+.gtitle{font-weight:700;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gright{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.spots{font-size:12.5px;font-weight:800;padding:3px 8px;border-radius:8px;background:var(--brand-soft);color:var(--brand-text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.spots.low{background:var(--accent-soft);color:var(--accent-text)}
+.spots.full{background:var(--line);color:var(--muted)}
+.price{font-size:13px;font-weight:700}
+
+.empty{border:1.5px dashed var(--line-strong);border-radius:16px;padding:22px 18px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
+.empty strong{color:var(--ink);font-size:16px}
+.notice{display:block;border-radius:14px;padding:12px 14px;background:var(--accent-soft);color:var(--accent-text);font-size:14px;font-weight:600;text-decoration:none}
+.skeleton{height:86px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(100deg,var(--surface) 30%,var(--bg) 50%,var(--surface) 70%);background-size:300% 100%;animation:shimmer 1.3s linear infinite}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:0 0}}
+
+.back{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;text-decoration:none;color:var(--ink);min-height:44px;align-self:flex-start}
+.back svg{width:18px;height:18px}
+.band{position:relative;overflow:hidden;background:var(--brand);color:var(--on-brand);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.band .court{position:absolute;right:-30px;top:-20px;width:190px;height:140px;opacity:.18;pointer-events:none}
+.band .eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.band h1{font-size:27px;position:relative}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;position:relative}
+.facts div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.facts span{font-size:12px;opacity:.8}
+.facts b{font-weight:700;font-size:14.5px}
+.hostline{font-size:13.5px;display:flex;align-items:center;gap:8px;position:relative}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.cta.center{justify-content:center}
+.pill{min-height:46px;display:inline-flex;align-items:center;gap:8px;padding:0 16px;border-radius:12px;background:var(--brand-soft);color:var(--brand-text);font-weight:800}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--brand);border-radius:4px}
+.meter-row{display:flex;flex-direction:column;gap:6px}
+.meter-row .meta b{color:var(--ink)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.switch-row p{font-size:13px;color:var(--muted)}
+.switch{flex:none;width:52px;height:32px;border-radius:16px;border:0;padding:3px;background:var(--line-strong);cursor:pointer;display:flex;align-items:center}
+.switch i{width:26px;height:26px;border-radius:50%;background:var(--surface);transition:transform .25s cubic-bezier(.3,1.5,.5,1)}
+.switch[aria-checked="true"]{background:var(--accent)}
+.switch[aria-checked="true"] i{transform:translateX(20px)}
+.confirm{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;border:1px solid var(--danger)}
+.confirm .actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.stack-sm{display:flex;flex-direction:column;gap:12px}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:14px 8px}
+.person{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:12.5px;font-weight:600;min-width:0}
+.person > span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avatar{position:relative;overflow:hidden;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#0F1F1A;flex:none}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.seat{width:50px;height:50px;border-radius:50%;border:1.5px dashed var(--line-strong);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;font-weight:700}
+.notes{white-space:pre-line;font-size:14.5px}
+
+.chat{background:var(--surface);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+.chat-head{display:flex;justify-content:space-between;align-items:baseline;padding:14px 14px 0}
+.msgs{max-height:380px;min-height:120px;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg.mine{flex-direction:row-reverse}
+.bubble{max-width:78%;background:var(--bg);border-radius:14px 14px 14px 4px;padding:8px 11px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.bubble p{overflow-wrap:anywhere;white-space:pre-wrap}
+.mine .bubble{background:var(--ink);color:var(--bg);border-radius:14px 14px 4px 14px}
+.who{font-size:12px;font-weight:800;color:var(--brand-text)}
+.at{font-size:11px;opacity:.7;align-self:flex-end}
+.chat-empty{color:var(--muted);font-size:14px;text-align:center;margin:auto 0;padding:16px 14px}
+.compose{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.compose input{flex:1;min-width:0;min-height:46px;border-radius:23px;border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);font:inherit;font-size:16px;padding:0 16px}
+.compose .btn{border-radius:23px}
+
+form.stack,.stack{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.field .lbl{font-size:13px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;min-height:46px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:inherit;font-size:16px;padding:0 12px}
+.field textarea{padding:10px 12px;min-height:90px;resize:vertical}
+.field .hint{font-size:12.5px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;background:var(--accent-soft);color:var(--ink);cursor:pointer}
+.check input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);flex:none}
+.check b{display:block}
+.check span{font-size:13px;color:var(--muted)}
+.err{color:var(--danger);font-weight:700;font-size:14px}
+.invite{width:100%;min-height:110px;border-radius:12px;border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);font:inherit;font-size:14px;padding:10px}
+
+.profile-head{display:flex;align-items:center;gap:14px}
+.wrap-chips{display:flex;flex-wrap:wrap;gap:8px}
+.foot{font-size:12.5px;color:var(--muted);text-align:center}
+.login{display:flex;flex-direction:column;gap:20px;padding-top:8px}
+.login-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px;font-weight:600}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line-strong)}
+.setup{min-height:100%;justify-content:center}
+
+/* Clubs and player profiles */
+.clublogo{flex:none;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;color:#0F1F1A}
+.clubrow{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:inherit;box-shadow:var(--shadow);min-width:0}
+.clubrow .gbody{flex:1}
+.strip{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.strip::-webkit-scrollbar{display:none}
+.clubcard{flex:none;width:148px;display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:inherit}
+.clubcard b{font-size:14px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clubband{background:var(--hero-bg);color:var(--hero-fg);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.clubband .row{display:flex;align-items:center;gap:14px}
+.clubband .sub{font-size:13px;color:var(--hero-muted)}
+.chips-sm{display:flex;flex-wrap:wrap;gap:6px}
+.chips-sm span{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand-text)}
+.clubband .chips-sm span{background:rgba(255,255,255,.12);color:var(--hero-fg)}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.member-row:last-child{border-bottom:0}
+.member-row a{display:flex;align-items:center;gap:10px;flex:1;min-width:0;text-decoration:none;color:inherit;font-weight:600}
+.member-row .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.person{text-decoration:none;color:inherit}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;max-width:calc(100% - 32px);z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+
+/* Motion and touch feedback */
+.inner.enter{animation:rise .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.btn,.chip,.day,.game,.tab,.switch,.back{transition:transform .12s ease,background-color .15s ease,border-color .15s ease,color .15s ease,box-shadow .15s ease}
+.btn:not(:disabled):active,.chip:active,.day:active,.switch:active{transform:scale(.96)}
+.game:active{transform:scale(.985)}
+@media (hover:hover){
+  .btn-accent:not(:disabled):hover{box-shadow:0 4px 14px rgba(255,138,61,.35)}
+  .btn-brand:not(:disabled):hover,.btn-line:not(:disabled):hover{box-shadow:0 2px 10px rgba(15,31,26,.12)}
+  .chip:hover,.day:hover{border-color:var(--ink)}
+  .game:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,31,26,.08)}
+}
+.wordmark:hover svg,.wordmark:active svg{animation:hop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hop{0%{transform:translateY(0)}35%{transform:translateY(-7px)}65%{transform:translateY(0) scale(1.06,.92)}100%{transform:none}}
+.alert.enter{animation:slide-in .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes slide-in{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+.flag{animation:ping 1.8s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,138,61,.65)}70%,100%{box-shadow:0 0 0 10px rgba(255,138,61,0)}}
+.msg.new{animation:pop .22s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+.celebrate{position:fixed;inset:0;pointer-events:none;z-index:30;display:flex;align-items:center;justify-content:center}
+.celebrate-ball{width:96px;height:96px;animation:drop 1.15s cubic-bezier(.3,0,.4,1) both;filter:drop-shadow(0 10px 16px rgba(0,0,0,.2))}
+.celebrate-ball svg{width:100%;height:100%;display:block}
+@keyframes drop{0%{transform:translateY(-60vh);opacity:1}34%{transform:translateY(0) scale(1.12,.86)}50%{transform:translateY(-80px) scale(.96,1.04)}64%{transform:translateY(0) scale(1.06,.93)}76%{transform:translateY(-24px)}86%{transform:translateY(0);opacity:1}100%{transform:translateY(0) scale(.6);opacity:0}}
+.burst{position:absolute;width:0;height:0}
+.burst span{position:absolute;width:9px;height:9px;border-radius:50%;left:-4.5px;top:-4.5px;opacity:0;animation:burst .85s cubic-bezier(.1,.7,.3,1) .4s both}
+@keyframes burst{0%{opacity:1;transform:rotate(var(--a)) translateX(0) scale(1)}100%{opacity:0;transform:rotate(var(--a)) translateX(var(--d)) scale(.4)}}
+
+/* Tablet and desktop: side menu and a two-column game grid */
+@media (min-width:900px){
+  #app{max-width:1180px;display:grid;grid-template-columns:232px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);border-inline:1px solid var(--line)}
+  .top{grid-column:1/-1}
+  .tabs{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:4px;background:transparent;border-top:0;border-right:1px solid var(--line);padding-block:20px}
+  .tab{flex-direction:row;justify-content:flex-start;min-height:48px;padding:0 14px;border-radius:12px;gap:12px;font-size:15px}
+  .tab:hover{background:var(--surface);color:var(--ink)}
+  .tab[aria-current="page"]{background:var(--surface);box-shadow:var(--shadow)}
+  .tab[aria-current="page"]::after{top:12px;bottom:12px;left:0;transform:none;width:3px;height:auto;border-radius:0 3px 3px 0}
+  main{grid-column:2;grid-row:2}
+  .inner{max-width:820px;margin:0 auto;padding-top:28px;padding-bottom:48px}
+  h1{font-size:34px}
+  .list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #toast{bottom:32px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top gut">
+    <a class="wordmark" href="#discover" aria-label="Bounce home"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><g fill="currentColor" opacity="0.4"><circle cx="9.2" cy="47" r="1.6"/><circle cx="11.4" cy="38.6" r="1.85"/><circle cx="14.3" cy="31.4" r="2.1"/><circle cx="17.6" cy="25.6" r="2.35"/><circle cx="21.2" cy="21.3" r="2.6"/></g><ellipse cx="38" cy="56" rx="11" ry="3" fill="currentColor" opacity="0.16"/><circle cx="38" cy="30" r="15" fill="#FF8A3D"/><circle cx="31" cy="22" r="2.8" fill="#FFFFFF" opacity="0.5"/><ellipse cx="33.6" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><ellipse cx="42.4" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><path d="M32.6 33.2 Q 38 38.4 43.4 33.2" fill="none" stroke="#1A0E05" stroke-width="2.4" stroke-linecap="round"/></svg>bounce</a>
+    <div class="top-right">
+      <span class="where" id="where"></span>
+      <span id="me-slot"></span>
+    </div>
+  </header>
+  <main id="main"><div class="inner gut"><div class="skeleton"></div><div class="skeleton"></div></div></main>
+  <nav class="tabs gut" aria-label="Main">
+    <a class="tab" href="#discover" data-tab="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Discover</a>
+    <a class="tab" href="#mine" data-tab="mine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>My games</a>
+    <a class="tab" href="#host" data-tab="host"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Host</a>
+    <a class="tab" href="#clubs" data-tab="clubs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5l8-2 8 2v16"/><path d="M9 21v-5h6v5"/><path d="M9 9h.01M15 9h.01M9 12.5h.01M15 12.5h.01"/></svg>Clubs</a>
+    <a class="tab" href="#profile" data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.4-6 8-6s7 2 8 6"/></svg>Profile</a>
+  </nav>
+</div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- constants ---------- */
+var SPORTS=[['pickleball','Pickleball'],['basketball','Basketball'],['futsal','Futsal'],['tennis','Tennis'],['running','Running'],['volleyball','Volleyball'],['badminton','Badminton'],['touch','Touch footy'],['padel','Padel'],['netball','Netball']];
+var SPORT_LABEL={};SPORTS.forEach(function(s){SPORT_LABEL[s[0]]=s[1];});
+var LEVELS=['All levels','Beginner','Intermediate','Advanced'];
+var DURATIONS=[['60','1 hour'],['90','1.5 hours'],['120','2 hours'],['180','3 hours']];
+var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var ID_RE=/^[A-Za-z0-9-]{1,60}$/;
+var CLUB_KINDS=['Club','Social group','Association','School or uni','Workplace'];
+var AV_COLORS=['#FFC79E','#BFE0D2','#C9D8FF','#FFE38A','#E5D4FF','#FFD1DC','#CDEBC0'];
+
+var I={
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>',
+  send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
+  court:'<svg class="court" viewBox="0 0 190 140" fill="none" stroke="currentColor" stroke-width="4" aria-hidden="true"><rect x="10" y="10" width="170" height="120" rx="3"/><path d="M95 10v120"/><circle cx="95" cy="70" r="26"/></svg>',
+  ball:'<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true"><g fill="currentColor" opacity="0.4"><circle cx="9.2" cy="47" r="1.6"/><circle cx="11.4" cy="38.6" r="1.85"/><circle cx="14.3" cy="31.4" r="2.1"/><circle cx="17.6" cy="25.6" r="2.35"/><circle cx="21.2" cy="21.3" r="2.6"/></g><ellipse cx="38" cy="56" rx="11" ry="3" fill="currentColor" opacity="0.16"/><circle cx="38" cy="30" r="15" fill="#FF8A3D"/><circle cx="31" cy="22" r="2.8" fill="#FFFFFF" opacity="0.5"/><ellipse cx="33.6" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><ellipse cx="42.4" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><path d="M32.6 33.2 Q 38 38.4 43.4 33.2" fill="none" stroke="#1A0E05" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  google:'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
+  apple:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.45-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-2.99-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.89 1.15 9.14.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.39-.92-2.4-3.67zM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.02.61-2.67 1.37-.58.67-1.1 1.76-.96 2.8 1.02.08 2.06-.52 2.69-1.28z"/></svg>'
+};
+
+/* ---------- helpers ---------- */
+function pad(n){return String(n).padStart(2,'0');}
+function keyOf(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function dayKey(off){var d=new Date();d.setDate(d.getDate()+(off||0));return keyOf(d);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fmtTime(d){var h=d.getHours(),m=d.getMinutes(),ap=h>=12?'pm':'am';h=h%12||12;return m?h+':'+pad(m)+ap:h+ap;}
+function fmtDay(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(1))return 'Tomorrow';return DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()];}
+function shortDow(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(1))return 'Tmrw';return DOW[d.getDay()];}
+function endOf(g){return new Date(g.start.getTime()+g.durationMin*60000);}
+function isUpcoming(g){return endOf(g).getTime()>Date.now();}
+function priceLabel(g){return g.price>0?'$'+g.price:'Free';}
+function spotsLeft(g,count){return Math.max(0,g.capacity-(count==null?g.count:count));}
+function place(g,sep){return [g.venue,g.suburb].filter(Boolean).join(sep||' · ');}
+function startsLabel(g){
+  var mins=Math.round((g.start.getTime()-Date.now())/60000);
+  if(mins<=0)return 'On now';
+  if(mins<60)return 'Starts in '+mins+' min';
+  if(mins<180)return 'Starts in '+Math.floor(mins/60)+'h '+(mins%60)+'m';
+  return fmtDay(g.start)+' · '+fmtTime(g.start);
+}
+function initials(name){var p=String(name||'').trim().split(/\s+/).filter(Boolean);if(!p.length)return '?';return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
+function colorFor(id){var h=0;id=String(id||'');for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return AV_COLORS[h%AV_COLORS.length];}
+function avatar(id,name,url,size){
+  size=size||50;
+  var img=(typeof url==='string'&&/^https:\/\//.test(url))?'<img src="'+esc(url)+'" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">':'';
+  return '<span class="avatar" aria-hidden="true" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*0.36)+'px;background:'+colorFor(id)+'">'+esc(initials(name))+img+'</span>';
+}
+function normGame(r){
+  r=r||{};
+  return {id:String(r.id),sport:SPORT_LABEL[r.sport]?r.sport:'pickleball',title:String(r.title||''),start:new Date(r.starts_at),
+    durationMin:Number(r.duration_min)||90,venue:String(r.venue||''),suburb:String(r.suburb||''),level:LEVELS.indexOf(r.level)>=0?r.level:'All levels',
+    price:Number(r.price)||0,capacity:Number(r.capacity)||2,hostId:r.host_id,oneShort:!!r.one_short,notes:String(r.notes||''),
+    count:(r.game_players&&r.game_players[0]&&r.game_players[0].count)||0,host:r.host||null,
+    clubId:r.club_id||null,club:r.club||null};
+}
+function normClub(r){
+  r=r||{};
+  return {id:String(r.id),name:String(r.name||''),kind:CLUB_KINDS.indexOf(r.kind)>=0?r.kind:'Club',
+    sports:(r.sports||[]).filter(function(s){return SPORT_LABEL[s];}),suburb:String(r.suburb||''),about:String(r.about||''),
+    website:typeof r.website==='string'&&/^https?:\/\//i.test(r.website)?r.website:'',
+    instagram:typeof r.instagram==='string'&&/^[A-Za-z0-9._]{1,30}$/.test(r.instagram)?r.instagram:'',
+    members:(r.club_members&&r.club_members[0]&&r.club_members[0].count)||0,createdBy:r.created_by};
+}
+function clubLogo(c,size){
+  size=size||44;
+  var words=String(c.name||'').trim().split(/\s+/).filter(Boolean);
+  var ini=(words[0]?words[0][0]:'?')+(words[1]?words[1][0]:'');
+  return '<span class="clublogo" aria-hidden="true" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*0.38)+'px;border-radius:'+Math.round(size*0.3)+'px;background:'+colorFor(c.id)+'">'+esc(ini.toUpperCase())+'</span>';
+}
+function isClubAdmin(cid){return S.myClubs.some(function(m){return m.role==='admin'&&m.club&&String(m.club.id)===cid;});}
+function myClubRole(cid){for(var i=0;i<S.myClubs.length;i++){var m=S.myClubs[i];if(m.club&&String(m.club.id)===cid)return m.role;}return null;}
+function sportsChips(list){return list.length?'<div class="chips-sm">'+list.map(function(s){return '<span>'+esc(SPORT_LABEL[s])+'</span>';}).join('')+'</div>':'';}
+function sortClubs(list){
+  var home=S.profile&&S.profile.suburb?S.profile.suburb.trim().toLowerCase():'';
+  var mine=S.profile&&S.profile.sports?S.profile.sports:[];
+  return list.slice().sort(function(a,b){
+    var ha=home&&a.suburb.toLowerCase()===home?0:1,hb=home&&b.suburb.toLowerCase()===home?0:1;
+    if(ha!==hb)return ha-hb;
+    var sa=a.sports.some(function(s){return mine.indexOf(s)>=0;})?0:1,sb2=b.sports.some(function(s){return mine.indexOf(s)>=0;})?0:1;
+    if(sa!==sb2)return sa-sb2;
+    return b.members-a.members||a.name.localeCompare(b.name);
+  });
+}
+function byStart(a,b){return a.start-b.start;}
+function friendlyError(e,fallback){
+  var m=String((e&&e.message)||'');
+  if(m.indexOf('GAME_FULL')>=0)return 'That game just filled up.';
+  if(m.indexOf('GAME_FINISHED')>=0)return 'That game has already finished.';
+  if(m.indexOf('GAME_NOT_FOUND')>=0)return 'That game isn’t there anymore.';
+  if(m.indexOf('LAST_ADMIN')>=0)return 'A club needs at least one committee member. Make someone else committee first, or close the club.';
+  if(/duplicate key/i.test(m))return 'That’s already done.';
+  if(/violates check constraint/i.test(m))return 'Something in the form isn’t valid. Check the fields and try again.';
+  if(/fetch|network/i.test(m))return 'You seem to be offline. Check your connection and try again.';
+  return fallback;
+}
+
+/* ---------- state ---------- */
+var S={route:'discover',gameId:null,sport:'all',day:'all',q:'',
+  games:[],loaded:false,loadError:'',mine:null,myIds:{},
+  session:null,uid:null,provider:'',profile:null,pf:null,pfDirty:false,authReady:false,
+  game:null,gameState:'idle',players:[],messages:[],seenMsgs:{},alertShown:null,
+  form:null,formError:'',busy:false,draft:'',confirmDel:false,inviteText:'',resetScroll:true,
+  clubs:null,clubQ:'',clubSport:'all',myClubs:[],club:null,clubId:null,clubState:'idle',clubMembers:[],clubGames:[],
+  clubForm:null,clubEditing:false,clubFormError:'',confirmClubDel:false,player:null,playerId:null,playerClubs:[],playerState:'idle',
+  login:{step:'choose',email:'',code:'',error:'',busy:false}};
+function defaultForm(){
+  var p=S.profile||{};
+  return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',capacity:'8',venue:'',suburb:p.suburb||'',price:'0',notes:'',oneShort:false,clubId:''};
+}
+S.form=defaultForm();
+
+var sb=null,refreshTimer=null,seq=0,toastTimer=null;
+var $main=document.getElementById('main');
+var configured=/^https:\/\/[^ ]+\.supabase\.co\/?$/.test(CONFIG.SUPABASE_URL)&&String(CONFIG.SUPABASE_ANON_KEY).length>30;
+
+/* ---------- views ---------- */
+function cardHTML(g){
+  var left=spotsLeft(g),cls=left===0?'spots full':left<=2?'spots low':'spots';
+  return '<a class="game" href="#g-'+esc(g.id)+'">'+
+    '<div class="when"><small>'+esc(shortDow(g.start))+'</small><b>'+esc(fmtTime(g.start))+'</b></div>'+
+    '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+'</div>'+
+    '<div class="gtitle">'+esc(g.title)+'</div><div class="meta">'+esc((g.club&&g.club.name?g.club.name+' · ':'')+place(g))+'</div></div>'+
+    '<div class="gright"><span class="'+cls+'">'+(left===0?'Full':g.count+'/'+g.capacity)+'<span class="sr"> going</span></span><span class="price">'+esc(priceLabel(g))+'</span></div></a>';
+}
+function skeletons(n){var h='<div class="list">';for(var i=0;i<n;i++)h+='<div class="skeleton"></div>';return h+'</div>';}
+
+function viewDiscover(){
+  var up=S.games.filter(isUpcoming).sort(byStart);
+  var alertG=null;
+  for(var i=0;i<up.length;i++){if(up[i].oneShort&&spotsLeft(up[i])>0&&!S.myIds[up[i].id]){alertG=up[i];break;}}
+  var q=S.q.trim().toLowerCase();
+  var list=up.filter(function(g){
+    if(S.sport!=='all'&&g.sport!==S.sport)return false;
+    if(S.day!=='all'&&keyOf(g.start)!==S.day)return false;
+    return !q||[g.title,g.venue,g.suburb,SPORT_LABEL[g.sport],g.level].join(' ').toLowerCase().indexOf(q)>=0;
+  });
+  var home=S.profile&&S.profile.suburb?S.profile.suburb.trim().toLowerCase():'';
+  if(home)list.sort(function(a,b){var da=keyOf(a.start),db=keyOf(b.start);if(da!==db)return da<db?-1:1;var ha=a.suburb.toLowerCase()===home?0:1,hb=b.suburb.toLowerCase()===home?0:1;return ha-hb||a.start-b.start;});
+
+  var h='<section class="hello"><h1>Find your next game</h1><p class="meta">'+esc(S.profile&&S.profile.suburb?'Pickup games, socials and comps around '+S.profile.suburb:'Pickup games, socials and comps near you')+'</p></section>';
+  if(S.loadError)h+='<p class="notice">'+esc(S.loadError)+'</p>';
+  var nearClubs=S.clubs?sortClubs(S.clubs).slice(0,8):[];
+  if(alertG){
+    var isNew=S.alertShown!==alertG.id;S.alertShown=alertG.id;
+    h+='<section class="alert'+(isNew?' enter':'')+'" aria-label="Game needs players"><div class="row"><span class="flag">ONE SHORT</span><span class="sub">'+esc(startsLabel(alertG))+'</span></div>'+
+      '<h2>'+esc(SPORT_LABEL[alertG.sport])+': '+esc(alertG.title)+' needs '+spotsLeft(alertG)+' more</h2>'+
+      '<p class="sub">'+esc(place(alertG,', '))+' · '+esc(alertG.level)+' · '+esc(priceLabel(alertG))+'</p>'+
+      '<div class="actions"><button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(alertG.id)+'">I’m in</button><a class="btn btn-line" href="#g-'+esc(alertG.id)+'">Details</a></div></section>';
+  }
+  h+='<div class="search">'+I.search+'<label class="sr" for="q">Search games</label><input id="q" type="search" placeholder="Search games, venues, suburbs" autocomplete="off" value="'+esc(S.q)+'"></div>';
+  h+='<div class="scroller" role="group" aria-label="Sport"><button type="button" class="chip" data-act="sport" data-v="all" aria-pressed="'+(S.sport==='all')+'">All sports</button>'+
+    SPORTS.map(function(s){return '<button type="button" class="chip" data-act="sport" data-v="'+s[0]+'" aria-pressed="'+(S.sport===s[0])+'">'+esc(s[1])+'</button>';}).join('')+'</div>';
+  var days='<button type="button" class="day all" data-act="day" data-v="all" aria-pressed="'+(S.day==='all')+'">Any day</button>';
+  for(var k=0;k<7;k++){var d=new Date();d.setDate(d.getDate()+k);var key=keyOf(d);
+    days+='<button type="button" class="day" data-act="day" data-v="'+key+'" aria-pressed="'+(S.day===key)+'"><small>'+(k===0?'TODAY':DOW[d.getDay()].toUpperCase())+'</small><b>'+d.getDate()+'</b></button>';}
+  h+='<div class="scroller" role="group" aria-label="Day">'+days+'</div>';
+  if(nearClubs.length){
+    h+='<section class="stack-sm" aria-label="Clubs near you"><div class="list-head"><h2>'+(S.profile&&S.profile.suburb?'Clubs near you':'Clubs on Bounce')+'</h2><a class="meta" href="#clubs">See all</a></div><div class="strip">'+
+      nearClubs.map(function(c){return '<a class="clubcard" href="#c-'+esc(c.id)+'">'+clubLogo(c,40)+'<b>'+esc(c.name)+'</b><span class="meta">'+esc([c.suburb,c.members+(c.members===1?' member':' members')].filter(Boolean).join(' · '))+'</span></a>';}).join('')+'</div></section>';
+  }
+  var label=S.day==='all'?'Coming up':fmtDay(new Date(S.day+'T00:00'));
+  h+='<div class="list-head"><h2>'+esc(label)+'</h2><span class="meta">'+list.length+(list.length===1?' game':' games')+'</span></div>';
+  if(!S.loaded&&!S.loadError)h+=skeletons(4);
+  else if(!list.length)h+='<div class="empty"><strong>'+(up.length?'No games match':'No games posted yet')+'</strong><p>'+(up.length?'Try another sport or day, or post your own game and let people find you.':'Be the first. Post a game you already play and share the invite with your group.')+'</p><a class="btn btn-accent" href="#host">Host a game</a></div>';
+  else{
+    h+='<div class="list">';var last='';
+    list.forEach(function(g){var dk=keyOf(g.start);if(S.day==='all'&&dk!==last){h+='<div class="group-label">'+esc(fmtDay(g.start))+'</div>';last=dk;}h+=cardHTML(g);});
+    h+='</div>';
+  }
+  return h;
+}
+
+function viewGame(){
+  var back='<a class="back" href="#discover">'+I.back+'Discover</a>';
+  var g=S.game;
+  if(S.gameState==='loading'||(S.gameState==='idle'&&!g))return back+'<div class="skeleton" style="height:220px"></div>'+skeletons(2);
+  if(!g)return back+'<div class="empty"><strong>This game isn’t here anymore</strong><p>The host may have deleted it.</p><a class="btn btn-accent" href="#discover">Find another game</a></div>';
+  var end=endOf(g),count=S.players.length,left=spotsLeft(g,count);
+  var isHost=!!S.uid&&g.hostId===S.uid,mine=!!S.uid&&S.players.some(function(p){return p.user_id===S.uid;}),past=!isUpcoming(g);
+  var hostName=(g.host&&g.host.display_name)||'A Bounce player';
+  var h=back;
+  h+='<section class="band">'+I.court+'<div class="eyebrow">'+esc(SPORT_LABEL[g.sport])+'</div><h1>'+esc(g.title)+'</h1>'+
+    '<div class="facts"><div><span>When</span><b>'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+'–'+fmtTime(end))+'</b></div>'+
+    '<div><span>Where</span><b>'+esc(place(g,', '))+'</b></div><div><span>Level</span><b>'+esc(g.level)+'</b></div>'+
+    '<div><span>Cost</span><b>'+esc(g.price>0?'$'+g.price+' per player':'Free')+'</b></div></div>'+
+    '<div class="hostline">'+(g.club&&g.club.name
+      ?clubLogo({id:g.club.id,name:g.club.name},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
+      :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>Hosted by '+(isHost?'you':'<a href="#p-'+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+'</div></section>';
+  h+='<div class="meter-row"><div class="meter" role="img" aria-label="'+count+' of '+g.capacity+' spots filled"><i style="width:'+Math.round(100*Math.min(count,g.capacity)/g.capacity)+'%"></i></div>'+
+    '<p class="meta"><b>'+count+' of '+g.capacity+'</b> going · '+(left>0?left+(left===1?' spot':' spots')+' left':'game is full')+'</p></div>';
+  var cta;
+  if(past)cta='<span class="pill">This game has finished</span>';
+  else if(isHost)cta='<span class="pill">You’re hosting</span>';
+  else if(mine)cta='<span class="pill">You’re in</span><button type="button" class="btn btn-line" data-act="leave" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>Leave game</button>';
+  else if(left===0)cta='<button type="button" class="btn btn-line btn-wide" disabled>Game full</button>';
+  else cta='<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
+  h+='<div class="cta">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button></div>';
+  if(S.inviteText)h+='<div class="field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
+  if(isHost&&!past){
+    h+='<section class="card" aria-label="Host tools"><h2>Host tools</h2><div class="switch-row"><div><b>One Short alert</b><p>Puts your game at the top of Discover for nearby players until it fills.</p></div>'+
+      '<button type="button" class="switch" role="switch" aria-label="One Short alert" aria-checked="'+g.oneShort+'" data-act="oneshort" data-id="'+esc(g.id)+'"><i></i></button></div>';
+    h+=S.confirmDel?'<div class="confirm"><b>Delete this game for everyone?</b><p class="meta">Players and chat messages go with it. This can’t be undone.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="del-yes" data-id="'+esc(g.id)+'">Delete game</button><button type="button" class="btn btn-line" data-act="del-no">Keep game</button></div></div>'
+      :'<button type="button" class="btn btn-danger self-start" data-act="del">Delete game</button>';
+    h+='</section>';
+  }
+  h+='<section class="stack-sm"><h2>Who’s going</h2><div class="people">';
+  S.players.forEach(function(p){var nm=p.user_id===S.uid?'You':((p.profile&&p.profile.display_name)||'Player');
+    h+='<a class="person" href="#p-'+esc(p.user_id)+'">'+avatar(p.user_id,p.profile&&p.profile.display_name,p.profile&&p.profile.avatar_url,50)+'<span>'+esc(nm)+(p.user_id===g.hostId?' (host)':'')+'</span></a>';});
+  for(var k=0;k<Math.min(left,4);k++)h+='<div class="person"><span class="seat">Open</span><span>&nbsp;</span></div>';
+  h+='</div></section>';
+  if(g.notes)h+='<section class="stack-sm"><h2>From the host</h2><p class="notes">'+esc(g.notes)+'</p></section>';
+  h+='<section class="chat" aria-label="Game chat"><div class="chat-head"><h2>Game chat</h2>'+((mine||isHost)?'<span class="meta">'+S.messages.length+(S.messages.length===1?' message':' messages')+'</span>':'')+'</div>';
+  if(mine||isHost){
+    h+='<div class="msgs" id="msgs">';
+    if(!S.messages.length)h+='<p class="chat-empty">No messages yet. Say g’day, sort out lifts, or check who’s bringing balls.</p>';
+    S.messages.forEach(function(m){
+      var me=m.user_id===S.uid,d=new Date(m.created_at),nm=(m.profile&&m.profile.display_name)||'Player';
+      var isNew=!S.seenMsgs[m.id];S.seenMsgs[m.id]=1;
+      h+='<div class="msg'+(me?' mine':'')+(isNew?' new':'')+'">'+(me?'':avatar(m.user_id,nm,m.profile&&m.profile.avatar_url,28))+'<div class="bubble">'+(me?'':'<span class="who">'+esc(nm)+'</span>')+
+        '<p>'+esc(m.body)+'</p><span class="at">'+esc((keyOf(d)===dayKey(0)?'':DOW[d.getDay()]+' ')+fmtTime(d))+'</span></div></div>';
+    });
+    h+='</div><form class="compose" id="chat-form"><label class="sr" for="chat-input">Message</label><input id="chat-input" maxlength="500" autocomplete="off" placeholder="Message players" value="'+esc(S.draft)+'">'+
+      '<button class="btn btn-accent btn-icon" aria-label="Send message">'+I.send+'</button></form>';
+  } else h+='<p class="chat-empty">Join the game to see the chat and talk to the other players.</p>';
+  h+='</section>';
+  return h;
+}
+
+function signInPrompt(title,text,next){
+  return '<div class="empty"><strong>'+esc(title)+'</strong><p>'+esc(text)+'</p><button type="button" class="btn btn-accent" data-act="login" data-v="'+esc(next)+'">Sign in</button></div>';
+}
+
+function viewHost(){
+  var h='<section class="hello"><h1>Host a game</h1><p class="meta">Post it, share the invite, and let players fill the spots.</p></section>';
+  if(!S.uid)return h+signInPrompt('Sign in to host','It takes a few seconds with Google or your email.','host');
+  var f=S.form;
+  var adminClubs=S.myClubs.filter(function(m){return m.role==='admin'&&m.club;});
+  h+='<form class="stack" id="host-form" novalidate>';
+  if(adminClubs.length){
+    h+='<div class="field"><label for="f-clubId">Host as</label><select id="f-clubId"><option value="">Me (personal game)</option>'+
+      adminClubs.map(function(m){return '<option value="'+esc(m.club.id)+'"'+(f.clubId===String(m.club.id)?' selected':'')+'>'+esc(m.club.name)+'</option>';}).join('')+
+      '</select><span class="hint">Club games show on the club’s page and say who posted them.</span></div>';
+  }
+  h+='<div class="row2"><div class="field"><label for="f-sport">Sport</label><select id="f-sport">'+SPORTS.map(function(s){return '<option value="'+s[0]+'"'+(f.sport===s[0]?' selected':'')+'>'+esc(s[1])+'</option>';}).join('')+'</select></div>'+
+    '<div class="field"><label for="f-level">Level</label><select id="f-level">'+LEVELS.map(function(l){return '<option'+(f.level===l?' selected':'')+'>'+esc(l)+'</option>';}).join('')+'</select></div></div>';
+  h+='<div class="field"><label for="f-title">Game name</label><input id="f-title" maxlength="80" placeholder="Social doubles round robin" value="'+esc(f.title)+'"></div>';
+  h+='<div class="row2"><div class="field"><label for="f-date">Date</label><input id="f-date" type="date" min="'+dayKey(0)+'" value="'+esc(f.date)+'"></div>'+
+    '<div class="field"><label for="f-time">Start time</label><input id="f-time" type="time" step="900" value="'+esc(f.time)+'"></div></div>';
+  h+='<div class="row2"><div class="field"><label for="f-duration">Length</label><select id="f-duration">'+DURATIONS.map(function(o){return '<option value="'+o[0]+'"'+(f.duration===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'+
+    '<div class="field"><label for="f-capacity">Players (incl. you)</label><input id="f-capacity" type="number" inputmode="numeric" min="2" max="50" value="'+esc(f.capacity)+'"></div></div>';
+  h+='<div class="row2"><div class="field"><label for="f-venue">Venue</label><input id="f-venue" maxlength="80" placeholder="Court, park or centre" value="'+esc(f.venue)+'"></div>'+
+    '<div class="field"><label for="f-suburb">Suburb</label><input id="f-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div></div>';
+  h+='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="numeric" min="0" max="500" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games. Players pay you at the court for now.</span></div>';
+  h+='<div class="field"><label for="f-notes">Notes for players</label><textarea id="f-notes" maxlength="600" placeholder="What to bring, parking, who it suits">'+esc(f.notes)+'</textarea></div>';
+  h+='<label class="check" for="f-oneshort"><input id="f-oneshort" type="checkbox"'+(f.oneShort?' checked':'')+'><div><b>Send a One Short alert</b><span>Shows your game at the top of Discover until it fills.</span></div></label>';
+  if(S.formError)h+='<p class="err" role="alert">'+esc(S.formError)+'</p>';
+  h+='<button class="btn btn-accent" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Posting…':'Post game')+'</button></form>';
+  return h;
+}
+
+function viewMine(){
+  var h='<section class="hello"><h1>My games</h1><p class="meta">Games you’re hosting or playing in.</p></section>';
+  if(!S.uid)return h+signInPrompt('Sign in to see your games','Keep track of everything you’ve joined or hosted.','mine');
+  if(S.mine===null)return h+skeletons(3);
+  var hosting=S.mine.filter(function(g){return isUpcoming(g)&&g.hostId===S.uid;}).sort(byStart);
+  var playing=S.mine.filter(function(g){return isUpcoming(g)&&g.hostId!==S.uid;}).sort(byStart);
+  var played=S.mine.filter(function(g){return !isUpcoming(g);}).sort(byStart).reverse().slice(0,20);
+  if(!S.mine.length)return h+'<div class="empty"><strong>No games yet</strong><p>Join a game near you or host your own.</p><div class="cta center"><a class="btn btn-accent" href="#discover">Find a game</a><a class="btn btn-line" href="#host">Host a game</a></div></div>';
+  function sec(title,list,emptyText){
+    return '<section class="list"><div class="list-head"><h2>'+title+'</h2><span class="meta">'+list.length+'</span></div>'+(list.length?list.map(cardHTML).join(''):'<p class="meta">'+emptyText+'</p>')+'</section>';
+  }
+  h+=sec('Playing',playing,'You haven’t joined any upcoming games.');
+  h+=sec('Hosting',hosting,'You’re not hosting anything right now.');
+  if(played.length)h+=sec('Played',played,'');
+  return h;
+}
+
+function viewProfile(){
+  if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
+  if(!S.pf)return skeletons(2);
+  var pf=S.pf,prov=S.provider==='google'?'Google':S.provider==='apple'?'Apple':'email';
+  var h='<section class="profile-head">'+avatar(S.uid,pf.display_name,S.profile&&S.profile.avatar_url,64)+'<div><h1>'+esc(pf.display_name||'Your profile')+'</h1><p class="meta">Signed in with '+prov+'</p></div></section>';
+  h+='<form class="stack" id="profile-form">'+
+    '<div class="field"><label for="pf-name">Name</label><input id="pf-name" maxlength="40" placeholder="First name and last initial" value="'+esc(pf.display_name)+'"><span class="hint">Shown to other players in games you join.</span></div>'+
+    '<div class="field"><label for="pf-suburb">Home suburb</label><input id="pf-suburb" maxlength="50" placeholder="Newtown" value="'+esc(pf.suburb)+'"><span class="hint">Games near you show first.</span></div>'+
+    '<div class="field"><label for="pf-bio">About you</label><textarea id="pf-bio" maxlength="160" placeholder="Social player, keen for weeknight doubles" style="min-height:70px">'+esc(pf.bio)+'</textarea><span class="hint">Shown on your player profile. Up to 160 characters.</span></div>'+
+    '<div class="field"><label for="pf-level">Usual level</label><select id="pf-level">'+LEVELS.map(function(l){return '<option'+(pf.level===l?' selected':'')+'>'+esc(l)+'</option>';}).join('')+'</select></div>'+
+    '<div class="field"><span class="lbl" id="pf-sports-l">Sports you play</span><div class="wrap-chips" role="group" aria-labelledby="pf-sports-l">'+
+    SPORTS.map(function(s){return '<button type="button" class="chip" data-act="pfsport" data-v="'+s[0]+'" aria-pressed="'+(pf.sports.indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div></div>'+
+    '<button class="btn btn-brand" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Saving…':'Save profile')+'</button></form>';
+  h+='<section class="stack-sm"><div class="list-head"><h2>Your clubs</h2><a class="meta" href="#p-'+esc(S.uid)+'">View my public profile</a></div>';
+  if(S.myClubs.length){
+    h+='<div class="list">'+S.myClubs.filter(function(m){return m.club;}).map(function(m){var c=normClub(m.club);
+      return '<a class="clubrow" href="#c-'+esc(c.id)+'">'+clubLogo(c,40)+'<div class="gbody"><div class="gtitle">'+esc(c.name)+'</div><div class="meta">'+esc([c.kind,c.suburb].filter(Boolean).join(' · '))+'</div></div>'+(m.role==='admin'?'<span class="tag tag-accent">COMMITTEE</span>':'')+'</a>';}).join('')+'</div>';
+  } else h+='<p class="meta">You haven’t joined a club yet.</p>';
+  h+='<div class="cta"><a class="btn btn-line" href="#clubs">Find a club</a><a class="btn btn-line" href="#club-new">Start a club</a></div></section>';
+  h+='<button type="button" class="btn btn-line" data-act="signout">Sign out</button>';
+  return h;
+}
+
+function clubRow(c,role){
+  return '<a class="clubrow" href="#c-'+esc(c.id)+'">'+clubLogo(c,44)+'<div class="gbody"><div class="gtitle">'+esc(c.name)+'</div>'+
+    '<div class="meta">'+esc([c.kind,c.suburb,c.members+(c.members===1?' member':' members')].filter(Boolean).join(' · '))+'</div>'+
+    (c.sports.length?'<div class="meta">'+esc(c.sports.map(function(s){return SPORT_LABEL[s];}).join(', '))+'</div>':'')+'</div>'+
+    (role==='admin'?'<span class="tag tag-accent">COMMITTEE</span>':role==='member'?'<span class="tag">MEMBER</span>':'')+'</a>';
+}
+function viewClubs(){
+  var h='<section class="hello"><h1>Clubs</h1><p class="meta">Find a club to play with, or set one up for your group.</p></section>';
+  h+='<div class="cta"><button type="button" class="btn btn-accent btn-wide" data-act="club-new">Start a club</button></div>';
+  h+='<div class="search">'+I.search+'<label class="sr" for="club-q">Search clubs</label><input id="club-q" type="search" placeholder="Search clubs or suburbs" autocomplete="off" value="'+esc(S.clubQ)+'"></div>';
+  h+='<div class="scroller" role="group" aria-label="Sport"><button type="button" class="chip" data-act="club-sport" data-v="all" aria-pressed="'+(S.clubSport==='all')+'">All sports</button>'+
+    SPORTS.map(function(s){return '<button type="button" class="chip" data-act="club-sport" data-v="'+s[0]+'" aria-pressed="'+(S.clubSport===s[0])+'">'+esc(s[1])+'</button>';}).join('')+'</div>';
+  if(S.clubs===null)return h+skeletons(3);
+  var q=S.clubQ.trim().toLowerCase();
+  var list=sortClubs(S.clubs.filter(function(c){
+    if(S.clubSport!=='all'&&c.sports.indexOf(S.clubSport)<0)return false;
+    return !q||[c.name,c.suburb,c.kind,c.about].join(' ').toLowerCase().indexOf(q)>=0;
+  }));
+  var mineIds={};S.myClubs.forEach(function(m){if(m.club)mineIds[m.club.id]=m.role;});
+  h+='<div class="list-head"><h2>'+(S.profile&&S.profile.suburb&&!q?'Near '+esc(S.profile.suburb)+' first':'All clubs')+'</h2><span class="meta">'+list.length+(list.length===1?' club':' clubs')+'</span></div>';
+  if(!list.length)return h+'<div class="empty"><strong>'+(S.clubs.length?'No clubs match':'No clubs yet')+'</strong><p>'+(S.clubs.length?'Try another sport or search.':'Start the first club and invite your group. Members see your games first.')+'</p><button type="button" class="btn btn-accent" data-act="club-new">Start a club</button></div>';
+  return h+'<div class="list">'+list.map(function(c){return clubRow(c,mineIds[c.id]);}).join('')+'</div>';
+}
+function viewClubForm(editing){
+  var f=S.clubForm||{};
+  var h=editing?'':'<a class="back" href="#clubs">'+I.back+'Clubs</a><section class="hello"><h1>Start a club</h1><p class="meta">Give your group a home on Bounce. You’ll be on the committee and can add others.</p></section>';
+  if(!S.uid)return h+signInPrompt('Sign in to start a club','It takes a few seconds with your email.','club-new');
+  h+='<form class="stack" id="club-form" novalidate>';
+  if(editing)h+='<h2>Edit club</h2>';
+  h+='<div class="field"><label for="cf-name">Club name</label><input id="cf-name" maxlength="60" placeholder="Inner West Paddlers" value="'+esc(f.name)+'"></div>';
+  h+='<div class="row2"><div class="field"><label for="cf-kind">Type</label><select id="cf-kind">'+CLUB_KINDS.map(function(k){return '<option'+(f.kind===k?' selected':'')+'>'+esc(k)+'</option>';}).join('')+'</select></div>'+
+    '<div class="field"><label for="cf-suburb">Suburb</label><input id="cf-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div></div>';
+  h+='<div class="field"><span class="lbl" id="cf-sports-l">Sports</span><div class="wrap-chips" role="group" aria-labelledby="cf-sports-l">'+
+    SPORTS.map(function(s){return '<button type="button" class="chip" data-act="cf-sport" data-v="'+s[0]+'" aria-pressed="'+((f.sports||[]).indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div></div>';
+  h+='<div class="field"><label for="cf-about">About the club</label><textarea id="cf-about" maxlength="600" placeholder="Who you are, when you play, who’s welcome">'+esc(f.about)+'</textarea></div>';
+  h+='<div class="row2"><div class="field"><label for="cf-website">Website (optional)</label><input id="cf-website" type="url" inputmode="url" maxlength="200" placeholder="https://" value="'+esc(f.website)+'"></div>'+
+    '<div class="field"><label for="cf-instagram">Instagram (optional)</label><input id="cf-instagram" maxlength="31" placeholder="@yourclub" value="'+esc(f.instagram)+'"></div></div>';
+  if(S.clubFormError)h+='<p class="err" role="alert">'+esc(S.clubFormError)+'</p>';
+  h+='<button class="btn btn-accent" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Saving…':editing?'Save changes':'Create club')+'</button>';
+  if(editing)h+='<button type="button" class="btn btn-line" data-act="club-edit-cancel">Cancel</button>';
+  return h+'</form>';
+}
+function viewClub(){
+  var back='<a class="back" href="#clubs">'+I.back+'Clubs</a>';
+  if(S.clubState==='loading')return back+'<div class="skeleton" style="height:180px"></div>'+skeletons(2);
+  var c=S.club;
+  if(!c)return back+'<div class="empty"><strong>This club isn’t here anymore</strong><p>It may have been closed by its committee.</p><a class="btn btn-accent" href="#clubs">Find another club</a></div>';
+  var role=S.uid?(S.clubMembers.filter(function(m){return m.user_id===S.uid;})[0]||{}).role:null;
+  var admin=role==='admin';
+  var count=S.clubMembers.length;
+  var h=back;
+  if(S.clubEditing&&admin)return h+viewClubForm(true);
+  h+='<section class="clubband"><div class="row">'+clubLogo(c,60)+'<div style="min-width:0"><h1 style="font-size:25px">'+esc(c.name)+'</h1><p class="sub">'+esc([c.kind,c.suburb,count+(count===1?' member':' members')].filter(Boolean).join(' · '))+'</p></div></div>'+sportsChips(c.sports)+'</section>';
+  var cta='';
+  if(admin)cta='<span class="pill">You’re on the committee</span>';
+  else if(role==='member')cta='<span class="pill">You’re a member</span><button type="button" class="btn btn-line" data-act="club-leave" data-id="'+esc(c.id)+'">Leave</button>';
+  else cta='<button type="button" class="btn btn-accent btn-wide" data-act="club-join" data-id="'+esc(c.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join club':'Sign in to join')+'</button>';
+  h+='<div class="cta">'+cta+'<button type="button" class="btn btn-line" data-act="club-invite">'+I.share+'Invite</button></div>';
+  if(S.inviteText)h+='<div class="field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
+  if(admin){
+    h+='<section class="card" aria-label="Committee tools"><h2>Committee tools</h2><div class="cta">'+
+      '<button type="button" class="btn btn-accent" data-act="club-host" data-id="'+esc(c.id)+'">Post a club game</button>'+
+      '<button type="button" class="btn btn-line" data-act="club-edit">Edit club</button></div>'+
+      '<p class="meta">Promote members to the committee from the member list. Committee members can edit the club and post its games.</p>';
+    h+=S.confirmClubDel?'<div class="confirm"><b>Close this club for everyone?</b><p class="meta">The club page and member list go. Its games stay as personal games.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="club-del-yes" data-id="'+esc(c.id)+'">Close club</button><button type="button" class="btn btn-line" data-act="club-del-no">Keep club</button></div></div>'
+      :'<button type="button" class="btn btn-danger self-start" data-act="club-del">Close club</button>';
+    h+='</section>';
+  }
+  if(c.about||c.website||c.instagram){
+    h+='<section class="stack-sm"><h2>About</h2>'+(c.about?'<p class="notes">'+esc(c.about)+'</p>':'')+'<div class="links">'+
+      (c.website?'<a class="btn btn-line btn-sm" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a>':'')+
+      (c.instagram?'<a class="btn btn-line btn-sm" href="https://instagram.com/'+esc(c.instagram)+'" target="_blank" rel="noopener">@'+esc(c.instagram)+'</a>':'')+'</div></section>';
+  }
+  var up=S.clubGames.filter(isUpcoming).sort(byStart);
+  h+='<section class="list"><div class="list-head"><h2>Upcoming games</h2><span class="meta">'+up.length+'</span></div>'+
+    (up.length?up.map(cardHTML).join(''):'<p class="meta">'+(admin?'No games yet. Post the club’s next session so members can join.':'No games posted yet. Join the club to hear when they are.')+'</p>')+'</section>';
+  var committee=S.clubMembers.filter(function(m){return m.role==='admin';}),members=S.clubMembers.filter(function(m){return m.role!=='admin';});
+  function row(m){
+    var nm=m.user_id===S.uid?'You':((m.profile&&m.profile.display_name)||'Player');
+    var acts='';
+    if(admin&&m.user_id!==S.uid){
+      acts='<div class="acts">'+(m.role==='admin'
+        ?'<button type="button" class="btn btn-line btn-sm" data-act="club-role" data-id="'+esc(m.user_id)+'" data-v="member">Remove from committee</button>'
+        :'<button type="button" class="btn btn-line btn-sm" data-act="club-role" data-id="'+esc(m.user_id)+'" data-v="admin">Make committee</button><button type="button" class="btn btn-line btn-sm" data-act="club-remove" data-id="'+esc(m.user_id)+'">Remove</button>')+'</div>';
+    }
+    return '<div class="member-row"><a href="#p-'+esc(m.user_id)+'">'+avatar(m.user_id,m.profile&&m.profile.display_name,m.profile&&m.profile.avatar_url,36)+'<span>'+esc(nm)+'</span></a>'+acts+'</div>';
+  }
+  h+='<section class="card"><h2>Committee</h2><div>'+committee.map(row).join('')+'</div></section>';
+  h+='<section class="card"><div class="list-head"><h2>Members</h2><span class="meta">'+members.length+'</span></div><div>'+(members.length?members.map(row).join(''):'<p class="meta">No members yet. Share the invite with your group.</p>')+'</div></section>';
+  return h;
+}
+function viewPlayer(){
+  var back='<a class="back" href="javascript:history.back()">'+I.back+'Back</a>';
+  if(S.playerState==='loading')return back+skeletons(2);
+  var p=S.player;
+  if(!p)return back+'<div class="empty"><strong>Player not found</strong><p>This profile may have been removed.</p></div>';
+  var me=p.id===S.uid,nm=p.display_name||'Bounce player';
+  var h=back+'<section class="profile-head">'+avatar(p.id,nm,p.avatar_url,72)+'<div><h1>'+esc(nm)+'</h1><p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce player')+'</p></div></section>';
+  if(p.bio)h+='<p class="notes">'+esc(p.bio)+'</p>';
+  if(p.sports&&p.sports.length)h+='<section class="stack-sm"><h2>Plays</h2>'+sportsChips(p.sports.filter(function(s){return SPORT_LABEL[s];}))+'</section>';
+  h+='<section class="stack-sm"><h2>Clubs</h2>'+(S.playerClubs.length?'<div class="list">'+S.playerClubs.map(function(m){return clubRow(normClub(m.club),m.role);}).join('')+'</div>':'<p class="meta">Not in any clubs yet.</p>')+'</section>';
+  if(me)h+='<a class="btn btn-line" href="#profile">Edit my profile</a>';
+  return h;
+}
+
+function viewLogin(){
+  var L=S.login;
+  var h='<section class="login"><div class="login-hero">'+I.ball+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p></div>';
+  if(L.step==='choose'){
+    h+='<div class="stack">';
+    if(CONFIG.SHOW_APPLE)h+='<button type="button" class="btn btn-apple" data-act="oauth" data-v="apple">'+I.apple+'Continue with Apple</button>';
+    if(CONFIG.SHOW_GOOGLE)h+='<button type="button" class="btn btn-google" data-act="oauth" data-v="google">'+I.google+'Continue with Google</button>';
+    h+='</div>';
+    if(CONFIG.SHOW_APPLE||CONFIG.SHOW_GOOGLE)h+='<div class="divider"><span>or use your email</span></div>';
+    h+='<form class="stack" id="email-form" novalidate><div class="field"><label for="login-email">Email</label><input id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+esc(L.email)+'"></div>'+
+      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':'Email me a sign-in code')+'</button></form>';
+  } else {
+    if(CONFIG.EMAIL_CODE){
+      h+='<form class="stack" id="code-form" novalidate><p>We sent a sign-in email to <b>'+esc(L.email)+'</b>. Tap the link in it, or type the 6-digit code here.</p>'+
+        '<div class="field"><label for="login-code">Code</label><input id="login-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" value="'+esc(L.code)+'"></div>'+
+        '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Checking…':'Sign in')+'</button>'+
+        '<button type="button" class="btn btn-line" data-act="login-back">Use a different email</button></form>';
+    } else {
+      h+='<div class="stack"><div class="card"><h2>Check your email</h2><p>We sent a sign-in link to <b>'+esc(L.email)+'</b>. Open the email on this phone and tap <b>Log In</b>. Bounce opens already signed in.</p><p class="meta">No email after a minute? Check your spam folder.</p></div>'+
+        '<button type="button" class="btn btn-line" data-act="login-back">Use a different email</button></div>';
+    }
+  }
+  if(L.error)h+='<p class="err" role="alert">'+esc(L.error)+'</p>';
+  return h+'<p class="foot">By continuing you agree to play fair and be a good sport.</p></section>';
+}
+
+function viewSetup(){
+  return '<section class="stack setup">'+I.ball+'<h1>Almost there</h1><p>Bounce needs its Supabase connection. Open <code>index.html</code>, paste your Supabase Project URL and anon public key into the settings near the top, and upload it again.</p></section>';
+}
+
+/* ---------- render ---------- */
+function paint(){
+  var r=S.route==='game'?'discover':(S.route==='club'||S.route==='club-new')?'clubs':S.route==='player'?(S.playerId===S.uid?'profile':''):S.route;
+  document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
+  document.getElementById('where').textContent=S.profile&&S.profile.suburb?S.profile.suburb:'';
+  document.getElementById('me-slot').innerHTML=!configured?'':S.uid?'<a class="me-btn" href="#profile" aria-label="Your profile">'+avatar(S.uid,S.profile&&S.profile.display_name,S.profile&&S.profile.avatar_url,36)+'</a>':(S.authReady&&S.route!=='login'?'<button type="button" class="btn btn-line btn-sm" data-act="login" data-v="'+esc(currentHash())+'">Sign in</button>':'');
+  var html;
+  if(!configured)html=viewSetup();
+  else{
+    html=S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
+      S.route==='clubs'?viewClubs():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
+    if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
+  }
+  var act=document.activeElement,aid=act&&act.id,ss=null,se=null;
+  try{if(aid&&act.selectionStart!=null){ss=act.selectionStart;se=act.selectionEnd;}}catch(e){}
+  var mOld=document.getElementById('msgs'),atBottom=!mOld||(mOld.scrollHeight-mOld.scrollTop-mOld.clientHeight<48),mTop=mOld?mOld.scrollTop:0;
+  var enter=S.resetScroll,top=enter?0:$main.scrollTop;S.resetScroll=false;
+  $main.innerHTML='<div class="inner gut'+(enter?' enter':'')+'">'+html+'</div>';
+  $main.scrollTop=top;
+  var m=document.getElementById('msgs');if(m)m.scrollTop=atBottom?m.scrollHeight:mTop;
+  if(aid){var el=document.getElementById(aid);if(el&&el!==document.activeElement){try{el.focus({preventScroll:true});if(ss!=null)el.setSelectionRange(ss,se);}catch(e){}}}
+  var inv=document.getElementById('invite');if(inv&&S.selectInvite){inv.focus();inv.select();S.selectInvite=false;}
+}
+var render=paint;
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true;},2800);}
+function celebrate(){
+  try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
+  var ball='<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#FF8A3D"/><circle cx="20" cy="17" r="5" fill="#FFFFFF" opacity="0.5"/><ellipse cx="23.5" cy="28" rx="3.6" ry="4.5" fill="#1A0E05"/><ellipse cx="40.5" cy="28" rx="3.6" ry="4.5" fill="#1A0E05"/><path d="M21.5 39 Q 32 49 42.5 39" fill="none" stroke="#1A0E05" stroke-width="4.4" stroke-linecap="round"/></svg>';
+  var colors=['#FF8A3D','#1F5C4A','#FFD23F','#8FB8FF','#7FC4A8'],dots='';
+  for(var i=0;i<16;i++)dots+='<span style="--a:'+((i/16)*360+Math.random()*12)+'deg;--d:'+(70+Math.random()*60)+'px;background:'+colors[i%5]+'"></span>';
+  var el=document.createElement('div');el.className='celebrate';el.setAttribute('aria-hidden','true');
+  el.innerHTML='<div class="celebrate-ball">'+ball+'</div><div class="burst">'+dots+'</div>';
+  document.body.appendChild(el);setTimeout(function(){el.remove();},1700);
+}
+
+/* ---------- data ---------- */
+function loadGames(){
+  var since=new Date(Date.now()-6*3600*1000).toISOString();
+  return sb.from('games').select('*, game_players(count), club:clubs(id, name)').gte('starts_at',since).order('starts_at').limit(300).then(function(r){
+    if(r.error){S.loadError='Couldn’t load games. Check your connection and reopen Bounce.';}
+    else{S.loadError='';S.games=(r.data||[]).map(normGame);}
+    S.loaded=true;
+  });
+}
+function loadMine(){
+  if(!S.uid){S.mine=null;S.myIds={};return Promise.resolve();}
+  return sb.from('game_players').select('game:games(*, game_players(count), club:clubs(id, name))').eq('user_id',S.uid).then(function(r){
+    if(r.error)return;
+    var games=(r.data||[]).map(function(x){return x.game;}).filter(Boolean).map(normGame);
+    S.mine=games;S.myIds={};games.forEach(function(g){S.myIds[g.id]=true;});
+  });
+}
+function loadProfile(){
+  if(!S.uid){S.profile=null;S.pf=null;return Promise.resolve();}
+  return sb.from('profiles').select('*').eq('id',S.uid).maybeSingle().then(function(r){
+    S.profile=r.data||null;
+    if(!S.pfDirty){var p=S.profile||{};S.pf={display_name:p.display_name||'',suburb:p.suburb||'',bio:p.bio||'',level:p.level||'All levels',sports:(p.sports||[]).slice()};}
+    if(S.profile&&!S.form.suburb&&S.profile.suburb)S.form.suburb=S.profile.suburb;
+  });
+}
+function loadGame(){
+  if(S.route!=='game'||!S.gameId)return Promise.resolve();
+  var id=S.gameId;
+  return Promise.all([
+    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url), club:clubs(id, name)').eq('id',id).maybeSingle(),
+    sb.from('game_players').select('user_id, joined_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('joined_at')
+  ]).then(function(res){
+    if(S.gameId!==id)return;
+    S.game=res[0].data?normGame(res[0].data):null;
+    S.players=res[1].data||[];
+    S.gameState='ready';
+    var inGame=!!S.uid&&S.game&&(S.game.hostId===S.uid||S.players.some(function(p){return p.user_id===S.uid;}));
+    if(!inGame){S.messages=[];return;}
+    return sb.from('messages').select('id, body, created_at, user_id, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('created_at',{ascending:false}).limit(100).then(function(m){
+      if(S.gameId===id&&!m.error)S.messages=(m.data||[]).reverse();
+    });
+  });
+}
+function loadClubs(){
+  return sb.from('clubs').select('*, club_members(count)').order('name').limit(500).then(function(r){
+    if(!r.error)S.clubs=(r.data||[]).map(normClub);
+  });
+}
+function loadMyClubs(){
+  if(!S.uid){S.myClubs=[];return Promise.resolve();}
+  return sb.from('club_members').select('role, club:clubs(*, club_members(count))').eq('user_id',S.uid).then(function(r){
+    if(!r.error)S.myClubs=(r.data||[]).filter(function(m){return m.club;});
+  });
+}
+function loadClub(){
+  if(S.route!=='club'||!S.clubId)return Promise.resolve();
+  var id=S.clubId,since=new Date(Date.now()-6*3600*1000).toISOString();
+  return Promise.all([
+    sb.from('clubs').select('*, club_members(count)').eq('id',id).maybeSingle(),
+    sb.from('club_members').select('user_id, role, joined_at, profile:profiles(id, display_name, avatar_url)').eq('club_id',id).order('joined_at'),
+    sb.from('games').select('*, game_players(count), club:clubs(id, name)').eq('club_id',id).gte('starts_at',since).order('starts_at').limit(50)
+  ]).then(function(res){
+    if(S.clubId!==id)return;
+    S.club=res[0].data?normClub(res[0].data):null;
+    S.clubMembers=res[1].data||[];
+    S.clubGames=(res[2].data||[]).map(normGame);
+    S.clubState='ready';
+  });
+}
+function loadPlayer(){
+  if(S.route!=='player'||!S.playerId)return Promise.resolve();
+  var id=S.playerId;
+  return Promise.all([
+    sb.from('profiles').select('id, display_name, avatar_url, suburb, level, sports, bio').eq('id',id).maybeSingle(),
+    sb.from('club_members').select('role, club:clubs(*, club_members(count))').eq('user_id',id)
+  ]).then(function(res){
+    if(S.playerId!==id)return;
+    S.player=res[0].data||null;
+    S.playerClubs=(res[1].data||[]).filter(function(m){return m.club;});
+    S.playerState='ready';
+  });
+}
+function refreshAll(){
+  if(!sb)return;
+  Promise.all([loadGames(),loadMine(),loadProfile(),loadGame(),loadClubs(),loadMyClubs(),loadClub(),loadPlayer()]).catch(function(){}).then(render);
+}
+function scheduleRefresh(){clearTimeout(refreshTimer);refreshTimer=setTimeout(refreshAll,300);}
+
+/* ---------- routing ---------- */
+function route(){
+  var h=location.hash.replace(/^#/,'');
+  var pre=h.slice(0,2),rest=h.slice(2);
+  S.gameId=null;S.clubId=null;S.playerId=null;
+  if(pre==='g-'&&ID_RE.test(rest)){
+    if(S.game&&S.game.id!==rest||!S.game){S.game=null;S.players=[];S.messages=[];S.gameState='loading';S.draft='';}
+    S.route='game';S.gameId=rest;
+  } else if(pre==='c-'&&ID_RE.test(rest)){
+    if(!S.club||S.club.id!==rest){S.club=null;S.clubMembers=[];S.clubGames=[];S.clubState='loading';}
+    S.route='club';S.clubId=rest;
+  } else if(pre==='p-'&&ID_RE.test(rest)){
+    if(!S.player||S.player.id!==rest){S.player=null;S.playerClubs=[];S.playerState='loading';}
+    S.route='player';S.playerId=rest;
+  } else {
+    S.route=['discover','mine','host','profile','login','clubs','club-new'].indexOf(h)>=0?h:'discover';
+  }
+  if(S.route==='login'&&S.uid){location.replace('#'+(popNext()||'discover'));return;}
+  if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:''};
+  S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
+  render();
+  if(sb){
+    if(S.route==='game')loadGame().then(render);
+    if(S.route==='club')loadClub().then(render);
+    if(S.route==='player')loadPlayer().then(render);
+    if(S.route==='clubs'&&S.clubs===null)loadClubs().then(render);
+  }
+}
+function currentHash(){return S.route==='game'?'g-'+S.gameId:S.route==='club'?'c-'+S.clubId:S.route==='player'?'p-'+S.playerId:S.route;}
+window.addEventListener('hashchange',route);
+function goLogin(next){try{sessionStorage.setItem('bounce-next',next||'discover');}catch(e){}S.login.step='choose';S.login.error='';location.hash='login';}
+function popNext(){var n=null;try{n=sessionStorage.getItem('bounce-next');sessionStorage.removeItem('bounce-next');}catch(e){}return n&&/^[A-Za-z0-9-]+$/.test(n)&&n!=='login'?n:null;}
+function needLogin(next){if(S.uid)return false;goLogin(next);return true;}
+
+/* ---------- actions ---------- */
+function join(id){
+  if(needLogin('g-'+id))return;
+  S.busy=true;render();
+  sb.from('game_players').insert({game_id:id,user_id:S.uid}).then(function(r){
+    S.busy=false;
+    if(r.error){toast(friendlyError(r.error,'Couldn’t join. Try again.'));render();return;}
+    celebrate();toast('You’re in. See you on court.');
+    if(S.route!=='game')location.hash='g-'+id;
+    refreshAll();
+  });
+}
+function leave(id){
+  S.busy=true;render();
+  sb.from('game_players').delete().eq('game_id',id).eq('user_id',S.uid).then(function(r){
+    S.busy=false;
+    if(r.error)toast(friendlyError(r.error,'Couldn’t leave the game. Try again.'));else toast('You’ve left the game');
+    refreshAll();
+  });
+}
+function toggleOneShort(id){
+  var g=S.game;if(!g)return;var next=!g.oneShort;
+  sb.from('games').update({one_short:next}).eq('id',id).then(function(r){
+    if(r.error)toast(friendlyError(r.error,'Couldn’t update the alert. Try again.'));else toast(next?'One Short alert sent':'One Short alert off');
+    refreshAll();
+  });
+}
+function deleteGame(id){
+  sb.from('games').delete().eq('id',id).then(function(r){
+    if(r.error){toast(friendlyError(r.error,'Couldn’t delete the game. Try again.'));return;}
+    toast('Game deleted');location.hash='mine';refreshAll();
+  });
+}
+function invite(){
+  var g=S.game;if(!g)return;
+  var left=spotsLeft(g,S.players.length);
+  var url=location.origin+location.pathname+'#g-'+g.id;
+  var text=SPORT_LABEL[g.sport]+': '+g.title+'\n'+fmtDay(g.start)+' '+fmtTime(g.start)+' at '+place(g,', ')+'\n'+(left>0?left+(left===1?' spot':' spots')+' left':'Full')+' · '+priceLabel(g)+' · '+g.level;
+  function fallback(){
+    try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Invite copied. Paste it in your group chat.');},function(){S.inviteText=text+'\n'+url;S.selectInvite=true;render();});}
+    catch(e){S.inviteText=text+'\n'+url;S.selectInvite=true;render();}
+  }
+  if(navigator.share){navigator.share({title:g.title,text:text,url:url}).catch(function(e){if(!e||e.name!=='AbortError')fallback();});}
+  else fallback();
+}
+function createGame(){
+  var f=S.form,cap=Math.round(Number(f.capacity)),price=Math.round(Number(f.price)),start=new Date(f.date+'T'+f.time),err='';
+  if(f.title.trim().length<3)err='Give your game a name, like “Social doubles”.';
+  else if(!f.date||!f.time||isNaN(start.getTime()))err='Pick a date and start time.';
+  else if(start.getTime()<Date.now())err='That time has already passed. Pick a later one.';
+  else if(!f.venue.trim())err='Add the venue so players know where to go.';
+  else if(!f.suburb.trim())err='Add the suburb.';
+  else if(!(cap>=2&&cap<=50))err='Players must be between 2 and 50.';
+  else if(!(price>=0&&price<=500))err='Cost must be between $0 and $500.';
+  S.formError=err;
+  if(err){render();return;}
+  S.busy=true;render();
+  sb.from('games').insert({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
+    venue:f.venue.trim(),suburb:f.suburb.trim(),level:f.level,price:price,capacity:cap,one_short:!!f.oneShort,notes:f.notes.trim(),
+    club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null}).select('id').single().then(function(r){
+    S.busy=false;
+    if(r.error){S.formError=friendlyError(r.error,'Couldn’t post the game. Check your connection and try again.');render();return;}
+    S.form=defaultForm();celebrate();toast('Game posted');location.hash='g-'+r.data.id;refreshAll();
+  });
+}
+function sendMsg(){
+  var body=S.draft.trim();if(!body||!S.gameId)return;
+  S.draft='';var inp=document.getElementById('chat-input');if(inp)inp.value='';
+  sb.from('messages').insert({game_id:S.gameId,user_id:S.uid,body:body.slice(0,500)}).then(function(r){
+    if(r.error){S.draft=body;toast(friendlyError(r.error,'Message didn’t send. Try again.'));render();return;}
+    loadGame().then(render);
+  });
+}
+function saveProfile(){
+  var pf=S.pf;if(!pf)return;
+  if(!pf.display_name.trim()){toast('Add your name so players know who’s coming');return;}
+  S.busy=true;render();
+  sb.from('profiles').update({display_name:pf.display_name.trim().slice(0,40),suburb:pf.suburb.trim().slice(0,50)||null,bio:pf.bio.trim().slice(0,160)||null,level:pf.level,sports:pf.sports}).eq('id',S.uid).then(function(r){
+    S.busy=false;
+    if(r.error){toast('Couldn’t save your profile. Try again.');render();return;}
+    S.pfDirty=false;toast('Profile saved');refreshAll();
+  });
+}
+/* ---------- club actions ---------- */
+function newClub(){
+  if(needLogin('club-new'))return;
+  S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:''};
+  S.clubFormError='';
+  if(location.hash==='#club-new')render();else location.hash='club-new';
+}
+function saveClub(){
+  var f=S.clubForm;if(!f)return;
+  var name=f.name.trim(),web=f.website.trim(),ig=f.instagram.trim().replace(/^@/,''),err='';
+  if(name.length<3)err='Give the club a name of at least 3 letters.';
+  else if(web&&!/^https?:\/\/\S+\.\S+/i.test(web))err='The website should start with https://';
+  else if(ig&&!/^[A-Za-z0-9._]{1,30}$/.test(ig))err='Instagram names use letters, numbers, dots and underscores only.';
+  S.clubFormError=err;
+  if(err){render();return;}
+  var data={name:name.slice(0,60),kind:CLUB_KINDS.indexOf(f.kind)>=0?f.kind:'Club',sports:f.sports||[],suburb:f.suburb.trim().slice(0,50)||null,
+    about:f.about.trim().slice(0,600),website:web||null,instagram:ig||null};
+  S.busy=true;render();
+  if(S.clubEditing&&S.clubId){
+    sb.from('clubs').update(data).eq('id',S.clubId).then(function(r){
+      S.busy=false;
+      if(r.error){S.clubFormError=friendlyError(r.error,'Couldn’t save the club. Try again.');render();return;}
+      S.clubEditing=false;toast('Club updated');refreshAll();
+    });
+  } else {
+    data.created_by=S.uid;
+    sb.from('clubs').insert(data).select('id').single().then(function(r){
+      S.busy=false;
+      if(r.error){S.clubFormError=friendlyError(r.error,'Couldn’t create the club. Try again.');render();return;}
+      S.clubForm=null;celebrate();toast('Club created. You’re on the committee.');location.hash='c-'+r.data.id;refreshAll();
+    });
+  }
+}
+function joinClub(id){
+  if(needLogin('c-'+id))return;
+  S.busy=true;render();
+  sb.from('club_members').insert({club_id:id,user_id:S.uid}).then(function(r){
+    S.busy=false;
+    if(r.error){toast(friendlyError(r.error,'Couldn’t join the club. Try again.'));render();return;}
+    celebrate();toast('Welcome to '+((S.club&&S.club.name)||'the club'));refreshAll();
+  });
+}
+function leaveClub(id){
+  sb.from('club_members').delete().eq('club_id',id).eq('user_id',S.uid).then(function(r){
+    if(r.error)toast(friendlyError(r.error,'Couldn’t leave the club. Try again.'));else toast('You’ve left the club');
+    refreshAll();
+  });
+}
+function setClubRole(userId,role){
+  sb.from('club_members').update({role:role==='admin'?'admin':'member'}).eq('club_id',S.clubId).eq('user_id',userId).then(function(r){
+    if(r.error)toast(friendlyError(r.error,'Couldn’t change their role. Try again.'));else toast(role==='admin'?'Added to the committee':'Removed from the committee');
+    refreshAll();
+  });
+}
+function removeClubMember(userId){
+  sb.from('club_members').delete().eq('club_id',S.clubId).eq('user_id',userId).then(function(r){
+    if(r.error)toast(friendlyError(r.error,'Couldn’t remove them. Try again.'));else toast('Member removed');
+    refreshAll();
+  });
+}
+function deleteClub(id){
+  sb.from('clubs').delete().eq('id',id).then(function(r){
+    if(r.error){toast(friendlyError(r.error,'Couldn’t close the club. Try again.'));return;}
+    toast('Club closed');location.hash='clubs';refreshAll();
+  });
+}
+function inviteClub(){
+  var c=S.club;if(!c)return;
+  var url=location.origin+location.pathname+'#c-'+c.id;
+  var text='Join '+c.name+' on Bounce'+(c.suburb?' ('+c.suburb+')':'')+(c.sports.length?': '+c.sports.map(function(s){return SPORT_LABEL[s];}).join(', '):'');
+  function fallback(){
+    try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Invite copied. Paste it in your group chat.');},function(){S.inviteText=text+'\n'+url;S.selectInvite=true;render();});}
+    catch(e){S.inviteText=text+'\n'+url;S.selectInvite=true;render();}
+  }
+  if(navigator.share)navigator.share({title:c.name,text:text,url:url}).catch(function(e){if(!e||e.name!=='AbortError')fallback();});
+  else fallback();
+}
+
+function oauth(provider){
+  S.login.error='';
+  sb.auth.signInWithOAuth({provider:provider,options:{redirectTo:location.origin+location.pathname}}).then(function(r){
+    if(r.error){S.login.error='That sign-in option isn’t working right now. Try email instead.';render();}
+  });
+}
+function sendCode(){
+  var L=S.login;L.error='';
+  if(!/^\S+@\S+\.\S+$/.test(L.email.trim())){L.error='Enter the email address you use every day.';render();return;}
+  L.busy=true;render();
+  sb.auth.signInWithOtp({email:L.email.trim(),options:{emailRedirectTo:location.origin+location.pathname}}).then(function(r){
+    L.busy=false;
+    if(r.error)L.error='Couldn’t send the email. Check the address and try again in a minute.';else{L.step='code';L.code='';}
+    render();
+  });
+}
+function verifyCode(){
+  var L=S.login;L.error='';
+  if(L.code.length<6){L.error='Enter the 6-digit code from the email.';render();return;}
+  L.busy=true;render();
+  sb.auth.verifyOtp({email:L.email.trim(),token:L.code.trim(),type:'email'}).then(function(r){
+    L.busy=false;
+    if(r.error){L.error='That code didn’t work. Check the latest email, or send a new code.';render();}
+  });
+}
+
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b)return;
+  var a=b.getAttribute('data-act'),id=b.getAttribute('data-id'),v=b.getAttribute('data-v');
+  if(id&&!ID_RE.test(id))return;
+  if(a==='sport'){S.sport=v;render();}
+  else if(a==='day'){S.day=v;render();}
+  else if(a==='join')join(id);
+  else if(a==='leave')leave(id);
+  else if(a==='oneshort')toggleOneShort(id);
+  else if(a==='del'){S.confirmDel=true;render();}
+  else if(a==='del-no'){S.confirmDel=false;render();}
+  else if(a==='del-yes')deleteGame(id);
+  else if(a==='invite')invite();
+  else if(a==='login')goLogin(v);
+  else if(a==='login-back'){S.login.step='choose';S.login.code='';S.login.error='';render();}
+  else if(a==='oauth')oauth(v==='apple'?'apple':'google');
+  else if(a==='signout'){sb.auth.signOut().then(function(){location.hash='discover';});}
+  else if(a==='pfsport'){var i=S.pf.sports.indexOf(v);if(i>=0)S.pf.sports.splice(i,1);else S.pf.sports.push(v);S.pfDirty=true;render();}
+  else if(a==='club-new')newClub();
+  else if(a==='club-sport'){S.clubSport=v;render();}
+  else if(a==='cf-sport'&&S.clubForm){var j=S.clubForm.sports.indexOf(v);if(j>=0)S.clubForm.sports.splice(j,1);else S.clubForm.sports.push(v);render();}
+  else if(a==='club-join')joinClub(id);
+  else if(a==='club-leave')leaveClub(id);
+  else if(a==='club-invite')inviteClub();
+  else if(a==='club-host'){S.form=defaultForm();S.form.clubId=id;location.hash='host';}
+  else if(a==='club-edit'&&S.club){var c=S.club;S.clubForm={name:c.name,kind:c.kind,suburb:c.suburb,sports:c.sports.slice(),about:c.about,website:c.website,instagram:c.instagram};S.clubFormError='';S.clubEditing=true;render();}
+  else if(a==='club-edit-cancel'){S.clubEditing=false;render();}
+  else if(a==='club-del'){S.confirmClubDel=true;render();}
+  else if(a==='club-del-no'){S.confirmClubDel=false;render();}
+  else if(a==='club-del-yes')deleteClub(id);
+  else if(a==='club-role')setClubRole(id,v);
+  else if(a==='club-remove')removeClubMember(id);
+});
+function onField(e){
+  var t=e.target,id=t.id;if(!id)return;
+  if(id==='q'){S.q=t.value;render();}
+  else if(id==='chat-input')S.draft=t.value;
+  else if(id==='f-oneshort')S.form.oneShort=t.checked;
+  else if(id.indexOf('f-')===0)S.form[id.slice(2)]=t.value;
+  else if(id==='pf-name'){S.pf.display_name=t.value;S.pfDirty=true;}
+  else if(id==='pf-suburb'){S.pf.suburb=t.value;S.pfDirty=true;}
+  else if(id==='pf-level'){S.pf.level=t.value;S.pfDirty=true;}
+  else if(id==='pf-bio'){S.pf.bio=t.value;S.pfDirty=true;}
+  else if(id==='club-q'){S.clubQ=t.value;render();}
+  else if(id.indexOf('cf-')===0&&S.clubForm){S.clubForm[id.slice(3)]=t.value;}
+  else if(id==='login-email')S.login.email=t.value;
+  else if(id==='login-code'){var c=t.value.replace(/\D/g,'').slice(0,6);if(c!==t.value)t.value=c;S.login.code=c;}
+}
+document.addEventListener('input',onField);
+document.addEventListener('change',onField);
+document.addEventListener('submit',function(e){
+  e.preventDefault();var id=e.target.id;
+  if(id==='host-form')createGame();
+  else if(id==='chat-form')sendMsg();
+  else if(id==='profile-form')saveProfile();
+  else if(id==='email-form')sendCode();
+  else if(id==='code-form')verifyCode();
+  else if(id==='club-form')saveClub();
+});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')scheduleRefresh();});
+
+/* ---------- boot ---------- */
+function setSession(session){
+  S.session=session||null;
+  S.uid=session&&session.user?session.user.id:null;
+  S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
+  if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};}
+}
+function cleanUrl(){
+  try{
+    if(/(access_token|refresh_token|error_description)=/.test(location.hash))history.replaceState(null,'',location.pathname+'#discover');
+    else if(/[?&](code|error|error_description)=/.test(location.search))history.replaceState(null,'',location.pathname+location.hash);
+  }catch(e){}
+}
+route();
+if(!configured||!window.supabase){render();return;}
+if(/[?&]error_description=/.test(location.search)){toast('Sign-in didn’t finish. Try again.');}
+// Implicit flow: an emailed sign-in link works in whichever browser opens it.
+sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY,{auth:{flowType:'implicit',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+sb.auth.onAuthStateChange(function(evt,session){
+  setTimeout(function(){
+    var wasIn=!!S.uid;setSession(session);S.authReady=true;
+    if(evt==='SIGNED_IN'&&!wasIn){
+      cleanUrl();S.login={step:'choose',email:'',code:'',error:'',busy:false};
+      var next=popNext();
+      if(next||S.route==='login')location.hash=next||'discover';
+      toast('Signed in. Welcome to Bounce.');
+    }
+    refreshAll();
+  },0);
+});
+sb.auth.getSession().then(function(r){setSession(r.data&&r.data.session);S.authReady=true;cleanUrl();refreshAll();});
+sb.channel('bounce-live')
+  .on('postgres_changes',{event:'*',schema:'public',table:'games'},scheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'game_players'},scheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'messages'},scheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'clubs'},scheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'club_members'},scheduleRefresh)
+  .subscribe();
+})();
+</script>
+</body>
+</html>
