@@ -288,7 +288,7 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 /* One-column order on phones and tablets: name prompt, back, band, meter, actions, then the rest */
 .inner > .notice{order:-3}
 .inner > .back{order:-2}
-.gp-main > .band,.gp-main > .meter-row,.gp-side > .cta,.gp-side > .cal-add-row,.gp-side > .invite-field{order:-1}
+.gp-main > .band,.gp-main > .meter-row,.gp-side > .cta,.gp-side > .nudge,.gp-side > .cal-add-row,.gp-side > .invite-field{order:-1}
 
 .search:focus-within{border-color:var(--ink)}
 .search-row{display:flex;gap:8px}
@@ -500,6 +500,16 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 @media (min-width:768px){.club-chat .msgs{height:calc(100dvh - 300px)}}
 @media (min-width:1024px){.tab-badge{position:static;margin-left:auto;box-shadow:none}.tab .kbd + .tab-badge{margin-left:8px}}
 
+/* Notifications */
+.nudge{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--accent-soft);color:var(--ink)}
+.nudge .gbody{flex:1;gap:2px}
+.nudge-ico{flex:none;width:36px;height:36px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:inline-flex;align-items:center;justify-content:center}
+.nudge-ico svg{width:20px;height:20px}
+.howto{background:var(--bg);border-radius:12px;padding:12px 14px}
+.howto ol{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.pref-list{display:flex;flex-direction:column;gap:12px;padding-top:4px;border-top:1px solid var(--line);margin-top:2px}
+.pref-list .switch-row{padding-top:8px}
+
 /* Photo viewer */
 .lightbox{position:fixed;inset:0;z-index:26;background:rgba(5,10,8,.92);display:flex;align-items:center;justify-content:center;padding:calc(56px + env(safe-area-inset-top,0px)) 12px calc(56px + env(safe-area-inset-bottom,0px))}
 .lightbox.enter{animation:fade .2s ease-out}
@@ -696,6 +706,7 @@ var I={
   pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
   locate:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
   cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 14v4M10 16h4"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
   heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-9.3-9.2C1.4 7.4 3.6 4 7 4c2.1 0 3.6 1.1 5 3 1.4-1.9 2.9-3 5-3 3.4 0 5.6 3.4 4.3 6.8C19.5 15.4 12 20 12 20z"/></svg>',
   chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg>',
   photo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-8 8"/></svg>',
@@ -848,6 +859,7 @@ function friendlyError(e,fallback){
 var S={route:'discover',gameId:null,sport:'all',day:'all',q:'',level:'all',free:false,near:false,sheet:null,sheetEnter:false,hostStep:0,
   waiting:[],myWait:null,waitIds:{},locating:false,
   dview:'list',mview:'list',cview:'list',cal:{},
+  push:{supported:false,ios:false,standalone:false,permission:'default',subscribed:false,busy:false},providers:{},
   inbox:null,inboxFilter:'all',reads:{},unread:0,chatClubId:null,chatClub:null,clubChat:{messages:[],state:'idle'},ccDraft:'',
   feed:null,clubPosts:null,gameCache:{},liked:{},comments:{},openComments:{},expanded:{},cdraft:{},composer:null,
   games:[],loaded:false,loadError:'',mine:null,myIds:{},
@@ -1008,6 +1020,7 @@ function viewGame(){
   else if(left===0)cta='<button type="button" class="btn btn-brand btn-wide" data-act="wait-join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join waitlist':'Sign in to join the waitlist')+'</button>';
   else cta='<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
   var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button></div>';
+  if(!past&&(mine||isHost||wPos))side+=pushNudge('game');
   if(!past&&(mine||isHost||wPos))side+='<div class="cal-add-row"><button type="button" class="btn btn-line btn-sm" data-act="cal-add" data-id="'+esc(g.id)+'" aria-haspopup="dialog">'+I.cal+'Add to calendar</button><span class="meta">Get a reminder 1 hour before</span></div>';
   if(S.inviteText)side+='<div class="field invite-field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
   if(isHost&&!past){
@@ -1187,6 +1200,7 @@ function viewProfile(){
     '<div class="field"><span class="lbl" id="pf-sports-l">Sports you play</span><div class="wrap-chips" role="group" aria-labelledby="pf-sports-l">'+
     SPORTS.map(function(s){return '<button type="button" class="chip" data-act="pfsport" data-v="'+s[0]+'" aria-pressed="'+(pf.sports.indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div></div>'+
     '<button class="btn btn-brand" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Saving…':'Save profile')+'</button></form>';
+  h+=notifCard();
   h+='<section class="stack-sm"><div class="list-head"><h2>Your clubs</h2><a class="meta" href="#p-'+esc(S.uid)+'">View my public profile</a></div>';
   if(S.myClubs.length){
     h+='<div class="list">'+S.myClubs.filter(function(m){return m.club;}).map(function(m){var c=normClub(m.club);
@@ -1575,6 +1589,7 @@ function viewInbox(){
   var h='<section class="hello"><h1>Inbox</h1><p class="meta">Chats with your clubs and the games you’re in.</p></section>';
   if(!S.uid)return h+signInPrompt('Sign in to see your chats','Talk with your clubs and the players in your games.','inbox');
   if(S.inbox===null)return h+skeletons(3);
+  h+=pushNudge('inbox');
   var f=S.inboxFilter,items=S.inbox.filter(function(it){return f==='all'||(f==='unread'&&it.unread)||(f==='clubs'&&it.kind==='club')||(f==='games'&&it.kind==='game');});
   var nUnread=S.inbox.filter(function(it){return it.unread;}).length;
   h+='<div class="ib-filters" role="group" aria-label="Show">'+[['all','All'],['unread','Unread'+(nUnread?' · '+nUnread:'')],['clubs','Clubs'],['games','Games']].map(function(o){
@@ -1619,17 +1634,107 @@ function sendClubMsg(){
   });
 }
 
+/* ---------- Phone notifications (Web Push) ---------- */
+var VAPID_PUBLIC='BDHmCfYkBtMyx2C4owIAIvnKd1gfz7fzzuUcQ3vpER5bsMQFo1xCqADQWPDHDfPEG-ecBgIL42AqMumZJDHfqAM';
+var PUSH_PREFS=[['games','Games','Reminders 2 hours before, waitlist spots, cancellations'],['oneshort','One Short near you','Games in your suburb that need players'],['clubs','Club posts','News and photos from your clubs'],['chat','Chat messages','First new message in your club and game chats']];
+var swReg=null;
+function urlB64ToBytes(s){var p=s.replace(/-/g,'+').replace(/_/g,'/'),b=atob(p+'==='.slice((p.length+3)%4)),o=new Uint8Array(b.length);for(var i=0;i<b.length;i++)o[i]=b.charCodeAt(i);return o;}
+function pushInit(){
+  var P=S.push;
+  P.supported=('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window);
+  P.ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  P.standalone=mq('(display-mode: standalone)')||navigator.standalone===true;
+  P.permission=('Notification' in window)?Notification.permission:'unsupported';
+  if(!('serviceWorker' in navigator))return;
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    swReg=reg;if(!P.supported)return;
+    return reg.pushManager.getSubscription().then(function(sub){P.subscribed=!!sub;if(sub)saveSub(sub);render();});
+  }).catch(function(){});
+  navigator.serviceWorker.addEventListener('message',function(e){
+    var d=e.data||{};if(d.type!=='open'||typeof d.url!=='string')return;
+    var h=d.url.split('#')[1];if(h&&/^[A-Za-z0-9-]+$/.test(h))location.hash=h;
+  });
+}
+function saveSub(sub){
+  if(!S.uid||!sub||!sb)return Promise.resolve();
+  var j=sub.toJSON();if(!j||!j.keys)return Promise.resolve();
+  return sb.from('push_subscriptions').upsert({user_id:S.uid,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,user_agent:String(navigator.userAgent).slice(0,300)},{onConflict:'endpoint'}).then(function(){},function(){});
+}
+function enablePush(){
+  var P=S.push;
+  if(needLogin(currentHash()))return;
+  if(P.ios&&!P.standalone){toast('Add Bounce to your Home Screen first, then turn notifications on from there.');return;}
+  if(!P.supported){toast('This browser can’t show notifications.');return;}
+  P.busy=true;render();
+  Notification.requestPermission().then(function(perm){
+    P.permission=perm;
+    if(perm!=='granted'){P.busy=false;render();if(perm==='denied')toast('Notifications are blocked. Turn them on in your phone’s Settings.');return;}
+    return (swReg?Promise.resolve(swReg):navigator.serviceWorker.ready).then(function(reg){
+      swReg=reg;
+      return reg.pushManager.getSubscription().then(function(sub){return sub||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64ToBytes(VAPID_PUBLIC)});});
+    }).then(function(sub){return saveSub(sub);}).then(function(){P.subscribed=true;P.busy=false;celebrate();toast('Notifications are on');render();});
+  }).catch(function(){P.busy=false;toast('Couldn’t turn on notifications. Try again.');render();});
+}
+function disablePush(){
+  var P=S.push;
+  (swReg?swReg.pushManager.getSubscription():Promise.resolve(null)).then(function(sub){
+    if(!sub)return;var ep=sub.endpoint;
+    return sub.unsubscribe().then(function(){return sb.from('push_subscriptions').delete().eq('endpoint',ep);});
+  }).then(function(){P.subscribed=false;toast('Notifications are off on this device');render();},function(){render();});
+}
+/* On sign-out, stop this device getting the old account's notifications */
+function forgetDevice(){
+  if(!swReg||!S.uid)return Promise.resolve();
+  return swReg.pushManager.getSubscription().then(function(sub){if(sub)return sb.from('push_subscriptions').delete().eq('endpoint',sub.endpoint);}).catch(function(){});
+}
+function testPush(){
+  sb.functions.invoke('push',{body:{type:'test'}}).then(function(r){
+    var n=r&&r.data&&r.data.sent;
+    toast(n?'Test sent. It should arrive in a few seconds.':'Test sent. If nothing arrives, allow notifications for Bounce in Settings.');
+  },function(){toast('Couldn’t send a test. Try again.');});
+}
+function setNotifyPref(key){
+  if(!S.profile)return;
+  var nt=Object.assign({},S.profile.notify||{});nt[key]=nt[key]===false;S.profile.notify=nt;render();
+  sb.from('profiles').update({notify:nt}).eq('id',S.uid).then(function(r){if(r.error)toast('Couldn’t save that. Try again.');});
+}
+function nudgeDismissed(){try{return localStorage.getItem('bounce-nudge')==='1';}catch(e){return false;}}
+function pushNudge(kind){
+  var P=S.push;if(!S.uid||P.subscribed||P.permission==='denied'||nudgeDismissed())return '';
+  var needHome=P.ios&&!P.standalone;
+  if(!P.supported&&!needHome)return '';
+  var text=kind==='game'?'Get a reminder 2 hours before the game, and a ping if plans change.':'Hear about new messages and club news straight away.';
+  return '<div class="nudge">'+'<span class="nudge-ico" aria-hidden="true">'+I.bell+'</span><div class="gbody"><b>'+(needHome?'Add Bounce to your Home Screen':'Turn on notifications')+'</b>'+
+    '<span class="meta">'+(needHome?'On iPhone, notifications come from the Home Screen app. Tap Share, then Add to Home Screen.':esc(text))+'</span></div>'+
+    (needHome?'':'<button type="button" class="btn btn-accent btn-sm" data-act="push-on">Turn on</button>')+
+    '<button type="button" class="cmt-del" data-act="nudge-x" aria-label="Not now">×</button></div>';
+}
+function notifCard(){
+  var P=S.push,nt=(S.profile&&S.profile.notify)||{},h='<section class="card" aria-label="Notifications"><h2>Notifications</h2>';
+  var needHome=P.ios&&!P.standalone;
+  if(needHome)h+='<div class="howto"><b>One step first on iPhone</b><ol><li>Tap <b>Share</b> at the bottom of Safari</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b></li><li>Open Bounce from the new icon and turn notifications on here</li></ol></div>';
+  else if(!P.supported)h+='<p class="meta">This browser can’t show notifications. Try Safari or Chrome on your phone.</p>';
+  else if(P.permission==='denied')h+='<p class="meta">Notifications are blocked for Bounce. Turn them on in your phone’s Settings, under Notifications.</p>';
+  else if(!P.subscribed)h+='<p class="meta">Reminders before games, a ping when a waitlist spot opens, and news from your clubs.</p><button type="button" class="btn btn-accent self-start" data-act="push-on"'+(P.busy?' disabled':'')+'>'+I.bell+(P.busy?'Turning on…':'Turn on notifications')+'</button>';
+  else h+='<div class="switch-row"><div><b>On for this device ✓</b><p>Choose what you hear about below.</p></div><button type="button" class="btn btn-line btn-sm" data-act="push-test">Send a test</button></div>';
+  h+='<div class="pref-list">'+PUSH_PREFS.map(function(p){var on=nt[p[0]]!==false;
+    return '<div class="switch-row"><div><b>'+esc(p[1])+'</b><p>'+esc(p[2])+'</p></div><button type="button" class="switch" role="switch" aria-label="'+esc(p[1])+'" aria-checked="'+on+'" data-act="notify-pref" data-v="'+p[0]+'"><i></i></button></div>';}).join('')+'</div>';
+  if(P.subscribed)h+='<button type="button" class="linkish" data-act="push-off">Turn off on this device</button>';
+  return h+'</section>';
+}
+
 function viewLogin(){
   var L=S.login;
   var h='<section class="login"><div class="login-hero">'+I.ball+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p></div>';
   if(L.step==='choose'){
     h+='<div class="stack">';
-    if(CONFIG.SHOW_APPLE)h+='<button type="button" class="btn btn-apple" data-act="oauth" data-v="apple">'+I.apple+'Continue with Apple</button>';
-    if(CONFIG.SHOW_GOOGLE)h+='<button type="button" class="btn btn-google" data-act="oauth" data-v="google">'+I.google+'Continue with Google</button>';
+    var showApple=CONFIG.SHOW_APPLE||!!S.providers.apple,showGoogle=CONFIG.SHOW_GOOGLE||!!S.providers.google;
+    if(showApple)h+='<button type="button" class="btn btn-apple" data-act="oauth" data-v="apple">'+I.apple+'Continue with Apple</button>';
+    if(showGoogle)h+='<button type="button" class="btn btn-google" data-act="oauth" data-v="google">'+I.google+'Continue with Google</button>';
     h+='</div>';
-    if(CONFIG.SHOW_APPLE||CONFIG.SHOW_GOOGLE)h+='<div class="divider"><span>or use your email</span></div>';
+    if(showApple||showGoogle)h+='<div class="divider"><span>or use your email</span></div>';
     h+='<form class="stack" id="email-form" novalidate><div class="field"><label for="login-email">Email</label><input id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+esc(L.email)+'"></div>'+
-      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':'Email me a sign-in code')+'</button></form>';
+      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':CONFIG.EMAIL_CODE?'Email me a sign-in code':'Email me a sign-in link')+'</button></form>';
   } else {
     if(CONFIG.EMAIL_CODE){
       h+='<form class="stack" id="code-form" novalidate><p>We sent a sign-in email to <b>'+esc(L.email)+'</b>. Tap the link in it, or type the 6-digit code here.</p>'+
@@ -2344,6 +2449,11 @@ document.addEventListener('click',function(e){
   else if(a==='member-menu')openSheet({type:'member',id:id});
   else if(a==='host-step'){S.hostStep=Math.max(0,Math.min(3,Number(v)||0));S.formError='';render();}
   else if(a==='host-next')hostNext();
+  else if(a==='push-on')enablePush();
+  else if(a==='push-off')disablePush();
+  else if(a==='push-test')testPush();
+  else if(a==='notify-pref'&&['games','oneshort','clubs','chat'].indexOf(v)>=0)setNotifyPref(v);
+  else if(a==='nudge-x'){try{localStorage.setItem('bounce-nudge','1');}catch(err){}render();}
   else if(a==='ib-filter'){S.inboxFilter=['all','unread','clubs','games'].indexOf(v)>=0?v:'all';render();}
   else if(a==='dview'||a==='mview'||a==='cview'){S[a]=v==='cal'?'cal':'list';render();}
   else if(a==='cal-month'){var cm=String(v||'').split('|'),ck=cm[0],cs=S.cal[ck];if(cs){var cy=Number(cs.m.slice(0,4)),cmo=Number(cs.m.slice(5,7))-1+(Number(cm[1])||0);cs.m=monthKey(new Date(cy,cmo,1));cs.d=null;render();}}
@@ -2380,7 +2490,7 @@ document.addEventListener('click',function(e){
   else if(a==='login')goLogin(v);
   else if(a==='login-back'){S.login.step='choose';S.login.code='';S.login.error='';render();}
   else if(a==='oauth')oauth(v==='apple'?'apple':'google');
-  else if(a==='signout'){sb.auth.signOut().then(function(){location.hash='discover';});}
+  else if(a==='signout'){forgetDevice().then(function(){return sb.auth.signOut();}).then(function(){location.hash='discover';});}
   else if(a==='pfsport'){var i=S.pf.sports.indexOf(v);if(i>=0)S.pf.sports.splice(i,1);else S.pf.sports.push(v);S.pfDirty=true;render();}
   else if(a==='club-new')newClub();
   else if(a==='club-sport'){S.clubSport=v;render();}
@@ -2461,8 +2571,10 @@ setInterval(function(){
 
 /* ---------- boot ---------- */
 function setSession(session){
+  var before=S.uid;
   S.session=session||null;
   S.uid=session&&session.user?session.user.id:null;
+  if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
   if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};}
 }
@@ -2473,7 +2585,9 @@ function cleanUrl(){
   }catch(e){}
 }
 route();
+pushInit();
 if(!configured||!window.supabase){render();return;}
+try{fetch(CONFIG.SUPABASE_URL.replace(/\/$/,'')+'/auth/v1/settings',{headers:{apikey:CONFIG.SUPABASE_ANON_KEY}}).then(function(r){return r.ok?r.json():null;}).then(function(st){if(st&&st.external){S.providers=st.external;render();}}).catch(function(){});}catch(e){}
 if(/[?&]error_description=/.test(location.search)){toast('Sign-in didn’t finish. Try again.');}
 // Implicit flow: an emailed sign-in link works in whichever browser opens it.
 sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY,{auth:{flowType:'implicit',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
