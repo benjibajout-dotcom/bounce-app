@@ -285,6 +285,17 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 .msg.new{animation:pop .22s ease-out}
 @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 .celebrate{position:fixed;inset:0;pointer-events:none;z-index:30;display:flex;align-items:center;justify-content:center}
+/* Club ABN */
+.biz-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0;font-size:14px}
+.biz-line a{color:var(--brand-text);font-weight:600}
+.nw{white-space:nowrap}
+.bizdl{margin:0;display:grid;gap:10px}
+.bizdl div{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:10px;align-items:baseline}
+.bizdl dt{color:var(--muted);font-size:14px}
+.bizdl dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.flabel{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+.seg.pay-to button{min-height:40px;border:0;border-radius:10px;background:transparent;font:inherit;font-weight:700;font-size:14.5px;color:var(--muted);cursor:pointer;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seg.pay-to button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 /* Payments */
 .paynote{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13px;color:var(--muted)}
 .paynote svg{flex:none;margin-top:1px;color:var(--brand-text)}
@@ -890,7 +901,7 @@ function normGame(r){
     clubId:r.club_id||null,club:r.club||null,address:String(r.address||''),
     lat:typeof r.lat==='number'&&isFinite(r.lat)?r.lat:null,lng:typeof r.lng==='number'&&isFinite(r.lng)?r.lng:null,
     waiting:(r.waitlist&&r.waitlist[0]&&r.waitlist[0].count)||0,
-    venueId:r.venue_id||null,payOnline:!!r.pay_online,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
+    venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
 }
 /* Maps: an embedded Google map plus a Directions link that opens Google Maps (app or web) */
 function hasPin(o){return o&&o.lat!=null&&o.lng!=null;}
@@ -988,6 +999,9 @@ function friendlyError(e,fallback){
   if(m.indexOf('SPOT_OPEN')>=0)return 'A spot just opened up. Tap I’m in to grab it.';
   if(m.indexOf('ALREADY_IN')>=0)return 'You’re already in this game.';
   if(m.indexOf('LAST_ADMIN')>=0)return 'A club needs at least one committee member. Make someone else committee first, or close the club.';
+  if(m.indexOf('CLUB_PAYOUTS_NOT_READY')>=0)return 'Set up club payouts before club games can take payments.';
+  if(m.indexOf('NOT_CLUB_ADMIN')>=0)return 'Only the club committee can send payments to the club.';
+  if(m.indexOf('CLUB_HAS_PAID_GAMES')>=0)return 'Players have paid for upcoming club games. Cancel those games first so they’re refunded.';
   if(m.indexOf('PAYOUTS_NOT_READY')>=0)return 'Set up payouts before asking players to pay in the app.';
   if(m.indexOf('PAYMENT_REQUIRED')>=0)return 'This game takes payment when you join.';
   if(m.indexOf('HAS_PAYMENTS')>=0)return 'Players have already paid, so the price can’t change.';
@@ -999,7 +1013,7 @@ function friendlyError(e,fallback){
 }
 
 /* ---------- state ---------- */
-var S={route:'discover',photoBusy:null,payout:null,payoutBusy:false,paying:null,hostPayments:null,gamePayments:[],payConfirm:null,confirmLeave:false,
+var S={route:'discover',photoBusy:null,clubBiz:null,clubPayouts:{},clubPayments:null,abnDraft:'',abnError:'',abnBusy:false,abnEditing:false,confirmAbnDel:false,payout:null,payoutBusy:false,paying:null,hostPayments:null,gamePayments:[],payConfirm:null,confirmLeave:false,
   venues:null,venueQ:'',venueSport:'all',venue:null,venueId:null,venueState:'idle',venueGames:[],venueForm:null,venueEditing:false,venueError:'',confirmVenueDel:false,
   coaches:null,coachSport:'all',coach:null,coachId:null,coachState:'idle',coachGames:[],myCoach:null,coachForm:null,coachError:'',confirmCoachDel:false,lessonForm:null,lessons:null,lessonReply:{},
   leagues:null,leagueSport:'all',league:null,leagueId:null,leagueState:'idle',leagueEntries:[],leagueMatches:[],leagueForm:null,leagueError:'',entryForm:null,ladderForm:null,scoreEdit:null,confirmLeagueDel:false,
@@ -1442,13 +1456,14 @@ function viewClub(){
   else if(role==='member')cta='<span class="pill">You’re a member</span><button type="button" class="btn btn-line" data-act="club-leave" data-id="'+esc(c.id)+'">Leave</button>';
   if(role)cta+='<a class="btn btn-brand" href="#m-'+esc(c.id)+'">'+I.chat+'Club chat</a>';
   else cta='<button type="button" class="btn btn-accent btn-wide" data-act="club-join" data-id="'+esc(c.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join club':'Sign in to join')+'</button>';
+  h+=bizBadge(S.clubBiz);
   h+='<div class="cta">'+cta+'<button type="button" class="btn btn-line" data-act="club-invite">'+I.share+'Invite</button></div>';
   if(S.inviteText)h+='<div class="field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
   if(admin){
     h+='<section class="card" aria-label="Committee tools"><h2>Committee tools</h2><div class="cta">'+
       '<button type="button" class="btn btn-accent" data-act="club-host" data-id="'+esc(c.id)+'">Post a club game</button>'+
       '<button type="button" class="btn btn-brand" data-act="post-new" data-id="'+esc(c.id)+'">Post an update</button>'+
-      '<button type="button" class="btn btn-line" data-act="club-edit">Edit club</button></div>'+
+      '<button type="button" class="btn btn-line" data-act="club-edit">Edit club</button><a class="btn btn-line" href="#b-'+esc(c.id)+'">ABN and payouts</a></div>'+
       '<p class="meta">Promote members to the committee from the member list. Committee members can edit the club and post its games.</p>';
     h+=S.confirmClubDel?'<div class="confirm"><b>Close this club for everyone?</b><p class="meta">The club page and member list go. Its games stay as personal games.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="club-del-yes" data-id="'+esc(c.id)+'">Close club</button><button type="button" class="btn btn-line" data-act="club-del-no">Keep club</button></div></div>'
       :'<button type="button" class="btn btn-danger self-start" data-act="club-del">Close club</button>';
@@ -2676,7 +2691,7 @@ function fieldExtra(e){
   else if(id==='pf-duprId'||id==='pf-duprDoubles'||id==='pf-duprSingles'){if(S.pf){S.pf[id.slice(3,4).toLowerCase()+id.slice(4)]=t.value;S.pfDirty=true;}}
   else if(id==='f-venueId'){if(ch){var vv=(S.venues||[]).filter(function(x){return x.id===t.value;})[0];applyVenueToForm(vv||null);render();}}
   else if(id==='f-clinic'){S.form.clinic=t.checked;updatePreview();}
-  else if(id==='f-payOnline'){S.form.payOnline=t.checked;}
+  else if(id==='f-payOnline'){S.form.payOnline=t.checked;render();}
   else if(id==='f-venue'){S.form.venue=t.value;if(S.form.venueId){var cur=(S.venues||[]).filter(function(x){return x.id===S.form.venueId;})[0];if(!cur||cur.name!==t.value)S.form.venueId='';}updatePreview();updateWhereMap();}
   else return false;
   return true;
@@ -2705,7 +2720,7 @@ function payInvoke(body){
 function payError(e){
   var m=String(e&&e.message||'');
   return {GAME_FULL:'That game just filled up. Join the waitlist and you’ll hear if a spot opens.',ALREADY_IN:'You’re already in this game.',IS_HOST:'You’re hosting this game.',
-    HOST_NOT_READY:'The host can’t take payments right now. Ask them to check their payout setup.',GAME_FINISHED:'That game has already finished.',
+    HOST_NOT_READY:'The host can’t take payments right now. Ask them to check their payout setup.',CLUB_NOT_READY:'The club can’t take payments right now. Ask the committee to check its payout setup.',GAME_FINISHED:'That game has already finished.',
     NO_STRIPE_KEY:'Payments aren’t switched on yet.',NOT_PAID_GAME:'This game doesn’t take payment in the app.'}[m]||'Couldn’t start the payment. Check your connection and try again.';
 }
 function startCheckout(id){
@@ -2767,6 +2782,9 @@ function viewPayouts(){
     '<li><b>Cancel a game</b> and everyone is refunded in full automatically.</li>'+
     '<li><b>A player leaves</b> more than 24 hours before: their game price is refunded. Inside 24 hours: no refund.</li>'+
     '<li><b>Card details never touch Bounce.</b> Checkout and payouts are handled by Stripe.</li></ul></section>';
+  var adm=(S.myClubs||[]).filter(function(m){return m.role==='admin'&&m.club;});
+  if(adm.length)h+='<section class="card"><h2>Your clubs</h2><p class="meta">Club games can pay the club’s own bank account instead of yours.</p><div class="cta">'+adm.map(function(m){
+    var cs=clubPayoutState(m.club.id);return '<a class="btn btn-line" href="#b-'+esc(m.club.id)+'">'+esc(m.club.name)+(cs==='ready'?' · payouts on':cs==='none'?' · set up':' · finish setup')+'</a>';}).join('')+'</div></section>';
   if(S.hostPayments&&S.hostPayments.length){
     var paid=S.hostPayments.filter(function(p){return p.status==='paid';}),tot=paid.reduce(function(n,p){return n+p.amount_cents;},0);
     h+='<section class="stack-sm"><div class="list-head"><h2>Recent payments</h2><span class="meta">'+esc(cents$(tot))+' to you</span></div><div class="card paylist">'+S.hostPayments.map(function(p){
@@ -2785,7 +2803,7 @@ function payJoinCTA(g){
   return '<button type="button" class="btn btn-accent btn-wide" data-act="pay-join" data-id="'+esc(g.id)+'"'+(S.paying?' disabled':'')+'>'+(S.paying===g.id?'Opening checkout…':S.uid?'Pay '+payTotal(g)+' and join':'Sign in to join')+'</button>';
 }
 function payNoteHTML(g){
-  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee. Secure checkout by Stripe.</span></p>';
+  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee'+(g.payClub&&g.club&&g.club.name?', paid to '+esc(g.club.name):'')+'. Secure checkout by Stripe.</span></p>';
   return n;
 }
 function leaveConfirmHTML(g){
@@ -2802,9 +2820,9 @@ function hostPaidLine(g){
 /* Coming back from Stripe */
 var RET=(function(){
   try{
-    var q=new URLSearchParams(location.search),o={pay:q.get('pay'),game:q.get('game'),stripe:q.get('stripe')};
+    var q=new URLSearchParams(location.search),o={pay:q.get('pay'),game:q.get('game'),stripe:q.get('stripe'),club:q.get('club')};
     if(o.pay||o.stripe){
-      var h=o.pay&&ID_RE.test(o.game||'')?'#g-'+o.game:o.stripe?'#payouts':location.hash;
+      var h=o.pay&&ID_RE.test(o.game||'')?'#g-'+o.game:o.stripe&&ID_RE.test(o.club||'')?'#b-'+o.club:o.stripe?'#payouts':location.hash;
       history.replaceState(null,'',location.pathname+h);
     }
     return o;
@@ -2826,6 +2844,14 @@ function handleReturn(){
     })();
     return;
   }
+  if((o.stripe==='return'||o.stripe==='refresh')&&ID_RE.test(o.club||'')){
+    var cid=o.club;
+    payInvoke({action:'club_status',club_id:cid}).catch(function(){}).then(loadClubPayouts).then(function(){
+      toast(clubPayoutReady(cid)?'Club payouts are on. Club games can take payments now.':o.stripe==='refresh'?'That Stripe link expired. Tap Continue to pick up where you left off.':'Saved. Stripe may need a few more details about the club.');
+      return loadClubPayments();
+    }).then(render);
+    return;
+  }
   if(o.stripe==='return'||o.stripe==='refresh'){
     payInvoke({action:'status'}).catch(function(){}).then(loadPayout).then(function(){
       var st=payoutState();
@@ -2841,8 +2867,15 @@ function payConfirmHTML(){
 }
 
 function payOnlineField(f){
-  if(payoutReady())return '<label class="check check-plain" for="f-payOnline"><input id="f-payOnline" type="checkbox"'+(f.payOnline?' checked':'')+'><div><b>Players pay when they join</b><span>Apple Pay, Google Pay or card. You get the full price; players add a $0.99 booking fee.</span></div></label>';
-  return '<p class="meta">Want players to pay by card or Apple Pay when they join? <a href="#payouts">Set up payouts</a> (about 5 minutes). Until then, collect payment at the court.</p>';
+  var mine=payoutReady(),club=f.clubId&&isClubAdmin(f.clubId)?f.clubId:'',clubOk=club&&clubPayoutReady(club),toClub=payClubFor(f);
+  if(!mine&&!clubOk){
+    if(club)return '<p class="meta">Want players to pay by card or Apple Pay when they join? <a href="#b-'+esc(club)+'">Set up club payouts</a> so the money goes to '+esc(clubNameFor(club))+', or <a href="#payouts">set up your own</a>. Until then, collect payment at the court.</p>';
+    return '<p class="meta">Want players to pay by card or Apple Pay when they join? <a href="#payouts">Set up payouts</a> (about 5 minutes). Until then, collect payment at the court.</p>';
+  }
+  var h='<label class="check check-plain" for="f-payOnline"><input id="f-payOnline" type="checkbox"'+(f.payOnline?' checked':'')+'><div><b>Players pay when they join</b><span>Apple Pay, Google Pay or card. '+(toClub?esc(clubNameFor(club))+' gets':'You get')+' the full price; players add a $0.99 booking fee.</span></div></label>';
+  if(f.payOnline&&clubOk&&mine)h+='<div class="field"><span class="flabel" id="payto-l">Money goes to</span><div class="seg pay-to" role="group" aria-labelledby="payto-l">'+
+    '<button type="button" data-act="pay-to" data-v="club" aria-pressed="'+toClub+'">'+esc(clubNameFor(club))+'</button><button type="button" data-act="pay-to" data-v="me" aria-pressed="'+(!toClub)+'">Me</button></div></div>';
+  return h;
 }
 function clickPay(a,id){
   if(a==='pay-join')startCheckout(id);
@@ -2856,8 +2889,171 @@ function clickPay(a,id){
   return true;
 }
 
+/* ================= Club business: ABN (checked with the Australian Business Register) and club payouts ================= */
+function abnClean(a){return String(a||'').replace(/[\s-]/g,'');}
+function abnOk(a){a=abnClean(a);if(!/^\d{11}$/.test(a))return false;var w=[10,1,3,5,7,9,11,13,15,17,19],s=0;for(var i=0;i<11;i++)s+=(Number(a[i])-(i?0:1))*w[i];return s%89===0;}
+function abnFmt(a){a=abnClean(a);return a.length===11?a.slice(0,2)+' '+a.slice(2,5)+' '+a.slice(5,8)+' '+a.slice(8):a;}
+function abnLink(a){return 'https://abr.business.gov.au/ABN/View?abn='+encodeURIComponent(abnClean(a));}
+function bizName(s){s=String(s||'');if(s!==s.toUpperCase())return s;return s.toLowerCase().replace(/(^|[\s(&\/-])([a-z])/g,function(m,p,c){return p+c.toUpperCase();}).replace(/\b(Nsw|Vic|Qld|Act|Sa|Wa|Tas|Nt|Abn)\b/g,function(w){return w.toUpperCase();});}
+function bizDate(d){try{return new Date(d+(String(d).length===10?'T00:00:00':'')).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}catch(e){return String(d);}}
+function abnInvoke(body){
+  return sb.functions.invoke('club-abn',{body:body}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};if(d.ok===false)throw new Error(d.error||'FAILED');return d;
+  });
+}
+function abnError(e){
+  var m=String(e&&e.message||'');
+  return {BAD_ABN:'That isn’t a valid ABN. Check the 11 digits.',ABN_NOT_FOUND:'The ABN register has no record of that ABN.',ABN_NOT_ACTIVE:'That ABN is cancelled on the ABN register.',
+    ABR_DOWN:'Couldn’t reach the ABN register. Try again in a minute.',NOT_CLUB_ADMIN:'Only the committee can change the club’s ABN.'}[m]||'Couldn’t save the ABN. Check your connection and try again.';
+}
+function loadClubBiz(){
+  if(!S.clubId||(S.route!=='club'&&S.route!=='clubbiz'))return Promise.resolve();
+  var id=S.clubId;
+  return sb.from('club_business').select('*').eq('club_id',id).maybeSingle().then(function(r){if(S.clubId===id&&!r.error)S.clubBiz=r.data||null;});
+}
+function loadClubPayouts(){
+  if(!S.uid){S.clubPayouts={};return Promise.resolve();}
+  return sb.from('club_payout_accounts').select('*').then(function(r){
+    if(r.error)return;var m={};(r.data||[]).forEach(function(a){m[String(a.club_id)]=a;});S.clubPayouts=m;
+  });
+}
+function loadClubPayments(){
+  if(!S.uid||S.route!=='clubbiz'||!S.clubId)return Promise.resolve();
+  var id=S.clubId;
+  return sb.from('payments').select('id, game_id, game_title, amount_cents, fee_cents, status, refund_cents, paid_at, created_at').eq('club_id',id).in('status',['paid','refunded']).order('created_at',{ascending:false}).limit(60)
+    .then(function(r){if(S.clubId===id&&!r.error)S.clubPayments=r.data||[];});
+}
+function clubPayoutState(cid){var a=S.clubPayouts[String(cid)];return !a?'none':a.charges_enabled?'ready':a.details_submitted?'checking':'unfinished';}
+function clubPayoutReady(cid){return clubPayoutState(cid)==='ready';}
+function clubNameFor(cid){
+  for(var i=0;i<S.myClubs.length;i++){var m=S.myClubs[i];if(m.club&&String(m.club.id)===String(cid))return m.club.name;}
+  return S.club&&S.club.id===cid?S.club.name:'the club';
+}
+/* Host form: who the money goes to */
+function payClubFor(f){var club=f.clubId&&isClubAdmin(f.clubId)?f.clubId:'';return !!(club&&clubPayoutReady(club)&&(!payoutReady()||f.payClub!==false));}
+function canPayOnline(f){return payoutReady()||payClubFor(f);}
+function saveAbn(again){
+  var c=S.club;if(!c||S.abnBusy)return;
+  var v=again&&S.clubBiz?S.clubBiz.abn:abnClean(S.abnDraft);
+  if(!abnOk(v)){S.abnError='That isn’t a valid ABN. Check the 11 digits.';render();return;}
+  S.abnBusy=true;S.abnError='';render();
+  abnInvoke({action:'check',club_id:c.id,abn:v}).then(function(d){
+    S.abnBusy=false;S.clubBiz=d.business||null;S.abnEditing=false;S.abnDraft='';
+    toast(d.looked_up?'ABN checked with the ABN register and saved':'ABN saved');render();
+  }).catch(function(e){S.abnBusy=false;S.abnError=abnError(e);if(again)toast(S.abnError);render();});
+}
+function removeAbn(){
+  var c=S.club;if(!c)return;
+  S.abnBusy=true;render();
+  abnInvoke({action:'remove',club_id:c.id}).then(function(){S.abnBusy=false;S.clubBiz=null;S.confirmAbnDel=false;toast('ABN removed');render();})
+    .catch(function(e){S.abnBusy=false;toast(abnError(e));render();});
+}
+function startClubPayouts(cid){
+  if(needLogin('b-'+cid)||S.payoutBusy)return;
+  S.payoutBusy=true;render();
+  payInvoke({action:'club_connect',club_id:cid}).then(function(d){
+    if(!/^https:\/\/connect\.stripe\.com\//.test(d.url||''))throw new Error('FAILED');
+    location.href=d.url;
+  }).catch(function(e){S.payoutBusy=false;var m=String(e&&e.message);toast(m==='NO_STRIPE_KEY'?'Payments aren’t switched on yet.':m==='NOT_CLUB_ADMIN'?'Only the committee can set up club payouts.':'Couldn’t open Stripe. Try again in a minute.');render();});
+}
+function clubPayoutDashboard(cid){
+  S.payoutBusy=true;render();
+  payInvoke({action:'club_dashboard',club_id:cid}).then(function(d){
+    if(!/^https:\/\/connect\.stripe\.com\//.test(d.url||''))throw new Error('FAILED');
+    location.href=d.url;
+  }).catch(function(e){S.payoutBusy=false;toast(String(e&&e.message)==='NOT_ACCOUNT_OWNER'?'Only the committee member who set up payouts can open the club’s Stripe dashboard.':'Couldn’t open the Stripe dashboard. Try again.');render();});
+}
+function refreshClubPayout(cid,quiet){
+  return payInvoke({action:'club_status',club_id:cid}).catch(function(){}).then(loadClubPayouts).then(function(){
+    if(!quiet)toast(clubPayoutReady(cid)?'Club payouts are on.':'Stripe is still checking the club’s details.');
+    return loadClubPayments();
+  }).then(render);
+}
+/* Public line on the club page */
+function bizBadge(b){
+  if(!b||!b.abn)return '';
+  var name=b.verified&&(b.business_name||b.entity_name);
+  return '<p class="biz-line">'+(b.verified?statusPill('Registered business','good'):statusPill('ABN','muted'))+
+    '<span>'+(name?esc(bizName(name))+' · ':'')+'<span class="nw">ABN '+esc(abnFmt(b.abn))+'</span></span>'+
+    '<a href="'+esc(abnLink(b.abn))+'" target="_blank" rel="noopener">Check on ABN Lookup</a></p>';
+}
+function viewClubBiz(){
+  var c=S.club,id=S.clubId;
+  var back='<a class="back" href="#c-'+esc(id||'')+'">'+I.back+(c?esc(c.name):'Club')+'</a>';
+  if(S.clubState==='loading')return back+loader('Loading…');
+  if(!c)return back+'<div class="empty"><strong>This club isn’t here anymore</strong><p>It may have been closed by its committee.</p><a class="btn btn-accent" href="#clubs">Find another club</a></div>';
+  var admin=isClubAdmin(c.id),b=S.clubBiz;
+  var h=back+'<section class="hello"><h1>Business and payments</h1><p class="meta">'+esc(c.name)+'</p></section>';
+  h+='<section class="card biz"><h2>Club ABN</h2>';
+  if(b&&!S.abnEditing){
+    var rows=[['ABN','<b>'+esc(abnFmt(b.abn))+'</b> '+(b.verified?statusPill('Checked','good'):statusPill('Not checked yet','muted'))]];
+    if(b.entity_name)rows.push(['Registered name',esc(bizName(b.entity_name))]);
+    if(b.business_name&&b.business_name!==b.entity_name)rows.push(['Business name',esc(bizName(b.business_name))]);
+    if(b.entity_type)rows.push(['Type',esc(b.entity_type)]);
+    if(b.verified)rows.push(['GST',b.gst_from?'Registered since '+esc(bizDate(b.gst_from)):'Not registered']);
+    if(b.state)rows.push(['Location',esc(b.state+(b.postcode?' '+b.postcode:''))]);
+    h+='<dl class="bizdl">'+rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>';}).join('')+'</dl>';
+    h+='<p class="meta">'+(b.verified?'Checked with the Australian Business Register on '+esc(bizDate(b.checked_at))+'.':'The number is valid, but it hasn’t been checked with the Australian Business Register yet.')+
+      ' <a href="'+esc(abnLink(b.abn))+'" target="_blank" rel="noopener">See it on ABN Lookup</a></p>';
+    if(admin){
+      h+=S.confirmAbnDel?'<div class="confirm"><b>Remove the club’s ABN?</b><p class="meta">It comes off the club page. Club payouts aren’t affected.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="abn-del-yes"'+(S.abnBusy?' disabled':'')+'>Remove ABN</button><button type="button" class="btn btn-line" data-act="abn-del-no">Keep it</button></div></div>'
+        :'<div class="cta"><button type="button" class="btn btn-line" data-act="abn-recheck"'+(S.abnBusy?' disabled':'')+'>'+(S.abnBusy?'Checking…':'Check again')+'</button><button type="button" class="btn btn-line" data-act="abn-change">Change ABN</button><button type="button" class="btn btn-line" data-act="abn-del">Remove</button></div>';
+    }
+  } else if(admin){
+    h+='<p>Add your club’s ABN to show members, venues and sponsors it’s a registered club. Clubs without one can still use Bounce.</p>'+
+      '<form class="stack-sm" id="abn-form" novalidate><div class="field"><label for="abn-input">ABN (11 digits)</label><input id="abn-input" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="51 824 753 556" value="'+esc(S.abnDraft||'')+'"'+(S.abnError?' aria-invalid="true" aria-describedby="abn-err"':'')+'>'+
+      (S.abnError?'<p class="err" id="abn-err" role="alert">'+esc(S.abnError)+'</p>':'<span class="hint">Don’t know it? Search the club’s name on <a href="https://abr.business.gov.au" target="_blank" rel="noopener">ABN Lookup</a>.</span>')+'</div>'+
+      '<div class="cta"><button type="submit" class="btn btn-accent"'+(S.abnBusy?' disabled':'')+'>'+(S.abnBusy?'Checking…':'Check and save')+'</button>'+(S.abnEditing?'<button type="button" class="btn btn-line" data-act="abn-cancel">Cancel</button>':'')+'</div></form>';
+  } else h+='<p class="meta">This club hasn’t added an ABN.</p>';
+  h+='</section>';
+  if(!admin)return h+'<p class="meta">Only the committee can change the club’s business details.</p>';
+  var st=clubPayoutState(c.id),a=S.clubPayouts[String(c.id)];
+  h+='<section class="card payout '+st+'"><h2>'+(st==='ready'?statusPill('Payouts on','good')+' Club games can take payments':'Club payouts')+'</h2>';
+  if(st==='none')h+='<p>Players pay by Apple Pay, Google Pay or card when they join club games, and the money goes to the club’s bank account, not a committee member’s.</p>'+
+    '<p class="meta">Stripe asks for the club’s ABN, legal name and bank account, plus one committee member’s details as the responsible person. It takes about 10 minutes.</p>'+
+    '<button type="button" class="btn btn-accent self-start" data-act="club-payout-start" data-id="'+esc(c.id)+'"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening Stripe…':'Set up club payouts')+'</button>';
+  else if(st==='unfinished')h+='<p>Stripe still needs a few details about the club before it can take payments.</p><button type="button" class="btn btn-accent self-start" data-act="club-payout-start" data-id="'+esc(c.id)+'"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening Stripe…':'Continue with Stripe')+'</button>';
+  else if(st==='checking')h+='<p><b>Stripe is checking the club’s details.</b> This usually takes a few minutes. Club games can take payments as soon as Stripe is done.</p><div class="cta"><button type="button" class="btn btn-line" data-act="club-payout-refresh" data-id="'+esc(c.id)+'">Check again</button><button type="button" class="btn btn-line" data-act="club-payout-start" data-id="'+esc(c.id)+'">Update details</button></div>';
+  else{
+    h+='<p>When a committee member posts a club game with a price, players can pay when they join. The club gets the full price; players add the $0.99 booking fee.</p><div class="cta">'+
+      (a&&a.created_by&&a.created_by!==S.uid?'':'<button type="button" class="btn btn-brand" data-act="club-payout-dashboard" data-id="'+esc(c.id)+'"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening…':'Open Stripe dashboard')+'</button>')+
+      '<button type="button" class="btn btn-line" data-act="club-host" data-id="'+esc(c.id)+'">Post a club game</button></div>'+
+      (a&&a.created_by&&a.created_by!==S.uid?'<p class="meta">The club’s Stripe dashboard is with the committee member who set up payouts.</p>':'')+
+      (a&&!a.payouts_enabled?'<p class="meta">Stripe hasn’t switched on bank payouts yet. Check the Stripe dashboard for anything it still needs.</p>':'');
+  }
+  h+='</section>';
+  if(S.clubPayments&&S.clubPayments.length){
+    var paid=S.clubPayments.filter(function(p){return p.status==='paid';}),tot=paid.reduce(function(n,p){return n+p.amount_cents;},0);
+    h+='<section class="stack-sm"><div class="list-head"><h2>Club payments</h2><span class="meta">'+esc(cents$(tot))+' to the club</span></div><div class="card paylist">'+S.clubPayments.map(function(p){
+      return '<div class="payrow"><div class="gbody"><b>'+esc(p.game_title||'Game')+'</b><span class="meta">'+esc(timeAgo(new Date(p.paid_at||p.created_at)))+'</span></div>'+
+        (p.status==='refunded'?statusPill('Refunded','muted'):'<b class="num">'+esc(cents$(p.amount_cents))+'</b>')+'</div>';}).join('')+'</div></section>';
+  }
+  h+='<p class="meta">Refunds work the same as personal games: cancelled games are refunded in full, and players who leave more than 24 hours before get the game price back.</p>';
+  return h;
+}
+function clickBiz(a,id,v){
+  if(a==='abn-recheck')saveAbn(true);
+  else if(a==='abn-change'){S.abnEditing=true;S.abnDraft=S.clubBiz?abnFmt(S.clubBiz.abn):'';S.abnError='';render();}
+  else if(a==='abn-cancel'){S.abnEditing=false;S.abnError='';render();}
+  else if(a==='abn-del'){S.confirmAbnDel=true;render();}
+  else if(a==='abn-del-no'){S.confirmAbnDel=false;render();}
+  else if(a==='abn-del-yes')removeAbn();
+  else if(a==='club-payout-start')startClubPayouts(id);
+  else if(a==='club-payout-refresh')refreshClubPayout(id);
+  else if(a==='club-payout-dashboard')clubPayoutDashboard(id);
+  else if(a==='pay-to'&&S.form){S.form.payClub=v==='club';render();}
+  else return false;
+  return true;
+}
+function fieldBiz(e){
+  var t=e.target;
+  if(t.id==='abn-input'){S.abnDraft=t.value;if(S.abnError&&e.type==='input'){S.abnError='';}return true;}
+  return false;
+}
+function submitBiz(id){if(id==='abn-form'){saveAbn(false);return true;}return false;}
+
 function paint(){
-  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route;
+  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route;
   document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
   // Club members land on their feed; everyone else lands on the club directory.
   var ct=document.querySelector('.tab[data-tab="clubs"]');if(ct)ct.setAttribute('href',S.myClubs.length?'#feed':'#clubs');
@@ -2868,7 +3064,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='payouts'?viewPayouts():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='payouts'?viewPayouts():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -3091,7 +3287,7 @@ function loadMyClubs(){
   });
 }
 function loadClub(){
-  if(S.route!=='club'||!S.clubId)return Promise.resolve();
+  if((S.route!=='club'&&S.route!=='clubbiz')||!S.clubId)return Promise.resolve();
   var id=S.clubId,since=new Date(Date.now()-6*3600*1000).toISOString();
   return Promise.all([
     sb.from('clubs').select('*, club_members(count)').eq('id',id).maybeSingle(),
@@ -3348,8 +3544,8 @@ function submitPost(){
 }
 function refreshAll(){
   if(!sb)return;
-  Promise.all([loadGames(),loadMine(),loadProfile(),loadGame(),loadClubs(),loadMyClubs(),loadClub(),loadPlayer(),loadMyCoach(),loadPayout()]).catch(function(){})
-    .then(function(){return Promise.all([loadFeed(),loadInbox(),loadClubChat(),loadVenue(),loadCoach(),loadLeague(),loadLessons(),loadGamePayments(),loadHostPayments()]);}).catch(function(){}).then(render);
+  Promise.all([loadGames(),loadMine(),loadProfile(),loadGame(),loadClubs(),loadMyClubs(),loadClub(),loadPlayer(),loadMyCoach(),loadPayout(),loadClubPayouts(),loadClubBiz()]).catch(function(){})
+    .then(function(){return Promise.all([loadFeed(),loadInbox(),loadClubChat(),loadVenue(),loadCoach(),loadLeague(),loadLessons(),loadGamePayments(),loadHostPayments(),loadClubPayments()]);}).catch(function(){}).then(render);
 }
 /* Live updates: collect what changed for ~300ms, then reload only those parts */
 var pending={};
@@ -3376,8 +3572,11 @@ function route(){
     if(S.game&&S.game.id!==rest||!S.game){S.game=null;S.players=[];S.messages=[];S.waiting=[];S.gameState='loading';S.draft='';}
     S.route='game';S.gameId=rest;
   } else if(pre==='c-'&&ID_RE.test(rest)){
-    if(!S.club||S.club.id!==rest){S.club=null;S.clubMembers=[];S.clubGames=[];S.clubPosts=null;S.clubState='loading';}
+    if(!S.club||S.club.id!==rest){S.club=null;S.clubMembers=[];S.clubGames=[];S.clubPosts=null;S.clubState='loading';S.clubBiz=null;S.clubPayments=null;}
     S.route='club';S.clubId=rest;
+  } else if(pre==='b-'&&ID_RE.test(rest)){
+    if(!S.club||S.club.id!==rest){S.club=null;S.clubMembers=[];S.clubGames=[];S.clubPosts=null;S.clubState='loading';S.clubBiz=null;S.clubPayments=null;}
+    S.route='clubbiz';S.clubId=rest;
   } else if(pre==='m-'&&ID_RE.test(rest)){
     if(prevChat!==rest||S.clubChat.state==='idle'){S.chatClub=null;S.clubChat={messages:[],state:'loading'};S.ccDraft='';}
     S.route='clubchat';S.chatClubId=rest;
@@ -3400,7 +3599,7 @@ function route(){
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
   if(S.route!=='league-new')S.leagueForm=null;
-  S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.confirmLeave=false;S.payoutBusy=false;S.venueError='';S.coachError='';S.leagueError='';
+  S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.confirmLeave=false;S.payoutBusy=false;S.abnEditing=false;S.confirmAbnDel=false;S.abnError='';S.venueError='';S.coachError='';S.leagueError='';
   if(S.route==='login'&&S.uid){location.replace('#'+(popNext()||'discover'));return;}
   if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
@@ -3409,7 +3608,8 @@ function route(){
   if(sb){
     if(S.route==='game')loadGame().then(loadGamePayments).then(render);
     if(S.route==='payouts')Promise.all([loadPayout(),loadHostPayments()]).then(render);
-    if(S.route==='club')loadClub().then(render);
+    if(S.route==='club')Promise.all([loadClub(),loadClubBiz()]).then(render);
+    if(S.route==='clubbiz')Promise.all([loadClub(),loadClubBiz(),loadClubPayouts(),loadClubPayments()]).then(render);
     if(S.route==='player')loadPlayer().then(render);
     if(S.route==='clubs'&&S.clubs===null)loadClubs().then(render);
     if(S.route==='feed'||S.route==='club')loadFeed().then(render);
@@ -3424,7 +3624,7 @@ function route(){
     if(S.route==='lessons'||S.route==='inbox')loadLessons().then(render);
   }
 }
-function currentHash(){return S.route==='venue'?'v-'+S.venueId:S.route==='coach'?'o-'+S.coachId:S.route==='league'?'l-'+S.leagueId:S.route==='game'?'g-'+S.gameId:S.route==='club'?'c-'+S.clubId:S.route==='player'?'p-'+S.playerId:S.route==='clubchat'?'m-'+S.chatClubId:S.route;}
+function currentHash(){return S.route==='venue'?'v-'+S.venueId:S.route==='coach'?'o-'+S.coachId:S.route==='league'?'l-'+S.leagueId:S.route==='game'?'g-'+S.gameId:S.route==='club'?'c-'+S.clubId:S.route==='clubbiz'?'b-'+S.clubId:S.route==='player'?'p-'+S.playerId:S.route==='clubchat'?'m-'+S.chatClubId:S.route;}
 window.addEventListener('hashchange',route);
 function goLogin(next){try{sessionStorage.setItem('bounce-next',next||'discover');}catch(e){}S.login.step='choose';S.login.error='';location.hash='login';}
 function popNext(){var n=null;try{n=sessionStorage.getItem('bounce-next');sessionStorage.removeItem('bounce-next');}catch(e){}return n&&/^[A-Za-z0-9-]+$/.test(n)&&n!=='login'?n:null;}
@@ -3519,7 +3719,7 @@ function createGame(){
   sb.from('games').insert({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
     venue:f.venue.trim(),suburb:f.suburb.trim(),address:f.address.trim()||null,lat:hasPin(f)?f.lat:null,lng:hasPin(f)?f.lng:null,host_plays:!!f.hostPlays,
     level:f.level,price:price,capacity:cap,one_short:!!f.oneShort,notes:f.notes.trim(),
-    club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',pay_online:!!f.payOnline&&price>0&&payoutReady(),
+    club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',pay_online:!!f.payOnline&&price>0&&canPayOnline(f),pay_club:!!f.payOnline&&price>0&&payClubFor(f),
     dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null}).select('id').single().then(function(r){
     S.busy=false;
     if(r.error){S.formError=friendlyError(r.error,'Couldn’t post the game. Check your connection and try again.');render();return;}
@@ -3688,7 +3888,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]');if(!b)return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id'),v=b.getAttribute('data-v');
   if(id&&!ID_RE.test(id))return;
-  if(clickPay(a,id)||clickExtra(a,id,v))return;
+  if(clickBiz(a,id,v)||clickPay(a,id)||clickExtra(a,id,v))return;
   // The sheet backdrop closes only when tapped directly, not when tapping blank space inside the sheet.
   if(a==='sheet-close'){if((b.classList.contains('sheet-back')||b.classList.contains('lightbox'))&&e.target!==b)return;closeSheet();return;}
   if(S.sheet&&S.sheet.type==='member'&&(a==='club-role'||a==='club-remove')){S.sheet=null;renderSheet();}
@@ -3764,7 +3964,7 @@ document.addEventListener('click',function(e){
 });
 function onField(e){
   var t=e.target,id=t.id;if(!id)return;
-  if(fieldExtra(e))return;
+  if(fieldBiz(e)||fieldExtra(e))return;
   if(id==='q'){S.q=t.value;render();}
   else if(id==='hq'){
     // Header search (desktop): typing anywhere takes you to Discover with the results.
@@ -3798,7 +3998,7 @@ document.addEventListener('input',onField);
 document.addEventListener('change',onField);
 document.addEventListener('submit',function(e){
   e.preventDefault();var id=e.target.id;
-  if(submitExtra(id))return;
+  if(submitBiz(id)||submitExtra(id))return;
   if(id==='host-form'){if(isPhone()&&S.hostStep<3)hostNext();else createGame();}
   else if(id==='chat-form')sendMsg();
   else if(id==='profile-form')saveProfile();
@@ -3838,7 +4038,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;}
+  if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
