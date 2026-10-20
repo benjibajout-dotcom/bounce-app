@@ -284,6 +284,40 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 .msg.new{animation:pop .22s ease-out}
 @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 .celebrate{position:fixed;inset:0;pointer-events:none;z-index:30;display:flex;align-items:center;justify-content:center}
+/* The Bounce ball, in 3D. loop = opening, loading and sign-in; idle = header (one hop every 4s); plain = celebration */
+.ballsvg{overflow:visible;flex:none}
+.ballsvg .ball,.ballsvg .squash,.ballsvg .face{transform-box:view-box}
+.ballsvg .squash{transform-origin:156px 222px}
+.ballsvg .face{transform-origin:156px 170px}
+.ballsvg .shadow{transform-box:fill-box;transform-origin:center}
+.ballsvg .eye{transform-box:fill-box;transform-origin:center;animation:bb-blink 4.2s infinite}
+.ballsvg .trail circle{fill:currentColor;opacity:.3}
+.ballsvg.plain .shadow{display:none}
+.ballsvg.loop .ball{animation:bb-hop 1.15s infinite}
+.ballsvg.loop .squash{animation:bb-squash 1.15s infinite}
+.ballsvg.loop .shadow{animation:bb-shade 1.15s infinite}
+.ballsvg.loop .face{animation:bb-glance 1.15s infinite}
+.ballsvg.loop .trail circle{animation:bb-trail 1.15s infinite}
+.ballsvg.loop .trail circle:nth-child(1){animation-delay:-.05s}.ballsvg.loop .trail circle:nth-child(2){animation-delay:-.13s}.ballsvg.loop .trail circle:nth-child(3){animation-delay:-.21s}
+.ballsvg.loop .trail circle:nth-child(4){animation-delay:-.29s}.ballsvg.loop .trail circle:nth-child(5){animation-delay:-.37s}.ballsvg.loop .trail circle:nth-child(6){animation-delay:-.45s}
+.ballsvg.idle .ball{animation:bb-idlehop 4s infinite}
+.ballsvg.idle .squash{animation:bb-idlesquash 4s infinite}
+.ballsvg.idle .shadow{animation:bb-idleshade 4s infinite}
+@keyframes bb-hop{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.22,.72,.32,1)}50%{transform:translateY(-64px);animation-timing-function:cubic-bezier(.62,0,.82,.32)}100%{transform:translateY(0)}}
+@keyframes bb-squash{0%{transform:scale(1.2,.8)}6%{transform:scale(.9,1.12)}18%,82%{transform:scale(1,1)}95%{transform:scale(.93,1.08)}100%{transform:scale(1.2,.8)}}
+@keyframes bb-shade{0%{transform:scale(1.08);opacity:.62;animation-timing-function:cubic-bezier(.22,.72,.32,1)}50%{transform:scale(.52);opacity:.22;animation-timing-function:cubic-bezier(.62,0,.82,.32)}100%{transform:scale(1.08);opacity:.62}}
+@keyframes bb-glance{0%{transform:translateY(5px) rotate(-4deg)}50%{transform:translateY(-4px) rotate(5deg)}100%{transform:translateY(5px) rotate(-4deg)}}
+@keyframes bb-trail{0%,100%{opacity:.1}35%{opacity:.5}70%{opacity:.2}}
+@keyframes bb-blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
+@keyframes bb-idlehop{0%,30%,100%{transform:translateY(0)}4%{transform:translateY(0);animation-timing-function:cubic-bezier(.22,.72,.32,1)}15%{transform:translateY(-38px);animation-timing-function:cubic-bezier(.62,0,.82,.32)}26%{transform:translateY(0)}}
+@keyframes bb-idlesquash{0%,32%,100%{transform:scale(1)}4%{transform:scale(1.12,.88)}7%{transform:scale(.94,1.08)}12%,23%{transform:scale(1)}26%{transform:scale(1.15,.85)}29%{transform:scale(.97,1.03)}}
+@keyframes bb-idleshade{0%,4%,26%,100%{transform:scale(1.05);opacity:.6}15%{transform:scale(.62);opacity:.28}}
+@media (prefers-reduced-motion:reduce){
+  .ballsvg .ball,.ballsvg .squash,.ballsvg .shadow,.ballsvg .face,.ballsvg .eye,.ballsvg .trail circle{animation:none!important}
+  .ballsvg.loop .ball{transform:translateY(-44px)}.ballsvg.loop .shadow{transform:scale(.62);opacity:.32}
+}
+.bb-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:42vh;color:var(--muted);font-weight:600;text-align:center}
+.bb-loader .ballsvg{color:var(--muted)}
 .celebrate-ball{width:96px;height:96px;animation:drop 1.15s cubic-bezier(.3,0,.4,1) both;filter:drop-shadow(0 10px 16px rgba(0,0,0,.2))}
 .celebrate-ball svg{width:100%;height:100%;display:block}
 @keyframes drop{0%{transform:translateY(-60vh);opacity:1}34%{transform:translateY(0) scale(1.12,.86)}50%{transform:translateY(-80px) scale(.96,1.04)}64%{transform:translateY(0) scale(1.06,.93)}76%{transform:translateY(-24px)}86%{transform:translateY(0);opacity:1}100%{transform:translateY(0) scale(.6);opacity:0}}
@@ -673,16 +707,17 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><radialGradient id="bb-body" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="#FFC995"/><stop offset=".34" stop-color="#FF8F42"/><stop offset=".74" stop-color="#F06A1F"/><stop offset="1" stop-color="#B9480E"/></radialGradient><radialGradient id="bb-rim" cx="50%" cy="50%" r="50%"><stop offset=".72" stop-color="#7A2E06" stop-opacity="0"/><stop offset="1" stop-color="#7A2E06" stop-opacity=".42"/></radialGradient><radialGradient id="bb-bounce" cx="50%" cy="100%" r="62%"><stop offset="0" stop-color="#2E8B6A" stop-opacity=".32"/><stop offset="1" stop-color="#2E8B6A" stop-opacity="0"/></radialGradient><radialGradient id="bb-spec" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/><stop offset=".45" stop-color="#FFF3E6" stop-opacity=".55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient><radialGradient id="bb-shadow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#0A1C15" stop-opacity=".75"/><stop offset=".6" stop-color="#0A1C15" stop-opacity=".35"/><stop offset="1" stop-color="#0A1C15" stop-opacity="0"/></radialGradient><clipPath id="bb-clip"><circle cx="156" cy="170" r="52"/></clipPath></defs></svg>
 <div id="app">
   <header class="top gut">
-    <a class="wordmark" href="#discover" aria-label="Bounce home"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><g fill="currentColor" opacity="0.4"><circle cx="9.2" cy="47" r="1.6"/><circle cx="11.4" cy="38.6" r="1.85"/><circle cx="14.3" cy="31.4" r="2.1"/><circle cx="17.6" cy="25.6" r="2.35"/><circle cx="21.2" cy="21.3" r="2.6"/></g><ellipse cx="38" cy="56" rx="11" ry="3" fill="currentColor" opacity="0.16"/><circle cx="38" cy="30" r="15" fill="#FF8A3D"/><circle cx="31" cy="22" r="2.8" fill="#FFFFFF" opacity="0.5"/><ellipse cx="33.6" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><ellipse cx="42.4" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><path d="M32.6 33.2 Q 38 38.4 43.4 33.2" fill="none" stroke="#1A0E05" stroke-width="2.4" stroke-linecap="round"/></svg>bounce</a>
+    <a class="wordmark" href="#discover" aria-label="Bounce home"><svg class="ballsvg idle" width="36" height="36" viewBox="30 40 200 200" aria-hidden="true" focusable="false"><g class="trail"><circle cx="96" cy="67" r="9.8"/><circle cx="85" cy="76" r="9"/><circle cx="76" cy="92" r="8.2"/><circle cx="67" cy="113" r="7.2"/><circle cx="59" cy="141" r="6.4"/><circle cx="52" cy="175" r="5.7"/></g><ellipse class="shadow" cx="156" cy="226" rx="44" ry="9" fill="url(#bb-shadow)"/><g class="ball"><g class="squash"><circle cx="156" cy="170" r="52" fill="url(#bb-body)"/><g clip-path="url(#bb-clip)"><g class="face"><ellipse class="eye" cx="140.8" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><ellipse class="eye" cx="171.2" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><path d="M136.7 180.8 Q156 198 175.3 180.8" fill="none" stroke="#1A0E05" stroke-width="7.6" stroke-linecap="round"/></g><circle cx="156" cy="170" r="52" fill="url(#bb-bounce)"/><circle cx="156" cy="170" r="52" fill="url(#bb-rim)"/></g><ellipse cx="134" cy="143" rx="17" ry="12" transform="rotate(-35 134 143)" fill="url(#bb-spec)"/><circle cx="129.5" cy="139" r="3.6" fill="#FFFFFF" opacity=".9"/></g></g></svg>bounce</a>
     <div class="top-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><label class="sr" for="hq">Search games</label><input id="hq" type="search" placeholder="Search games, venues, suburbs" autocomplete="off"><kbd class="kbd" aria-hidden="true">/</kbd></div>
     <div class="top-right">
       <span class="where" id="where"></span>
       <span id="me-slot"></span>
     </div>
   </header>
-  <main id="main"><div class="inner gut"><div class="skeleton"></div><div class="skeleton"></div></div></main>
+  <main id="main"><div class="inner gut"><div class="bb-loader" role="status"><svg class="ballsvg loop" width="76" height="76" viewBox="30 40 200 200" aria-hidden="true" focusable="false"><g class="trail"><circle cx="96" cy="67" r="9.8"/><circle cx="85" cy="76" r="9"/><circle cx="76" cy="92" r="8.2"/><circle cx="67" cy="113" r="7.2"/><circle cx="59" cy="141" r="6.4"/><circle cx="52" cy="175" r="5.7"/></g><ellipse class="shadow" cx="156" cy="226" rx="44" ry="9" fill="url(#bb-shadow)"/><g class="ball"><g class="squash"><circle cx="156" cy="170" r="52" fill="url(#bb-body)"/><g clip-path="url(#bb-clip)"><g class="face"><ellipse class="eye" cx="140.8" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><ellipse class="eye" cx="171.2" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><path d="M136.7 180.8 Q156 198 175.3 180.8" fill="none" stroke="#1A0E05" stroke-width="7.6" stroke-linecap="round"/></g><circle cx="156" cy="170" r="52" fill="url(#bb-bounce)"/><circle cx="156" cy="170" r="52" fill="url(#bb-rim)"/></g><ellipse cx="134" cy="143" rx="17" ry="12" transform="rotate(-35 134 143)" fill="url(#bb-spec)"/><circle cx="129.5" cy="139" r="3.6" fill="#FFFFFF" opacity=".9"/></g></g></svg><span>Finding games near you…</span></div></div></main>
   <nav class="tabs gut" aria-label="Main">
     <a class="tab" href="#discover" data-tab="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Discover</a>
     <a class="tab" href="#mine" data-tab="mine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>My games</a>
@@ -724,7 +759,7 @@ var I={
   sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>',
   share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
   court:'<svg class="court" viewBox="0 0 190 140" fill="none" stroke="currentColor" stroke-width="4" aria-hidden="true"><rect x="10" y="10" width="170" height="120" rx="3"/><path d="M95 10v120"/><circle cx="95" cy="70" r="26"/></svg>',
-  ball:'<svg width="72" height="72" viewBox="0 0 64 64" aria-hidden="true"><g fill="currentColor" opacity="0.4"><circle cx="9.2" cy="47" r="1.6"/><circle cx="11.4" cy="38.6" r="1.85"/><circle cx="14.3" cy="31.4" r="2.1"/><circle cx="17.6" cy="25.6" r="2.35"/><circle cx="21.2" cy="21.3" r="2.6"/></g><ellipse cx="38" cy="56" rx="11" ry="3" fill="currentColor" opacity="0.16"/><circle cx="38" cy="30" r="15" fill="#FF8A3D"/><circle cx="31" cy="22" r="2.8" fill="#FFFFFF" opacity="0.5"/><ellipse cx="33.6" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><ellipse cx="42.4" cy="27.5" rx="1.9" ry="2.4" fill="#1A0E05"/><path d="M32.6 33.2 Q 38 38.4 43.4 33.2" fill="none" stroke="#1A0E05" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  ball:ballSVG('loop',true,104),
   google:'<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
   apple:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.45-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-2.99-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.89 1.15 9.14.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.39-.92-2.4-3.67zM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.02.61-2.67 1.37-.58.67-1.1 1.76-.96 2.8 1.02.08 2.06-.52 2.69-1.28z"/></svg>'
 };
@@ -749,6 +784,23 @@ function startsLabel(g){
   if(mins<180)return 'Starts in '+Math.floor(mins/60)+'h '+(mins%60)+'m';
   return fmtDay(g.start)+' · '+fmtTime(g.start);
 }
+/* The 3D Bounce ball (same drawing as the header logo). Gradients live in the hidden <svg> at the top of <body>. */
+function ballSVG(mode,trail,size){
+  var vb=mode==='plain'?'98 112 116 116':trail?'30 40 200 200':'56 40 200 200';
+  var dots=[[96,67,9.8],[85,76,9],[76,92,8.2],[67,113,7.2],[59,141,6.4],[52,175,5.7]];
+  return '<svg class="ballsvg '+mode+'"'+(size?' width="'+size+'" height="'+size+'"':'')+' viewBox="'+vb+'" aria-hidden="true" focusable="false">'+
+    (trail?'<g class="trail">'+dots.map(function(d){return '<circle cx="'+d[0]+'" cy="'+d[1]+'" r="'+d[2]+'"/>';}).join('')+'</g>':'')+
+    '<ellipse class="shadow" cx="156" cy="226" rx="44" ry="9" fill="url(#bb-shadow)"/>'+
+    '<g class="ball"><g class="squash"><circle cx="156" cy="170" r="52" fill="url(#bb-body)"/>'+
+    '<g clip-path="url(#bb-clip)"><g class="face">'+
+    '<ellipse class="eye" cx="140.8" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/>'+
+    '<ellipse class="eye" cx="171.2" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/>'+
+    '<path d="M136.7 180.8 Q156 198 175.3 180.8" fill="none" stroke="#1A0E05" stroke-width="7.6" stroke-linecap="round"/>'+
+    '</g><circle cx="156" cy="170" r="52" fill="url(#bb-bounce)"/><circle cx="156" cy="170" r="52" fill="url(#bb-rim)"/></g>'+
+    '<ellipse cx="134" cy="143" rx="17" ry="12" transform="rotate(-35 134 143)" fill="url(#bb-spec)"/>'+
+    '<circle cx="129.5" cy="139" r="3.6" fill="#FFFFFF" opacity=".9"/></g></g></svg>';
+}
+function loader(text){return '<div class="bb-loader" role="status">'+ballSVG('loop',true,76)+'<span>'+esc(text)+'</span></div>';}
 function initials(name){var p=String(name||'').trim().split(/\s+/).filter(Boolean);if(!p.length)return '?';return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase();}
 function colorFor(id){var h=0;id=String(id||'');for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))>>>0;return AV_COLORS[h%AV_COLORS.length];}
 function avatar(id,name,url,size){
@@ -980,7 +1032,7 @@ function viewDiscover(){
   h+='<div class="filters not-xs"><div class="scroller" role="group" aria-label="Sport">'+sportChips('sport',S.sport)+'</div>'+(calView?'':'<div class="scroller" role="group" aria-label="Day">'+dayButtons()+'</div>')+'</div>';
   var label=S.day==='all'||calView?'Coming up':fmtDay(new Date(S.day+'T00:00'));
   h+='<div class="list-head"><h2>'+esc(calView?'Calendar':label)+(calView||!S.loaded?'':' <span class="meta">'+list.length+(list.length===1?' game':' games')+'</span>')+'</h2>'+viewToggle('dview',S.dview)+'</div>';
-  if(!S.loaded&&!S.loadError)h+=skeletons(4);
+  if(!S.loaded&&!S.loadError)h+=loader('Finding games near you…');
   else if(calView){h+=calendarHTML('discover',filterGames(up,true));}
   else if(!list.length){
     h+='<div class="empty"><strong>'+(up.length?'No games match':'No games posted yet')+'</strong><p>'+(up.length?'Try another sport or day, or post your own game and let people find you.':'Be the first. Post a game you already play and share the invite with your group.')+'</p>'+
@@ -1006,7 +1058,7 @@ function viewDiscover(){
 function viewGame(){
   var back='<a class="back" href="#discover">'+I.back+'Discover</a>';
   var g=S.game;
-  if(S.gameState==='loading'||(S.gameState==='idle'&&!g))return back+'<div class="skeleton" style="height:220px"></div>'+skeletons(2);
+  if(S.gameState==='loading'||(S.gameState==='idle'&&!g))return back+loader('Loading game…');
   if(!g)return back+'<div class="empty"><strong>This game isn’t here anymore</strong><p>The host may have deleted it.</p><a class="btn btn-accent" href="#discover">Find another game</a></div>';
   var end=endOf(g),count=S.players.length,left=spotsLeft(g,count);
   var isHost=!!S.uid&&g.hostId===S.uid,mine=!!S.uid&&S.players.some(function(p){return p.user_id===S.uid;}),past=!isUpcoming(g);
@@ -1280,7 +1332,7 @@ function viewClubForm(editing){
 }
 function viewClub(){
   var back='<a class="back" href="#clubs">'+I.back+'Clubs</a>';
-  if(S.clubState==='loading')return back+'<div class="skeleton" style="height:180px"></div>'+skeletons(2);
+  if(S.clubState==='loading')return back+loader('Loading club…');
   var c=S.club;
   if(!c)return back+'<div class="empty"><strong>This club isn’t here anymore</strong><p>It may have been closed by its committee.</p><a class="btn btn-accent" href="#clubs">Find another club</a></div>';
   var role=S.uid?(S.clubMembers.filter(function(m){return m.user_id===S.uid;})[0]||{}).role:null;
@@ -1341,7 +1393,7 @@ function viewClub(){
 }
 function viewPlayer(){
   var back='<a class="back" href="javascript:history.back()">'+I.back+'Back</a>';
-  if(S.playerState==='loading')return back+skeletons(2);
+  if(S.playerState==='loading')return back+loader('Loading player…');
   var p=S.player;
   if(!p)return back+'<div class="empty"><strong>Player not found</strong><p>This profile may have been removed.</p></div>';
   var me=p.id===S.uid,nm=p.display_name||'Bounce player';
@@ -1637,7 +1689,7 @@ function loadClubChat(){
 }
 function viewClubChat(){
   var back='<a class="back" href="#inbox">'+I.back+'Inbox</a>';
-  if(S.clubChat.state!=='ready')return back+skeletons(2);
+  if(S.clubChat.state!=='ready')return back+loader('Loading chat…');
   var c=S.chatClub;
   if(!c)return back+'<div class="empty"><strong>This club isn’t here anymore</strong><a class="btn btn-accent" href="#clubs">Find a club</a></div>';
   var member=!!myClubRole(c.id);
@@ -1929,7 +1981,7 @@ var render=paint;
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true;},2800);}
 function celebrate(){
   try{if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
-  var ball='<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#FF8A3D"/><circle cx="20" cy="17" r="5" fill="#FFFFFF" opacity="0.5"/><ellipse cx="23.5" cy="28" rx="3.6" ry="4.5" fill="#1A0E05"/><ellipse cx="40.5" cy="28" rx="3.6" ry="4.5" fill="#1A0E05"/><path d="M21.5 39 Q 32 49 42.5 39" fill="none" stroke="#1A0E05" stroke-width="4.4" stroke-linecap="round"/></svg>';
+  var ball=ballSVG('plain',false);
   var colors=['#FF8A3D','#1F5C4A','#FFD23F','#8FB8FF','#7FC4A8'],dots='';
   for(var i=0;i<16;i++)dots+='<span style="--a:'+((i/16)*360+Math.random()*12)+'deg;--d:'+(70+Math.random()*60)+'px;background:'+colors[i%5]+'"></span>';
   var el=document.createElement('div');el.className='celebrate';el.setAttribute('aria-hidden','true');
