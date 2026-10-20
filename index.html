@@ -230,7 +230,18 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 .setup{min-height:100%;justify-content:center}
 
 /* Clubs and player profiles */
-.clublogo{flex:none;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;color:#0F1F1A}
+.clublogo{flex:none;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;color:#0F1F1A;position:relative;overflow:hidden}
+.clublogo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff}
+.photo-pick{position:relative;display:inline-flex;flex:none;cursor:pointer;border-radius:50%;-webkit-tap-highlight-color:transparent}
+.photo-pick.sq{border-radius:18px}
+.photo-pick .cam{position:absolute;right:-3px;bottom:-3px;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface);box-shadow:var(--shadow)}
+.photo-pick .cam svg{width:14px;height:14px}
+.photo-pick:focus-within{outline:2px solid var(--brand);outline-offset:3px}
+.photo-pick.busy{opacity:.55;pointer-events:none}
+.photo-pick.busy .cam{animation:pulse 1s ease-in-out infinite alternate}
+@keyframes pulse{from{transform:scale(.9)}to{transform:scale(1.08)}}
+.photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.logo-field{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .clubrow{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;text-decoration:none;color:inherit;box-shadow:var(--shadow);min-width:0}
 .clubrow .gbody{flex:1}
 .strip{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
@@ -780,13 +791,15 @@ function normClub(r){
     website:typeof r.website==='string'&&/^https?:\/\//i.test(r.website)?r.website:'',
     instagram:typeof r.instagram==='string'&&/^[A-Za-z0-9._]{1,30}$/.test(r.instagram)?r.instagram:'',
     members:(r.club_members&&r.club_members[0]&&r.club_members[0].count)||0,createdBy:r.created_by,
-    venue:String(r.venue||''),address:String(r.address||'')};
+    venue:String(r.venue||''),address:String(r.address||''),logo:isPhotoUrl(r.logo_url)?r.logo_url:''};
 }
 function clubLogo(c,size){
   size=size||44;
   var words=String(c.name||'').trim().split(/\s+/).filter(Boolean);
   var ini=(words[0]?words[0][0]:'?')+(words[1]?words[1][0]:'');
-  return '<span class="clublogo" aria-hidden="true" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*0.38)+'px;border-radius:'+Math.round(size*0.3)+'px;background:'+colorFor(c.id)+'">'+esc(ini.toUpperCase())+'</span>';
+  var src=(typeof c.preview==='string'&&c.preview.indexOf('blob:')===0)?c.preview:isPhotoUrl(c.logo)?c.logo:isPhotoUrl(c.logo_url)?c.logo_url:'';
+  var img=src?'<img src="'+esc(src)+'" alt="" loading="lazy" onerror="this.remove()">':'';
+  return '<span class="clublogo" aria-hidden="true" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*0.38)+'px;border-radius:'+Math.round(size*0.3)+'px;background:'+colorFor(c.id)+'">'+esc(ini.toUpperCase())+img+'</span>';
 }
 function isClubAdmin(cid){return S.myClubs.some(function(m){return m.role==='admin'&&m.club&&String(m.club.id)===cid;});}
 function myClubRole(cid){for(var i=0;i<S.myClubs.length;i++){var m=S.myClubs[i];if(m.club&&String(m.club.id)===cid)return m.role;}return null;}
@@ -856,7 +869,7 @@ function friendlyError(e,fallback){
 }
 
 /* ---------- state ---------- */
-var S={route:'discover',gameId:null,sport:'all',day:'all',q:'',level:'all',free:false,near:false,sheet:null,sheetEnter:false,hostStep:0,
+var S={route:'discover',photoBusy:null,gameId:null,sport:'all',day:'all',q:'',level:'all',free:false,near:false,sheet:null,sheetEnter:false,hostStep:0,
   waiting:[],myWait:null,waitIds:{},locating:false,
   dview:'list',mview:'list',cview:'list',cal:{},
   push:{supported:false,ios:false,standalone:false,permission:'default',subscribed:false,busy:false},providers:{},
@@ -1007,7 +1020,7 @@ function viewGame(){
     '<div><span>Where</span><b>'+esc(place(g,', '))+'</b></div><div><span>Level</span><b>'+esc(g.level)+'</b></div>'+
     '<div><span>Cost</span><b>'+esc(g.price>0?'$'+g.price+' per player':'Free')+'</b></div></div>'+
     '<div class="hostline">'+(g.club&&g.club.name
-      ?clubLogo({id:g.club.id,name:g.club.name},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
+      ?clubLogo({id:g.club.id,name:g.club.name,logo_url:g.club.logo_url},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
       :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>Hosted by '+(isHost?'you':'<a href="#p-'+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+'</div></section>';
   h+='<div class="meter-row"><div class="meter" role="img" aria-label="'+count+' of '+g.capacity+' spots filled"><i style="width:'+Math.round(100*Math.min(count,g.capacity)/g.capacity)+'%"></i></div>'+
     '<p class="meta">'+(past?'<b>'+count+' of '+g.capacity+'</b> played':left>0?'<b>Looking for '+left+' more '+(left===1?'player':'players')+'</b> · '+count+' of '+g.capacity+' going'
@@ -1191,7 +1204,12 @@ function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
   if(!S.pf)return skeletons(2);
   var pf=S.pf,prov=S.provider==='google'?'Google':S.provider==='apple'?'Apple':'email';
-  var h='<section class="profile-head">'+avatar(S.uid,pf.display_name,S.profile&&S.profile.avatar_url,64)+'<div><h1>'+esc(pf.display_name||'Your profile')+'</h1><p class="meta">Signed in with '+prov+'</p></div></section>';
+  var pic=S.profile&&S.profile.avatar_url,pbusy=S.photoBusy==='me';
+  var h='<section class="profile-head"><label class="photo-pick'+(pbusy?' busy':'')+'" for="pf-photo" aria-label="'+(pic?'Change your photo':'Add a profile photo')+'">'+avatar(S.uid,pf.display_name,pic,76)+'<span class="cam">'+I.photo+'</span></label>'+
+    '<input id="pf-photo" class="sr" type="file" accept="image/*"'+(pbusy?' disabled':'')+'>'+
+    '<div><h1>'+esc(pf.display_name||'Your profile')+'</h1><p class="meta">Signed in with '+prov+'</p>'+
+    '<div class="photo-actions"><label class="btn btn-line btn-sm" for="pf-photo">'+(pbusy?'Uploading…':pic?'Change photo':'Add photo')+'</label>'+
+    (pic&&!pbusy?'<button type="button" class="btn btn-line btn-sm" data-act="pf-photo-remove">Remove</button>':'')+'</div></div></section>';
   h+='<form class="stack" id="profile-form">'+
     '<div class="field"><label for="pf-name">Name</label><input id="pf-name" maxlength="40" placeholder="First name and last initial" value="'+esc(pf.display_name)+'"><span class="hint">Shown to other players in games you join.</span></div>'+
     '<div class="field"><label for="pf-suburb">Home suburb</label><input id="pf-suburb" maxlength="50" placeholder="Newtown" value="'+esc(pf.suburb)+'"><span class="hint">Games near you show first.</span></div>'+
@@ -1241,6 +1259,10 @@ function viewClubForm(editing){
   h+='<form class="stack" id="club-form" novalidate>';
   if(editing)h+='<h2>Edit club</h2>';
   h+='<div class="field"><label for="cf-name">Club name</label><input id="cf-name" maxlength="60" placeholder="Inner West Paddlers" value="'+esc(f.name)+'"></div>';
+  var lg=f.logoPreview||(!f.logoRemove&&f.logo)||'';
+  h+='<div class="field"><span class="lbl">Club logo (optional)</span><div class="logo-field">'+clubLogo({id:editing?S.clubId:'new',name:f.name||'Club',preview:f.logoPreview,logo:f.logoRemove?'':f.logo},60)+
+    '<div class="photo-actions" style="margin:0"><label class="btn btn-line btn-sm" for="cf-logofile">'+(f.logoBusy?'Preparing…':lg?'Change logo':'Upload logo')+'</label><input id="cf-logofile" class="sr" type="file" accept="image/*">'+
+    (lg?'<button type="button" class="btn btn-line btn-sm" data-act="cf-logo-remove">Remove</button>':'')+'</div></div><span class="hint">Shown on your club page, posts and chats. The whole logo fits on a white square.</span></div>';
   h+='<div class="row2"><div class="field"><label for="cf-kind">Type</label><select id="cf-kind">'+CLUB_KINDS.map(function(k){return '<option'+(f.kind===k?' selected':'')+'>'+esc(k)+'</option>';}).join('')+'</select></div>'+
     '<div class="field"><label for="cf-suburb">Suburb</label><input id="cf-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div></div>';
   h+='<div class="field"><span class="lbl" id="cf-sports-l">Sports</span><div class="wrap-chips" role="group" aria-labelledby="cf-sports-l">'+
@@ -1266,7 +1288,9 @@ function viewClub(){
   var count=S.clubMembers.length;
   var h=back;
   if(S.clubEditing&&admin)return h+viewClubForm(true);
-  h+='<section class="clubband"><div class="row">'+clubLogo(c,60)+'<div style="min-width:0"><h1 style="font-size:25px">'+esc(c.name)+'</h1><p class="sub">'+esc([c.kind,c.suburb,count+(count===1?' member':' members')].filter(Boolean).join(' · '))+'</p></div></div>'+sportsChips(c.sports)+'</section>';
+  var lbusy=S.photoBusy==='club-'+c.id;
+  var logoTile=admin?'<label class="photo-pick sq'+(lbusy?' busy':'')+'" for="club-logo-file" aria-label="'+(c.logo?'Change the club logo':'Add a club logo')+'">'+clubLogo(c,60)+'<span class="cam">'+I.photo+'</span></label><input id="club-logo-file" class="sr" type="file" accept="image/*"'+(lbusy?' disabled':'')+'>':clubLogo(c,60);
+  h+='<section class="clubband"><div class="row">'+logoTile+'<div style="min-width:0"><h1 style="font-size:25px">'+esc(c.name)+'</h1><p class="sub">'+esc([c.kind,c.suburb,count+(count===1?' member':' members')].filter(Boolean).join(' · '))+'</p></div></div>'+sportsChips(c.sports)+'</section>';
   var cta='';
   if(admin)cta='<span class="pill">You’re on the committee</span>';
   else if(role==='member')cta='<span class="pill">You’re a member</span><button type="button" class="btn btn-line" data-act="club-leave" data-id="'+esc(c.id)+'">Leave</button>';
@@ -1379,7 +1403,7 @@ function commentsHTML(p){
 function postHTML(p){
   var authorName=p.authorId===S.uid?'You':((p.author&&p.author.display_name)||'Committee');
   var long=p.body.length>300||p.body.split('\n').length>6,open=!!S.expanded[p.id];
-  var h='<article class="post" id="post-'+esc(p.id)+'"><header class="post-head"><a href="#c-'+esc(p.clubId)+'" tabindex="-1" aria-hidden="true">'+clubLogo({id:p.clubId,name:p.club.name},40)+'</a>'+
+  var h='<article class="post" id="post-'+esc(p.id)+'"><header class="post-head"><a href="#c-'+esc(p.clubId)+'" tabindex="-1" aria-hidden="true">'+clubLogo({id:p.clubId,name:p.club.name,logo_url:p.club.logo_url},40)+'</a>'+
     '<div class="gbody"><a class="post-club" href="#c-'+esc(p.clubId)+'">'+esc(p.club.name)+'</a><span class="meta">'+esc(authorName)+' · '+esc(timeAgo(p.createdAt))+'</span></div>'+
     (canModerate(p)?'<button type="button" class="btn btn-line more" data-act="post-menu" data-id="'+esc(p.id)+'" aria-haspopup="dialog" aria-label="Post options">⋯</button>':'')+'</header>';
   if(p.body)h+='<div class="post-text'+(long&&!open?' clamp':'')+'">'+esc(p.body)+'</div>'+(long?'<button type="button" class="linkish" data-act="post-more" data-id="'+esc(p.id)+'">'+(open?'See less':'See more')+'</button>':'');
@@ -1922,7 +1946,7 @@ function loadGames(){
     S.loaded=true;
   });
 }
-var GAME_SELECT='*, game_players(count), waitlist(count), club:clubs(id, name)';
+var GAME_SELECT='*, game_players(count), waitlist(count), club:clubs(id, name, logo_url)';
 function loadMine(){
   if(!S.uid){S.mine=null;S.myIds={};S.myWait=null;S.waitIds={};return Promise.resolve();}
   return Promise.all([
@@ -1956,7 +1980,7 @@ function loadGame(){
   if(S.route!=='game'||!S.gameId)return Promise.resolve();
   var id=S.gameId;
   return Promise.all([
-    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url), club:clubs(id, name)').eq('id',id).maybeSingle(),
+    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url), club:clubs(id, name, logo_url)').eq('id',id).maybeSingle(),
     sb.from('game_players').select('user_id, joined_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('joined_at'),
     sb.from('waitlist').select('user_id, created_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('created_at')
   ]).then(function(res){
@@ -2012,7 +2036,7 @@ function loadPlayer(){
   });
 }
 /* ---------- feed data ---------- */
-var POST_SELECT='*, club:clubs(id, name), author:profiles(id, display_name, avatar_url), post_likes(count), post_comments(count)';
+var POST_SELECT='*, club:clubs(id, name, logo_url), author:profiles(id, display_name, avatar_url), post_likes(count), post_comments(count)';
 function inGames(id){for(var i=0;i<S.games.length;i++)if(S.games[i].id===id)return true;return false;}
 function loadFeed(){
   var forClub=S.route==='club'?S.clubId:null;
@@ -2118,6 +2142,91 @@ function shrinkImage(file){
     img.src=url;
   });
 }
+/* Profile photos and club logos: squared on the phone (photos fill the circle, logos fit whole on white), then uploaded */
+var STORAGE_PUBLIC=String(CONFIG.SUPABASE_URL).replace(/\/$/,'')+'/storage/v1/object/public/';
+function squareImage(file,size,fit){
+  return new Promise(function(resolve,reject){
+    var url=URL.createObjectURL(file),img=new Image();
+    img.onload=function(){
+      var w=img.naturalWidth||1,h=img.naturalHeight||1,c=document.createElement('canvas');c.width=c.height=size;
+      var x=c.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,size,size);
+      var sc=fit==='contain'?Math.min(size*0.88/w,size*0.88/h):Math.max(size/w,size/h),dw=w*sc,dh=h*sc;
+      x.imageSmoothingQuality='high';x.drawImage(img,(size-dw)/2,(size-dh)/2,dw,dh);URL.revokeObjectURL(url);
+      c.toBlob(function(b){if(b)resolve(b);else reject(new Error('encode'));},'image/jpeg',0.86);
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);reject(new Error('decode'));};
+    img.src=url;
+  });
+}
+function isImageFile(file){if(file&&/^image\//.test(file.type))return true;toast('Pick a photo or image (JPEG, PNG or HEIC).');return false;}
+/* Tidy up a replaced picture. Only works for files this person uploaded; anything else is simply left. */
+function forgetStored(bucket,url){
+  var pre=STORAGE_PUBLIC+bucket+'/';
+  if(sb&&typeof url==='string'&&url.indexOf(pre)===0)sb.storage.from(bucket).remove([url.slice(pre.length)]).then(function(){},function(){});
+}
+function pickAvatar(file){
+  if(!S.uid||S.photoBusy||!isImageFile(file))return;
+  var old=S.profile&&S.profile.avatar_url,path=S.uid+'/'+Date.now()+'.jpg';
+  S.photoBusy='me';render();
+  squareImage(file,512,'cover').then(function(b){
+    return sb.storage.from('avatars').upload(path,b,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false});
+  }).then(function(r){
+    if(r.error)throw r.error;
+    var url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+    return sb.from('profiles').update({avatar_url:url}).eq('id',S.uid).then(function(u){if(u.error)throw u.error;return url;});
+  }).then(function(url){
+    forgetStored('avatars',old);
+    if(S.profile)S.profile.avatar_url=url;
+    S.photoBusy=null;toast('Photo updated');render();refreshAll();
+  },function(e){S.photoBusy=null;toast(friendlyError(e,'Couldn’t upload the photo. Try a different one.'));render();});
+}
+function removeAvatar(){
+  if(!S.uid||S.photoBusy)return;
+  var old=S.profile&&S.profile.avatar_url;
+  S.photoBusy='me';render();
+  sb.from('profiles').update({avatar_url:null}).eq('id',S.uid).then(function(r){
+    S.photoBusy=null;
+    if(r.error){toast('Couldn’t remove the photo. Try again.');render();return;}
+    forgetStored('avatars',old);
+    if(S.profile)S.profile.avatar_url=null;
+    toast('Photo removed');render();refreshAll();
+  });
+}
+function uploadLogo(cid,blob){
+  var path=cid+'/logo-'+Date.now()+'.jpg';
+  return sb.storage.from('club-photos').upload(path,blob,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false}).then(function(r){
+    if(r.error)throw r.error;
+    return sb.storage.from('club-photos').getPublicUrl(path).data.publicUrl;
+  });
+}
+function pickClubLogo(cid,file){
+  if(!cid||S.photoBusy||!isImageFile(file))return;
+  var old=S.club&&S.club.id===cid?S.club.logo:'';
+  S.photoBusy='club-'+cid;render();
+  squareImage(file,512,'contain').then(function(b){return uploadLogo(cid,b);}).then(function(url){
+    return sb.from('clubs').update({logo_url:url}).eq('id',cid).select('id').then(function(r){
+      if(r.error)throw r.error;
+      if(Array.isArray(r.data)&&!r.data.length)throw new Error('committee');
+      return url;
+    });
+  }).then(function(url){
+    forgetStored('club-photos',old);
+    if(S.club&&S.club.id===cid)S.club.logo=url;
+    S.photoBusy=null;toast('Club logo updated');render();refreshAll();
+  },function(e){
+    S.photoBusy=null;
+    toast(String(e&&e.message)==='committee'?'Only the club committee can change the logo.':friendlyError(e,'Couldn’t upload the logo. Try a different image.'));render();
+  });
+}
+function setFormLogo(file){
+  var f=S.clubForm;if(!f||!isImageFile(file))return;
+  f.logoBusy=true;render();
+  squareImage(file,512,'contain').then(function(b){
+    if(S.clubForm!==f)return;
+    clearFormLogo(f);f.logoBlob=b;f.logoPreview=URL.createObjectURL(b);f.logoRemove=false;f.logoBusy=false;render();
+  },function(){f.logoBusy=false;toast('That image couldn’t be read. Try another.');render();});
+}
+function clearFormLogo(f){if(f&&f.logoPreview){try{URL.revokeObjectURL(f.logoPreview);}catch(e){}}if(f){f.logoPreview='';f.logoBlob=null;}}
 function addPhotos(list){
   var c=S.composer;if(!c||!list||!list.length)return;
   var files=Array.prototype.slice.call(list).filter(function(f){return /^image\//.test(f.type);}).slice(0,4-c.files.length);
@@ -2347,18 +2456,30 @@ function saveClub(){
     about:f.about.trim().slice(0,600),website:web||null,instagram:ig||null,
     venue:String(f.venue||'').trim().slice(0,80)||null,address:String(f.address||'').trim().slice(0,160)||null};
   S.busy=true;render();
+  var blob=f.logoBlob||null;
   if(S.clubEditing&&S.clubId){
-    sb.from('clubs').update(data).eq('id',S.clubId).then(function(r){
+    var cid=S.clubId,oldLogo=S.club&&S.club.id===cid?S.club.logo:'';
+    (blob?uploadLogo(cid,blob):Promise.resolve(null)).then(function(url){
+      if(url)data.logo_url=url;else if(f.logoRemove)data.logo_url=null;
+      return sb.from('clubs').update(data).eq('id',cid);
+    }).then(function(r){
       S.busy=false;
       if(r.error){S.clubFormError=friendlyError(r.error,'Couldn’t save the club. Try again.');render();return;}
-      S.clubEditing=false;toast('Club updated');refreshAll();
-    });
+      if(oldLogo&&(blob||f.logoRemove))forgetStored('club-photos',oldLogo);
+      clearFormLogo(f);S.clubEditing=false;toast('Club updated');refreshAll();
+    },function(e){S.busy=false;S.clubFormError=friendlyError(e,'Couldn’t upload the logo. Try again.');render();});
   } else {
     data.created_by=S.uid;
     sb.from('clubs').insert(data).select('id').single().then(function(r){
-      S.busy=false;
-      if(r.error){S.clubFormError=friendlyError(r.error,'Couldn’t create the club. Try again.');render();return;}
-      S.clubForm=null;celebrate();toast('Club created. You’re on the committee.');location.hash='c-'+r.data.id;refreshAll();
+      if(r.error){S.busy=false;S.clubFormError=friendlyError(r.error,'Couldn’t create the club. Try again.');render();return;}
+      var id=r.data.id;
+      var logo=blob?uploadLogo(id,blob).then(function(url){return sb.from('clubs').update({logo_url:url}).eq('id',id).then(function(u){if(u.error)throw u.error;});})
+        .then(function(){return true;},function(){return false;}):Promise.resolve(true);
+      return logo.then(function(ok){
+        S.busy=false;clearFormLogo(f);S.clubForm=null;celebrate();
+        toast(ok?'Club created. You’re on the committee.':'Club created. The logo didn’t upload: tap the logo on your club page to try again.');
+        location.hash='c-'+id;refreshAll();
+      });
     });
   }
 }
@@ -2499,8 +2620,10 @@ document.addEventListener('click',function(e){
   else if(a==='club-leave')leaveClub(id);
   else if(a==='club-invite')inviteClub();
   else if(a==='club-host'){S.form=defaultForm();applyClubToForm(id);S.hostStep=0;location.hash='host';}
-  else if(a==='club-edit'&&S.club){var c=S.club;S.clubForm={name:c.name,kind:c.kind,suburb:c.suburb,sports:c.sports.slice(),about:c.about,website:c.website,instagram:c.instagram,venue:c.venue,address:c.address};S.clubFormError='';S.clubEditing=true;render();}
-  else if(a==='club-edit-cancel'){S.clubEditing=false;render();}
+  else if(a==='club-edit'&&S.club){var c=S.club;S.clubForm={name:c.name,kind:c.kind,suburb:c.suburb,sports:c.sports.slice(),about:c.about,website:c.website,instagram:c.instagram,venue:c.venue,address:c.address,logo:c.logo};S.clubFormError='';S.clubEditing=true;render();}
+  else if(a==='club-edit-cancel'){clearFormLogo(S.clubForm);S.clubEditing=false;render();}
+  else if(a==='cf-logo-remove'&&S.clubForm){clearFormLogo(S.clubForm);S.clubForm.logoRemove=true;render();}
+  else if(a==='pf-photo-remove')removeAvatar();
   else if(a==='club-del'){S.confirmClubDel=true;render();}
   else if(a==='club-del-no'){S.confirmClubDel=false;render();}
   else if(a==='club-del-yes')deleteClub(id);
@@ -2525,6 +2648,9 @@ function onField(e){
   else if(id==='f-hostPlays'){S.form.hostPlays=t.checked;updatePreview();}
   else if(id==='f-oneshort'){S.form.oneShort=t.checked;updatePreview();}
   else if(id.indexOf('f-')===0){S.form[id.slice(2)]=t.value;updatePreview();if(id==='f-venue'||id==='f-address'||id==='f-suburb')updateWhereMap();}
+  else if(id==='pf-photo'){if(e.type==='change'){pickAvatar(t.files&&t.files[0]);t.value='';}}
+  else if(id==='club-logo-file'){if(e.type==='change'){pickClubLogo(S.club&&S.club.id,t.files&&t.files[0]);t.value='';}}
+  else if(id==='cf-logofile'){if(e.type==='change'){setFormLogo(t.files&&t.files[0]);t.value='';}}
   else if(id==='pf-name'){S.pf.display_name=t.value;S.pfDirty=true;}
   else if(id==='pf-suburb'){S.pf.suburb=t.value;S.pfDirty=true;}
   else if(id==='pf-level'){S.pf.level=t.value;S.pfDirty=true;}
