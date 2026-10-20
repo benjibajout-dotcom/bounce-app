@@ -285,6 +285,20 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 .msg.new{animation:pop .22s ease-out}
 @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 .celebrate{position:fixed;inset:0;pointer-events:none;z-index:30;display:flex;align-items:center;justify-content:center}
+/* Payments */
+.paynote{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13px;color:var(--muted)}
+.paynote svg{flex:none;margin-top:1px;color:var(--brand-text)}
+.paid-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;font-size:14px}
+.howto-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+.paylist{padding:4px 14px;gap:0}
+.payrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.payrow:last-child{border-bottom:0}
+.payrow .gbody{flex:1;min-width:0;display:flex;flex-direction:column}
+.payrow .gbody b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.payrow .num{font-variant-numeric:tabular-nums}
+.card.payout.ready{border-color:var(--brand-text)}
+.card.payout h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.notice svg{vertical-align:-3px;margin-right:4px}
 /* Venues, coaches, leagues */
 .search-row .search{flex:1;min-width:0}
 .explore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -392,7 +406,7 @@ fieldset.dupr legend{padding:0 6px}
 /* One-column order on phones and tablets: name prompt, back, band, meter, actions, then the rest */
 .inner > .notice{order:-3}
 .inner > .back{order:-2}
-.gp-main > .band,.gp-main > .meter-row,.gp-side > .cta,.gp-side > .nudge,.gp-side > .cal-add-row,.gp-side > .invite-field{order:-1}
+.gp-main > .band,.gp-main > .meter-row,.gp-side > .notice,.gp-side > .cta,.gp-side > .paynote,.gp-side > .paid-line,.gp-side > .confirm,.gp-side > .nudge,.gp-side > .cal-add-row,.gp-side > .invite-field{order:-1}
 
 .search:focus-within{border-color:var(--ink)}
 .search-row{display:flex;gap:8px}
@@ -876,7 +890,7 @@ function normGame(r){
     clubId:r.club_id||null,club:r.club||null,address:String(r.address||''),
     lat:typeof r.lat==='number'&&isFinite(r.lat)?r.lat:null,lng:typeof r.lng==='number'&&isFinite(r.lng)?r.lng:null,
     waiting:(r.waitlist&&r.waitlist[0]&&r.waitlist[0].count)||0,
-    venueId:r.venue_id||null,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
+    venueId:r.venue_id||null,payOnline:!!r.pay_online,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
 }
 /* Maps: an embedded Google map plus a Directions link that opens Google Maps (app or web) */
 function hasPin(o){return o&&o.lat!=null&&o.lng!=null;}
@@ -974,6 +988,9 @@ function friendlyError(e,fallback){
   if(m.indexOf('SPOT_OPEN')>=0)return 'A spot just opened up. Tap I’m in to grab it.';
   if(m.indexOf('ALREADY_IN')>=0)return 'You’re already in this game.';
   if(m.indexOf('LAST_ADMIN')>=0)return 'A club needs at least one committee member. Make someone else committee first, or close the club.';
+  if(m.indexOf('PAYOUTS_NOT_READY')>=0)return 'Set up payouts before asking players to pay in the app.';
+  if(m.indexOf('PAYMENT_REQUIRED')>=0)return 'This game takes payment when you join.';
+  if(m.indexOf('HAS_PAYMENTS')>=0)return 'Players have already paid, so the price can’t change.';
   if(m.indexOf('CLINIC_NEEDS_COACH')>=0)return 'Only coaches can post a clinic. List yourself as a coach first.';
   if(/duplicate key/i.test(m))return 'That’s already done.';
   if(/violates check constraint/i.test(m))return 'Something in the form isn’t valid. Check the fields and try again.';
@@ -982,7 +999,7 @@ function friendlyError(e,fallback){
 }
 
 /* ---------- state ---------- */
-var S={route:'discover',photoBusy:null,
+var S={route:'discover',photoBusy:null,payout:null,payoutBusy:false,paying:null,hostPayments:null,gamePayments:[],payConfirm:null,confirmLeave:false,
   venues:null,venueQ:'',venueSport:'all',venue:null,venueId:null,venueState:'idle',venueGames:[],venueForm:null,venueEditing:false,venueError:'',confirmVenueDel:false,
   coaches:null,coachSport:'all',coach:null,coachId:null,coachState:'idle',coachGames:[],myCoach:null,coachForm:null,coachError:'',confirmCoachDel:false,lessonForm:null,lessons:null,lessonReply:{},
   leagues:null,leagueSport:'all',league:null,leagueId:null,leagueState:'idle',leagueEntries:[],leagueMatches:[],leagueForm:null,leagueError:'',entryForm:null,ladderForm:null,scoreEdit:null,confirmLeagueDel:false,
@@ -1002,7 +1019,7 @@ var S={route:'discover',photoBusy:null,
 function defaultForm(){
   var p=S.profile||{};
   return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',need:'7',hostPlays:true,
-    venue:'',address:'',suburb:p.suburb||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:''};
+    venue:'',address:'',suburb:p.suburb||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
 }
 /* A club game starts from the club's home court, and the organiser isn't counted as a player unless they switch it on */
 function applyClubToForm(cid){
@@ -1150,15 +1167,17 @@ function viewGame(){
   else if(mine)cta='<span class="pill">You’re in</span><button type="button" class="btn btn-line" data-act="leave" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>Leave game</button>';
   else if(left===0&&wPos)cta='<span class="pill" title="Your place on the waitlist">#'+wPos+' in line</span><button type="button" class="btn btn-line" data-act="wait-leave" data-id="'+esc(g.id)+'" aria-label="Leave the waitlist"'+(S.busy?' disabled':'')+'>Leave</button>';
   else if(left===0)cta='<button type="button" class="btn btn-brand btn-wide" data-act="wait-join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join waitlist':'Sign in to join the waitlist')+'</button>';
-  else cta='<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
+  else cta=g.payOnline&&g.price>0?payJoinCTA(g):'<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
   var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button></div>';
+  if(g.payOnline&&g.price>0){if(canAct&&left>0)side+=payNoteHTML(g);if(isHost)side+=hostPaidLine(g);if(mine&&S.confirmLeave)side+=leaveConfirmHTML(g);}
+  side=payConfirmHTML()+side;
   if(!past&&(mine||isHost||wPos))side+=pushNudge('game');
   if(!past&&(mine||isHost||wPos))side+='<div class="cal-add-row"><button type="button" class="btn btn-line btn-sm" data-act="cal-add" data-id="'+esc(g.id)+'" aria-haspopup="dialog">'+I.cal+'Add to calendar</button><span class="meta">Get a reminder 1 hour before</span></div>';
   if(S.inviteText)side+='<div class="field invite-field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
   if(isHost&&!past){
     h+='<section class="card" aria-label="Host tools"><h2>Host tools</h2><div class="switch-row"><div><b>One Short alert</b><p>Puts your game at the top of Discover for nearby players until it fills.</p></div>'+
       '<button type="button" class="switch" role="switch" aria-label="One Short alert" aria-checked="'+g.oneShort+'" data-act="oneshort" data-id="'+esc(g.id)+'"><i></i></button></div>';
-    h+=S.confirmDel?'<div class="confirm"><b>Delete this game for everyone?</b><p class="meta">Players and chat messages go with it. This can’t be undone.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="del-yes" data-id="'+esc(g.id)+'">Delete game</button><button type="button" class="btn btn-line" data-act="del-no">Keep game</button></div></div>'
+    h+=S.confirmDel?'<div class="confirm"><b>Delete this game for everyone?</b><p class="meta">Players and chat messages go with it. This can’t be undone.'+(g.payOnline&&g.price>0?' Everyone who paid gets a full refund.':'')+'</p><div class="actions"><button type="button" class="btn btn-danger" data-act="del-yes" data-id="'+esc(g.id)+'">Delete game</button><button type="button" class="btn btn-line" data-act="del-no">Keep game</button></div></div>'
       :'<button type="button" class="btn btn-danger self-start" data-act="del">Delete game</button>';
     h+='</section>';
   }
@@ -1224,7 +1243,7 @@ function viewHost(){
       ?'<span class="pill pill-sm">'+I.pin+'Pinned at your location</span><button type="button" class="btn btn-line btn-sm" data-act="pin-clear">Remove pin</button>'
       :'<button type="button" class="btn btn-line btn-sm" data-act="pin-here"'+(S.locating?' disabled':'')+'>'+I.locate+(S.locating?'Finding you…':'Use my location')+'</button><span class="meta">At the court? Drop a pin for exact directions.</span>')+'</div>'+
     '<div id="where-map-slot">'+whereMap(f)+'</div>';
-  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="numeric" min="0" max="500" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games. Players pay you at the court for now.</span></div>'+
+  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="numeric" min="0" max="500" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games.</span></div>'+payOnlineField(f)+
     '<div class="field"><label for="f-notes">Notes for players</label><textarea id="f-notes" maxlength="600" placeholder="What to bring, parking, who it suits">'+esc(f.notes)+'</textarea></div>'+
     '<label class="check" for="f-oneshort"><input id="f-oneshort" type="checkbox"'+(f.oneShort?' checked':'')+'><div><b>Send a One Short alert</b><span>Shows your game at the top of Discover until it fills.</span></div></label>';
   // Phones: four steps, one open at a time. Tablet and desktop: all four open as sections, plus a live preview on desktop.
@@ -1345,6 +1364,7 @@ function viewProfile(){
     '<button class="btn btn-brand" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Saving…':'Save profile')+'</button></form>';
   h+=notifCard();
   h+=coachingCard();
+  h+=payoutCard();
   h+='<section class="stack-sm"><div class="list-head"><h2>Your clubs</h2><a class="meta" href="#p-'+esc(S.uid)+'">View my public profile</a></div>';
   if(S.myClubs.length){
     h+='<div class="list">'+S.myClubs.filter(function(m){return m.club;}).map(function(m){var c=normClub(m.club);
@@ -2656,6 +2676,7 @@ function fieldExtra(e){
   else if(id==='pf-duprId'||id==='pf-duprDoubles'||id==='pf-duprSingles'){if(S.pf){S.pf[id.slice(3,4).toLowerCase()+id.slice(4)]=t.value;S.pfDirty=true;}}
   else if(id==='f-venueId'){if(ch){var vv=(S.venues||[]).filter(function(x){return x.id===t.value;})[0];applyVenueToForm(vv||null);render();}}
   else if(id==='f-clinic'){S.form.clinic=t.checked;updatePreview();}
+  else if(id==='f-payOnline'){S.form.payOnline=t.checked;}
   else if(id==='f-venue'){S.form.venue=t.value;if(S.form.venueId){var cur=(S.venues||[]).filter(function(x){return x.id===S.form.venueId;})[0];if(!cur||cur.name!==t.value)S.form.venueId='';}updatePreview();updateWhereMap();}
   else return false;
   return true;
@@ -2667,6 +2688,170 @@ function submitExtra(id){
   else if(id==='league-form')saveLeague();
   else if(id==='entry-form')joinLeague();
   else if(id==='ladder-form')saveLadder();
+  else return false;
+  return true;
+}
+
+/* ================= Payments: Apple Pay, Google Pay and cards through Stripe ================= */
+var BOOKING_FEE=0.99;
+I.lock='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+function cents$(c){c=Number(c)||0;return '$'+(c/100).toFixed(2).replace(/\.00$/,'');}
+function payTotal(g){return '$'+(g.price+BOOKING_FEE).toFixed(2);}
+function payInvoke(body){
+  return sb.functions.invoke('payments',{body:body}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};if(d.ok===false)throw new Error(d.error||'FAILED');return d;
+  });
+}
+function payError(e){
+  var m=String(e&&e.message||'');
+  return {GAME_FULL:'That game just filled up. Join the waitlist and you’ll hear if a spot opens.',ALREADY_IN:'You’re already in this game.',IS_HOST:'You’re hosting this game.',
+    HOST_NOT_READY:'The host can’t take payments right now. Ask them to check their payout setup.',GAME_FINISHED:'That game has already finished.',
+    NO_STRIPE_KEY:'Payments aren’t switched on yet.',NOT_PAID_GAME:'This game doesn’t take payment in the app.'}[m]||'Couldn’t start the payment. Check your connection and try again.';
+}
+function startCheckout(id){
+  if(needLogin('g-'+id)||S.paying)return;
+  S.paying=id;render();
+  payInvoke({action:'checkout',game_id:id}).then(function(d){
+    if(!/^https:\/\/checkout\.stripe\.com\//.test(d.url||''))throw new Error('FAILED');
+    location.href=d.url;
+  }).catch(function(e){S.paying=null;toast(payError(e));render();});
+}
+function loadPayout(){
+  if(!S.uid){S.payout=null;return Promise.resolve();}
+  return sb.from('payout_accounts').select('*').eq('user_id',S.uid).maybeSingle().then(function(r){if(!r.error)S.payout=r.data||null;});
+}
+function loadHostPayments(){
+  if(!S.uid||S.route!=='payouts')return Promise.resolve();
+  return sb.from('payments').select('id, game_id, game_title, amount_cents, fee_cents, status, refund_cents, paid_at, created_at').eq('host_id',S.uid).in('status',['paid','refunded']).order('created_at',{ascending:false}).limit(60)
+    .then(function(r){if(!r.error)S.hostPayments=r.data||[];});
+}
+function loadGamePayments(){
+  if(!S.uid||S.route!=='game'||!S.gameId){S.gamePayments=[];return Promise.resolve();}
+  var id=S.gameId;
+  return sb.from('payments').select('user_id, status, amount_cents, fee_cents, refund_cents').eq('game_id',id).in('status',['paid','refunded']).then(function(r){if(S.gameId===id&&!r.error)S.gamePayments=r.data||[];});
+}
+function myPaid(){for(var i=0;i<S.gamePayments.length;i++){var p=S.gamePayments[i];if(p.user_id===S.uid&&p.status==='paid')return p;}return null;}
+function startPayouts(){
+  if(needLogin('payouts'))return;
+  S.payoutBusy=true;render();
+  payInvoke({action:'connect'}).then(function(d){
+    if(!/^https:\/\/connect\.stripe\.com\//.test(d.url||''))throw new Error('FAILED');
+    location.href=d.url;
+  }).catch(function(e){S.payoutBusy=false;toast(String(e&&e.message)==='NO_STRIPE_KEY'?'Payments aren’t switched on yet.':'Couldn’t open Stripe. Try again in a minute.');render();});
+}
+function payoutDashboard(){
+  S.payoutBusy=true;render();
+  payInvoke({action:'dashboard'}).then(function(d){
+    if(!/^https:\/\/connect\.stripe\.com\//.test(d.url||''))throw new Error('FAILED');
+    location.href=d.url;
+  }).catch(function(){S.payoutBusy=false;toast('Couldn’t open your Stripe dashboard. Try again.');render();});
+}
+function payoutReady(){return !!(S.payout&&S.payout.charges_enabled);}
+function payoutState(){var a=S.payout;return !a?'none':a.charges_enabled?'ready':a.details_submitted?'checking':'unfinished';}
+function viewPayouts(){
+  var h='<a class="back" href="#profile">'+I.back+'Profile</a><section class="hello"><h1>Get paid</h1><p class="meta">Players pay by Apple Pay, Google Pay or card when they join your game. Stripe sends the money to your bank.</p></section>';
+  if(!S.uid)return h+signInPrompt('Sign in to set up payouts','It takes a few seconds.','payouts');
+  var st=payoutState();
+  h+='<section class="card payout '+st+'">';
+  if(st==='none')h+='<h2>Set up payouts</h2><p>Stripe asks for your name, date of birth, address and the bank account to pay into. It takes about 5 minutes, and you can use your ABN if you have one.</p>'+
+    '<button type="button" class="btn btn-accent self-start" data-act="payout-start"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening Stripe…':'Set up payouts')+'</button>';
+  else if(st==='unfinished')h+='<h2>Finish setting up</h2><p>Stripe still needs a few details before you can take payments.</p><button type="button" class="btn btn-accent self-start" data-act="payout-start"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening Stripe…':'Continue with Stripe')+'</button>';
+  else if(st==='checking')h+='<h2>Stripe is checking your details</h2><p>This usually takes a few minutes. We’ll switch payments on as soon as Stripe is done.</p><div class="cta"><button type="button" class="btn btn-line" data-act="payout-refresh">Check again</button><button type="button" class="btn btn-line" data-act="payout-start">Update details</button></div>';
+  else h+='<h2>'+statusPill('Payouts on','good')+' You can take payments</h2><p>When you post a game with a price, tick <b>Players pay when they join</b>.</p>'+
+    '<div class="cta"><button type="button" class="btn btn-brand" data-act="payout-dashboard"'+(S.payoutBusy?' disabled':'')+'>'+(S.payoutBusy?'Opening…':'Open Stripe dashboard')+'</button><a class="btn btn-line" href="#host">Host a game</a></div>'+
+    (S.payout&&!S.payout.payouts_enabled?'<p class="meta">Stripe hasn’t switched on bank payouts yet. Check the Stripe dashboard for anything it still needs.</p>':'');
+  h+='</section>';
+  h+='<section class="card"><h2>How it works</h2><ul class="howto-list">'+
+    '<li><b>You get your full price.</b> A $10 game pays you $10.</li>'+
+    '<li><b>Players pay a $0.99 booking fee</b> on top, which keeps Bounce running.</li>'+
+    '<li><b>Cancel a game</b> and everyone is refunded in full automatically.</li>'+
+    '<li><b>A player leaves</b> more than 24 hours before: their game price is refunded. Inside 24 hours: no refund.</li>'+
+    '<li><b>Card details never touch Bounce.</b> Checkout and payouts are handled by Stripe.</li></ul></section>';
+  if(S.hostPayments&&S.hostPayments.length){
+    var paid=S.hostPayments.filter(function(p){return p.status==='paid';}),tot=paid.reduce(function(n,p){return n+p.amount_cents;},0);
+    h+='<section class="stack-sm"><div class="list-head"><h2>Recent payments</h2><span class="meta">'+esc(cents$(tot))+' to you</span></div><div class="card paylist">'+S.hostPayments.map(function(p){
+      return '<div class="payrow"><div class="gbody"><b>'+esc(p.game_title||'Game')+'</b><span class="meta">'+esc(timeAgo(new Date(p.paid_at||p.created_at)))+'</span></div>'+
+        (p.status==='refunded'?statusPill('Refunded','muted'):'<b class="num">'+esc(cents$(p.amount_cents))+'</b>')+'</div>';}).join('')+'</div></section>';
+  }
+  return h;
+}
+function payoutCard(){
+  if(!S.uid)return '';
+  var st=payoutState();
+  return '<section class="card"><h2>Get paid</h2><p class="meta">'+(st==='ready'?'Payouts are on. Players can pay by Apple Pay, Google Pay or card when they join your games.':st==='none'?'Let players pay by Apple Pay, Google Pay or card when they join your games.':'Finish your payout setup to take payments.')+'</p>'+
+    '<a class="btn btn-line self-start" href="#payouts">'+(st==='ready'?'Payouts and payments':st==='none'?'Set up payouts':'Finish setting up')+'</a></section>';
+}
+function payJoinCTA(g){
+  return '<button type="button" class="btn btn-accent btn-wide" data-act="pay-join" data-id="'+esc(g.id)+'"'+(S.paying?' disabled':'')+'>'+(S.paying===g.id?'Opening checkout…':S.uid?'Pay '+payTotal(g)+' and join':'Sign in to join')+'</button>';
+}
+function payNoteHTML(g){
+  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee. Secure checkout by Stripe.</span></p>';
+  return n;
+}
+function leaveConfirmHTML(g){
+  var p=myPaid(),early=g.start.getTime()-Date.now()>24*3600*1000;
+  return '<div class="confirm"><b>Leave this game?</b><p class="meta">'+(p?(early?'You’ll get '+esc(cents$(p.amount_cents))+' back to your card. The $0.99 booking fee isn’t refunded.':'The game starts within 24 hours, so leaving now isn’t refunded.'):'Your spot goes to the next person.')+'</p>'+
+    '<div class="actions"><button type="button" class="btn btn-danger" data-act="leave-confirm" data-id="'+esc(g.id)+'">Leave game</button><button type="button" class="btn btn-line" data-act="leave-cancel">Stay in</button></div></div>';
+}
+function hostPaidLine(g){
+  var paid=S.gamePayments.filter(function(p){return p.status==='paid'&&p.user_id!==S.uid;});
+  if(!paid.length)return '<p class="meta">Players pay when they join. You’ll see payments here.</p>';
+  var tot=paid.reduce(function(n,p){return n+p.amount_cents;},0);
+  return '<p class="paid-line">'+statusPill(paid.length+(paid.length===1?' paid':' paid'),'good')+' <b>'+esc(cents$(tot))+'</b> to you for this game</p>';
+}
+/* Coming back from Stripe */
+var RET=(function(){
+  try{
+    var q=new URLSearchParams(location.search),o={pay:q.get('pay'),game:q.get('game'),stripe:q.get('stripe')};
+    if(o.pay||o.stripe){
+      var h=o.pay&&ID_RE.test(o.game||'')?'#g-'+o.game:o.stripe?'#payouts':location.hash;
+      history.replaceState(null,'',location.pathname+h);
+    }
+    return o;
+  }catch(e){return {};}
+})();
+function handleReturn(){
+  var o=RET;RET={};
+  if(o.pay==='cancel'){toast('Payment cancelled. You haven’t been charged.');return;}
+  if(o.pay==='success'&&ID_RE.test(o.game||'')){
+    S.payConfirm=o.game;render();
+    var tries=0;
+    (function poll(){
+      tries++;
+      Promise.all([loadGame(),loadGamePayments(),loadMine()]).catch(function(){}).then(function(){
+        var inNow=S.gameId===o.game&&S.players.some(function(p){return p.user_id===S.uid;});
+        if(inNow){S.payConfirm=null;celebrate();toast('Paid and in. Stripe has emailed your receipt.');render();return;}
+        if(tries<15)setTimeout(poll,2000);else{S.payConfirm='slow';render();}
+      });
+    })();
+    return;
+  }
+  if(o.stripe==='return'||o.stripe==='refresh'){
+    payInvoke({action:'status'}).catch(function(){}).then(loadPayout).then(function(){
+      var st=payoutState();
+      toast(st==='ready'?'Payouts are on. You can take payments now.':o.stripe==='refresh'?'That Stripe link expired. Tap Continue to pick up where you left off.':'Saved. Stripe may need a few more details.');
+      loadHostPayments().then(render);
+    });
+  }
+}
+function payConfirmHTML(){
+  if(!S.payConfirm)return '';
+  return S.payConfirm==='slow'?'<p class="notice">Your payment went through. Stripe is still confirming it, so it can take a minute to show you in the game. You don’t need to pay again.</p>'
+    :'<p class="notice">'+I.lock+' Payment received. Confirming your spot…</p>';
+}
+
+function payOnlineField(f){
+  if(payoutReady())return '<label class="check check-plain" for="f-payOnline"><input id="f-payOnline" type="checkbox"'+(f.payOnline?' checked':'')+'><div><b>Players pay when they join</b><span>Apple Pay, Google Pay or card. You get the full price; players add a $0.99 booking fee.</span></div></label>';
+  return '<p class="meta">Want players to pay by card or Apple Pay when they join? <a href="#payouts">Set up payouts</a> (about 5 minutes). Until then, collect payment at the court.</p>';
+}
+function clickPay(a,id){
+  if(a==='pay-join')startCheckout(id);
+  else if(a==='payout-start')startPayouts();
+  else if(a==='payout-dashboard')payoutDashboard();
+  else if(a==='payout-refresh'){payInvoke({action:'status'}).catch(function(){}).then(loadPayout).then(function(){toast(payoutReady()?'Payouts are on.':'Stripe is still checking.');render();});}
+  else if(a==='leave'&&S.game&&S.game.id===id&&S.game.payOnline&&S.game.price>0&&!S.confirmLeave){S.confirmLeave=true;render();}
+  else if(a==='leave-confirm'){S.confirmLeave=false;leave(id);}
+  else if(a==='leave-cancel'){S.confirmLeave=false;render();}
   else return false;
   return true;
 }
@@ -2683,7 +2868,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='payouts'?viewPayouts():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -3163,8 +3348,8 @@ function submitPost(){
 }
 function refreshAll(){
   if(!sb)return;
-  Promise.all([loadGames(),loadMine(),loadProfile(),loadGame(),loadClubs(),loadMyClubs(),loadClub(),loadPlayer(),loadMyCoach()]).catch(function(){})
-    .then(function(){return Promise.all([loadFeed(),loadInbox(),loadClubChat(),loadVenue(),loadCoach(),loadLeague(),loadLessons()]);}).catch(function(){}).then(render);
+  Promise.all([loadGames(),loadMine(),loadProfile(),loadGame(),loadClubs(),loadMyClubs(),loadClub(),loadPlayer(),loadMyCoach(),loadPayout()]).catch(function(){})
+    .then(function(){return Promise.all([loadFeed(),loadInbox(),loadClubChat(),loadVenue(),loadCoach(),loadLeague(),loadLessons(),loadGamePayments(),loadHostPayments()]);}).catch(function(){}).then(render);
 }
 /* Live updates: collect what changed for ~300ms, then reload only those parts */
 var pending={};
@@ -3210,19 +3395,20 @@ function route(){
     if(!S.league||S.league.id!==rest){S.league=null;S.leagueEntries=[];S.leagueMatches=[];S.leagueState='loading';}
     S.route='league';S.leagueId=rest;
   } else {
-    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new'].indexOf(h)>=0?h:'discover';
+    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts'].indexOf(h)>=0?h:'discover';
   }
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
   if(S.route!=='league-new')S.leagueForm=null;
-  S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.venueError='';S.coachError='';S.leagueError='';
+  S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.confirmLeave=false;S.payoutBusy=false;S.venueError='';S.coachError='';S.leagueError='';
   if(S.route==='login'&&S.uid){location.replace('#'+(popNext()||'discover'));return;}
   if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
   S.sheet=null;hideHover();
   render();
   if(sb){
-    if(S.route==='game')loadGame().then(render);
+    if(S.route==='game')loadGame().then(loadGamePayments).then(render);
+    if(S.route==='payouts')Promise.all([loadPayout(),loadHostPayments()]).then(render);
     if(S.route==='club')loadClub().then(render);
     if(S.route==='player')loadPlayer().then(render);
     if(S.route==='clubs'&&S.clubs===null)loadClubs().then(render);
@@ -3247,6 +3433,7 @@ function needLogin(next){if(S.uid)return false;goLogin(next);return true;}
 /* ---------- actions ---------- */
 function join(id){
   if(needLogin('g-'+id))return;
+  var pg=lookupGame(id);if(pg&&pg.payOnline&&pg.price>0){startCheckout(id);return;}
   S.busy=true;render();
   sb.from('game_players').insert({game_id:id,user_id:S.uid}).then(function(r){
     S.busy=false;
@@ -3332,7 +3519,7 @@ function createGame(){
   sb.from('games').insert({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
     venue:f.venue.trim(),suburb:f.suburb.trim(),address:f.address.trim()||null,lat:hasPin(f)?f.lat:null,lng:hasPin(f)?f.lng:null,host_plays:!!f.hostPlays,
     level:f.level,price:price,capacity:cap,one_short:!!f.oneShort,notes:f.notes.trim(),
-    club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',
+    club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',pay_online:!!f.payOnline&&price>0&&payoutReady(),
     dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null}).select('id').single().then(function(r){
     S.busy=false;
     if(r.error){S.formError=friendlyError(r.error,'Couldn’t post the game. Check your connection and try again.');render();return;}
@@ -3501,7 +3688,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]');if(!b)return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id'),v=b.getAttribute('data-v');
   if(id&&!ID_RE.test(id))return;
-  if(clickExtra(a,id,v))return;
+  if(clickPay(a,id)||clickExtra(a,id,v))return;
   // The sheet backdrop closes only when tapped directly, not when tapping blank space inside the sheet.
   if(a==='sheet-close'){if((b.classList.contains('sheet-back')||b.classList.contains('lightbox'))&&e.target!==b)return;closeSheet();return;}
   if(S.sheet&&S.sheet.type==='member'&&(a==='club-role'||a==='club-remove')){S.sheet=null;renderSheet();}
@@ -3651,7 +3838,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;}
+  if(!S.uid){S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;}
 }
 function cleanUrl(){
   try{
@@ -3678,7 +3865,7 @@ sb.auth.onAuthStateChange(function(evt,session){
     refreshAll();
   },0);
 });
-sb.auth.getSession().then(function(r){setSession(r.data&&r.data.session);S.authReady=true;cleanUrl();refreshAll();});
+sb.auth.getSession().then(function(r){setSession(r.data&&r.data.session);S.authReady=true;cleanUrl();refreshAll();handleReturn();});
 function onLive(kind){return function(){scheduleRefresh(kind);};}
 sb.channel('bounce-live')
   .on('postgres_changes',{event:'*',schema:'public',table:'games'},onLive('games'))
