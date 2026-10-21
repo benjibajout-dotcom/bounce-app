@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Terms of use · Bounce</title>
+<meta name="description" content="How Bounce works, what we look after, and what organisers, clubs and players look after themselves.">
+<meta name="theme-color" content="#1F5C4A">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>:root{
+  --paper:#F6F0DC; --paper-2:#EFE6C8; --card:#FFFBEF; --ink:#13261E; --muted:#4E5D52; --line:#D9CFAE;
+  --forest:#1F5C4A; --moss:#5E8B4E; --fern:#A9C77E; --sun:#E9B23A; --sun-soft:#F7DE9B; --terra:#E0763A; --terra-ink:#8A3A08;
+  --display:'Fraunces',Georgia,serif; --body:'Figtree',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1A14; --paper-2:#13241B; --card:#16291F; --ink:#F1ECD9; --muted:#B4BFA8; --line:#2A4234;
+  --forest:#8FD3B6; --moss:#9CC587; --fern:#5E8B4E; --sun:#F2C55C; --sun-soft:#3A2F12; --terra:#FF9A55; --terra-ink:#FFC59C; color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0E1A14; --paper-2:#13241B; --card:#16291F; --ink:#F1ECD9; --muted:#B4BFA8; --line:#2A4234;
+  --forest:#8FD3B6; --moss:#9CC587; --fern:#5E8B4E; --sun:#F2C55C; --sun-soft:#3A2F12; --terra:#FF9A55; --terra-ink:#FFC59C; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16.5px/1.62 var(--body);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--moss) 22%,transparent) 1px,transparent 1.6px);background-size:22px 22px}
+a{color:var(--forest);text-decoration-thickness:1.5px;text-underline-offset:3px}
+a:hover{color:var(--terra)}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--card);padding:8px 12px;border-radius:10px;z-index:9}
+.skip:focus{left:12px}
+
+/* Hero: forest canopy, rising sun, court lines */
+.hero{position:relative;overflow:hidden;color:#F6F0DC;background:
+  radial-gradient(120% 90% at 85% 115%,rgba(233,178,58,.55),rgba(233,178,58,0) 55%),
+  radial-gradient(60% 60% at 10% -10%,rgba(169,199,126,.35),transparent 60%),
+  linear-gradient(160deg,#173F33 0%,#1F5C4A 55%,#2B6B4C 100%);
+  padding:max(18px,env(safe-area-inset-top)) 16px 96px;border-radius:0 0 44px 44px / 0 0 28px 28px}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;
+  background:
+    linear-gradient(90deg,transparent calc(50% - 1px),#F6F0DC calc(50% - 1px),#F6F0DC calc(50% + 1px),transparent calc(50% + 1px)),
+    linear-gradient(0deg,transparent 61%,#F6F0DC 61%,#F6F0DC calc(61% + 2px),transparent calc(61% + 2px));
+  -webkit-mask:radial-gradient(90% 100% at 50% 0%,#000 30%,transparent 80%);mask:radial-gradient(90% 100% at 50% 0%,#000 30%,transparent 80%)}
+.sun{position:absolute;right:-60px;bottom:-120px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,#FFE9A8,#E9B23A 55%,#E0763A 100%);opacity:.9;filter:saturate(1.05);
+  box-shadow:0 0 0 18px rgba(233,178,58,.14),0 0 0 40px rgba(233,178,58,.08);animation:rise 1.4s cubic-bezier(.2,.8,.2,1) both}
+.leaf{position:absolute;fill:#A9C77E;opacity:.32}
+.leaf .vein{fill:none;stroke:#173F33;stroke-width:3;stroke-linecap:round;opacity:.55}
+.leaf.l1{width:120px;left:-28px;bottom:-20px;transform:rotate(-12deg);animation:sway 7s ease-in-out infinite alternate}
+.leaf.l2{width:64px;right:30%;top:22px;transform:rotate(140deg);opacity:.22;animation:sway 9s ease-in-out infinite alternate-reverse}
+.wrap{position:relative;max-width:1060px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px}
+.brand{display:inline-flex;align-items:center;gap:8px;color:#F6F0DC;text-decoration:none;font:800 22px/1 var(--display);letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.brand i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD9A0,#FF8A3D 60%,#C85A1E);box-shadow:inset -3px -3px 0 rgba(0,0,0,.12)}
+.back{color:#F6F0DC;font:600 14px/1 var(--body);text-decoration:none;border:1px solid rgba(246,240,220,.35);padding:10px 14px;border-radius:999px;min-height:40px;display:inline-flex;align-items:center;gap:6px;background:rgba(246,240,220,.06)}
+.back:hover{color:#F6F0DC;background:rgba(246,240,220,.14)}
+.kicker{margin:40px 0 6px;font:500 12.5px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#F7DE9B;animation:up .7s .1s both}
+.hero h1{margin:0;font:900 clamp(46px,13vw,104px)/.9 var(--display);letter-spacing:-.035em;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 144;max-width:12ch;animation:up .8s .18s both}
+.hero h1 em{font-style:italic;font-weight:200;color:#F7DE9B}
+.lede{max-width:46ch;margin:16px 0 0;font:300 clamp(17px,4.4vw,21px)/1.45 var(--body);color:rgba(246,240,220,.88);animation:up .8s .28s both}
+.meta-line{margin:18px 0 0;font:500 12.5px/1.4 var(--mono);color:rgba(246,240,220,.72);letter-spacing:.04em;animation:up .8s .36s both}
+
+/* Tabs between the three pages */
+.tabs{display:flex;gap:6px;margin-top:22px;padding:5px;border-radius:999px;background:rgba(9,30,22,.35);width:max-content;max-width:100%;overflow-x:auto;animation:up .8s .44s both;scrollbar-width:none}
+.tabs a{flex:none;color:#F6F0DC;text-decoration:none;font:600 14.5px/1 var(--body);padding:11px 16px;border-radius:999px;min-height:40px;display:flex;align-items:center}
+.tabs a[aria-current="page"]{background:#F6F0DC;color:#173F33}
+.tabs a:not([aria-current]):hover{background:rgba(246,240,220,.12)}
+
+/* Body */
+main{position:relative;max-width:1060px;margin:-64px auto 0;padding:0 16px 40px;display:grid;gap:28px}
+.summary{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:28px 28px 28px 6px;padding:22px 20px 20px;
+  box-shadow:0 18px 40px -24px rgba(19,38,30,.45);animation:up .9s .5s both;overflow:hidden}
+.summary::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,var(--sun-soft),transparent 70%)}
+.summary h2{margin:0 0 12px;font:800 22px/1.15 var(--display);font-variation-settings:"SOFT" 100;letter-spacing:-.01em;position:relative}
+.summary h2 span{font:500 11.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--terra-ink);display:block;margin-bottom:8px}
+.summary ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;position:relative}
+.summary li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.summary li::before{content:"";width:14px;height:14px;margin-top:6px;border-radius:14px 0 14px 0;background:linear-gradient(135deg,var(--fern),var(--moss));transform:rotate(-8deg)}
+.layout{display:grid;gap:28px}
+.toc{background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:4px 16px}
+.toc summary{cursor:pointer;list-style:none;min-height:48px;display:flex;align-items:center;justify-content:space-between;font:600 15px/1 var(--body)}
+.toc summary::-webkit-details-marker{display:none}
+.toc summary::after{content:"+";font:300 26px/1 var(--display);color:var(--forest)}
+.toc[open] summary::after{content:"–"}
+.toc ol{margin:0 0 12px;padding:0;list-style:none;counter-reset:t}
+.toc li{counter-increment:t}
+.toc a{display:flex;gap:12px;padding:9px 0;text-decoration:none;color:var(--ink);border-top:1px dashed var(--line);font-size:15px}
+.toc a::before{content:counter(t,decimal-leading-zero);font:500 12px/1.9 var(--mono);color:var(--terra-ink);min-width:22px}
+.toc a:hover{color:var(--forest)}
+.sections{display:grid;gap:14px;min-width:0}
+.sec{position:relative;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 20px 18px;scroll-margin-top:16px}
+.sec .num{display:flex;align-items:center;gap:10px;margin:0 0 6px;font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--terra-ink);text-transform:uppercase}
+.sec .num::after{content:"";flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 10px)}
+.sec h2{margin:0 0 10px;font:800 clamp(24px,6.2vw,32px)/1.08 var(--display);letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 0}
+.sec p{margin:0 0 12px;max-width:68ch}
+.sec ul{margin:0 0 12px;padding-left:0;list-style:none;display:grid;gap:8px;max-width:68ch}
+.sec ul li{position:relative;padding-left:22px}
+.sec ul li::before{content:"";position:absolute;left:2px;top:.62em;width:9px;height:9px;border-radius:50%;border:2px solid var(--moss)}
+.sec b{font-weight:700}
+.sec > :last-child{margin-bottom:0}
+
+/* Refund table */
+.rtable{display:grid;border:1.5px solid var(--line);border-radius:18px;overflow:hidden;font-size:15px}
+.rrow{display:grid;grid-template-columns:1fr;gap:4px 12px;padding:12px 14px;border-top:1px solid var(--line)}
+.rrow:first-child{border-top:0}
+.rhead{display:none}
+.rrow span[role="cell"]:first-child{font-weight:600}
+.rrow .yes,.rrow .no{display:inline-flex;align-items:center;gap:6px;font:500 13px/1.3 var(--mono)}
+.rrow .yes::before{content:"";width:10px;height:10px;border-radius:10px 0 10px 0;background:var(--moss)}
+.rrow .no::before{content:"";width:10px;height:10px;border-radius:50%;border:2px solid var(--terra)}
+.rrow .yes:nth-child(2)::after{content:" · game price"}
+.rrow .no:nth-child(2)::after{content:" · game price"}
+.rrow span:nth-child(3)::after{content:" · booking fee"}
+
+/* Footer */
+footer{max-width:1060px;margin:0 auto;padding:8px 16px calc(32px + env(safe-area-inset-bottom));color:var(--muted);font-size:14px}
+.foot{border-top:1.5px solid var(--line);padding-top:18px;display:grid;gap:10px}
+.foot b{color:var(--ink)}
+.foot .mono{font:500 12.5px/1.5 var(--mono)}
+.foot nav{display:flex;flex-wrap:wrap;gap:6px 16px}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(60px) scale(.9)}to{opacity:.9;transform:none}}
+@keyframes sway{from{transform:rotate(-14deg) translateY(0)}to{transform:rotate(-4deg) translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+@media (min-width:720px){
+  .hero{padding:24px 32px 120px}
+  .sun{width:420px;height:420px;right:-40px;bottom:-200px}
+  main{padding:0 32px 56px;margin-top:-84px}
+  .summary{padding:28px 30px 26px}
+  .summary ul{grid-template-columns:1fr 1fr;gap:12px 28px}
+  .sec{padding:28px 30px 24px}
+  .rrow{grid-template-columns:1.6fr 1fr 1fr;align-items:center}
+  .rhead{display:grid;background:var(--paper-2);font:600 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .rrow .yes::after,.rrow .no::after,.rrow span:nth-child(3)::after{content:none!important}
+  footer{padding:8px 32px 40px}
+}
+@media (min-width:1000px){
+  .layout{grid-template-columns:240px 1fr;align-items:start}
+  .toc{position:sticky;top:20px;padding:6px 18px}
+  .toc summary{pointer-events:none}
+  .toc summary::after,.toc[open] summary::after{content:none}
+}
+@media print{.hero{background:none;color:#000;padding:0}.hero::before,.sun,.leaf,.tabs,.back,.toc{display:none}main{margin:0}.sec,.summary{border:0;box-shadow:none;padding:12px 0}body{background:#fff}}</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the terms of use</a>
+<header class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <svg class="leaf l1" viewBox="0 0 120 120" aria-hidden="true"><path d="M14 106C14 52 52 14 106 14c0 54-38 92-92 92Z"/><path class="vein" d="M14 106 78 42M38 82l-2-22M56 64l-2-20M38 82l22 2M56 64l20 2"/></svg><svg class="leaf l2" viewBox="0 0 120 120" aria-hidden="true"><path d="M14 106C14 52 52 14 106 14c0 54-38 92-92 92Z"/><path class="vein" d="M14 106 78 42M38 82l-2-22M56 64l-2-20M38 82l22 2M56 64l20 2"/></svg>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="./"><i aria-hidden="true"></i>bounce</a>
+      <a class="back" href="./">&larr; Back to Bounce</a>
+    </div>
+    <p class="kicker">The rules of the court</p>
+    <h1>Terms <em>of use</em></h1>
+    <p class="lede">How Bounce works, what we look after, and what organisers, clubs and players look after themselves.</p>
+    <p class="meta-line">Last updated <time datetime="2026-10-21">21 October 2026</time></p>
+    <nav class="tabs" aria-label="Bounce policies"><a href="terms.html" aria-current="page">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a></nav>
+  </div>
+</header>
+<main id="content">
+  <section class="summary" aria-labelledby="sum-h">
+    <h2 id="sum-h"><span>In short</span>The plain-English version</h2>
+    <ul><li><span>Bounce helps you find, host and join social sport games. We don’t run the games ourselves.</span></li><li><span>Organisers, clubs, coaches and venues are independent and responsible for their own sessions.</span></li><li><span>Sport has a risk of injury. Play within your limits and follow the organiser’s and venue’s rules.</span></li><li><span>Payments go through Stripe. Players pay a A$0.99 booking fee on paid games, and organisers get their full game price.</span></li><li><span>Be decent to each other. We can remove content or accounts that break these rules.</span></li></ul>
+  </section>
+  <div class="layout">
+    <details class="toc" open>
+      <summary>On this page</summary>
+      <ol><li><a href="#about">About Bounce</a></li><li><a href="#accounts">Your account</a></li><li><a href="#games">Games, organisers and clubs</a></li><li><a href="#safety">Playing safely</a></li><li><a href="#payments">Payments</a></li><li><a href="#conduct">How to behave on Bounce</a></li><li><a href="#content">What you post</a></li><li><a href="#acl">Australian Consumer Law</a></li><li><a href="#changes">Changes to Bounce and these terms</a></li><li><a href="#law">Law and contact</a></li></ol>
+    </details>
+    <div class="sections"><section class="sec" id="about" aria-labelledby="about-h"><p class="num">01</p><h2 id="about-h">About Bounce</h2><p>Bounce (“we”, “us”) is an app and website that helps people find, host and join social sport games in Australia. Bounce is run by Benjamin Gerard, trading as Bounce (ABN 83 386 303 756), based in Victoria, Australia.</p>
+<p>By creating an account or using Bounce you agree to these terms, our <a href="privacy.html">privacy policy</a> and our <a href="refunds.html">refund policy</a>. If you don’t agree, please don’t use Bounce.</p></section><section class="sec" id="accounts" aria-labelledby="accounts-h"><p class="num">02</p><h2 id="accounts-h">Your account</h2><ul>
+<li>You must be <b>18 or older</b> to create a Bounce account.</li>
+<li>Give accurate details, keep your sign-in email secure, and use one account per person.</li>
+<li>You’re responsible for what happens on your account. Tell us straight away if you think someone else has used it.</li>
+<li>You can stop using Bounce at any time. To delete your account, email us and we’ll remove it.</li>
+</ul></section><section class="sec" id="games" aria-labelledby="games-h"><p class="num">03</p><h2 id="games-h">Games, organisers and clubs</h2><p>Games on Bounce are run by organisers, clubs, coaches and venues (“organisers”), not by Bounce. Organisers are responsible for their sessions, including:</p>
+<ul>
+<li>accurate game details (time, place, level, price and what’s included)</li>
+<li>booking courts or venues, and any permits they need</li>
+<li>running the session safely, and having the insurance they need</li>
+<li>following our <a href="refunds.html">refund rules</a> when they take payment through Bounce</li>
+<li>their own tax and GST obligations</li>
+</ul>
+<p>Club committees act for their club. A committee member who sets up club payouts confirms they’re allowed to do that for the club.</p></section><section class="sec" id="safety" aria-labelledby="safety-h"><p class="num">04</p><h2 id="safety-h">Playing safely</h2><p>Sport involves physical activity and a risk of injury. You take part at your own risk, to the extent the law allows. Check you’re fit to play, warm up, use the right gear, and follow the organiser’s and venue’s instructions.</p>
+<p>Bounce doesn’t check players, organisers, coaches or venues. Ratings such as DUPR are entered by players themselves, and coaches are responsible for their own accreditation and any Working with Children Check they need. A club’s ABN is checked against the Australian Business Register when we can, but that only confirms the ABN, not the club’s activities.</p>
+<p>Meet in public places, trust your instincts, and tell us about anyone who makes you feel unsafe. If someone is in danger, call <b>000</b>.</p></section><section class="sec" id="payments" aria-labelledby="payments-h"><p class="num">05</p><h2 id="payments-h">Payments</h2><p>Organisers can ask players to pay through Bounce when they join. Payments are processed by <a href="https://stripe.com/au" target="_blank" rel="noopener">Stripe</a>. Your card details go straight to Stripe and Bounce never sees them.</p>
+<ul>
+<li>Prices are in Australian dollars and include GST where it applies.</li>
+<li>Players pay the organiser’s game price plus a <b>A$0.99 booking fee</b> for each paid spot. The booking fee is Bounce’s fee for the booking service.</li>
+<li>The organiser receives the full game price, paid to their bank account by Stripe.</li>
+<li>To receive payments, organisers and clubs set up a Stripe account and agree to the <a href="https://stripe.com/au/legal/connect-account" target="_blank" rel="noopener">Stripe Connected Account Agreement</a>.</li>
+<li>Paying at the court, outside Bounce, is between you and the organiser.</li>
+</ul>
+<p>Refunds follow our <a href="refunds.html">refund policy</a>.</p></section><section class="sec" id="conduct" aria-labelledby="conduct-h"><p class="num">06</p><h2 id="conduct-h">How to behave on Bounce</h2><p>Be respectful on and off the court. Don’t:</p>
+<ul>
+<li>harass, threaten, bully or discriminate against anyone</li>
+<li>post anything unlawful, sexual, hateful, misleading or that you don’t have the right to share</li>
+<li>post fake games, spam, or ask players to pay outside Bounce for a game listed as paid in Bounce</li>
+<li>pretend to be someone else, or misuse other people’s details</li>
+<li>copy, scrape or interfere with Bounce or other people’s accounts</li>
+</ul>
+<p>We can remove content, cancel games or suspend accounts that break these terms or put people at risk. Where it’s fair to, we’ll tell you why.</p></section><section class="sec" id="content" aria-labelledby="content-h"><p class="num">07</p><h2 id="content-h">What you post</h2><p>You own the photos, posts and messages you put on Bounce. You give us permission to store and show them in Bounce so the service works (for example, showing your club post to its members). You can delete your posts at any time.</p>
+<p>Game chats are seen by the people in that game, and club chats by the club’s members. Your profile name, photo, suburb, sports and level are visible to other Bounce users.</p></section><section class="sec" id="acl" aria-labelledby="acl-h"><p class="num">08</p><h2 id="acl-h">Australian Consumer Law</h2><p>Our services come with guarantees that can’t be excluded under the Australian Consumer Law. Nothing in these terms takes away those rights.</p>
+<p>To the extent the law allows, Bounce isn’t responsible for games, sessions or venues run by others, or for loss caused by other users. Where our liability can be limited, it is limited to supplying the service again or refunding what you paid Bounce (the booking fee).</p></section><section class="sec" id="changes" aria-labelledby="changes-h"><p class="num">09</p><h2 id="changes-h">Changes to Bounce and these terms</h2><p>Bounce is growing, so features will change. We may update these terms. If a change is important, we’ll tell you in the app or by email before it starts. The date at the top of this page shows the latest version.</p></section><section class="sec" id="law" aria-labelledby="law-h"><p class="num">10</p><h2 id="law-h">Law and contact</h2><p>These terms are governed by the laws of Victoria, Australia. If something goes wrong, please contact us first. Most problems can be sorted out quickly.</p>
+<p>Questions or complaints: <a href="mailto:benjibajout@gmail.com">benjibajout@gmail.com</a>.</p></section></div>
+  </div>
+</main>
+<footer>
+  <div class="foot">
+    <p style="margin:0"><b>Bounce</b> is run by Benjamin Gerard, trading as Bounce. ABN 83 386 303 756. Victoria, Australia.</p>
+    <p class="mono" style="margin:0">Questions: <a href="mailto:benjibajout@gmail.com">benjibajout@gmail.com</a></p>
+    <nav aria-label="More"><a href="privacy.html">Privacy</a><a href="refunds.html">Refunds</a><a href="./">Open Bounce</a></nav>
+  </div>
+</footer>
+<script>
+// Phones start with the contents list closed; larger screens keep it open beside the text.
+(function(){var d=document.querySelector('.toc');if(d&&window.matchMedia('(max-width: 999px)').matches)d.removeAttribute('open');})();
+</script>
+</body>
+</html>

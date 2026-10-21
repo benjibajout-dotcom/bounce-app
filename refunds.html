@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Refund policy · Bounce</title>
+<meta name="description" content="What happens to your money when plans change, for games you pay for through Bounce.">
+<meta name="theme-color" content="#1F5C4A">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>:root{
+  --paper:#F6F0DC; --paper-2:#EFE6C8; --card:#FFFBEF; --ink:#13261E; --muted:#4E5D52; --line:#D9CFAE;
+  --forest:#1F5C4A; --moss:#5E8B4E; --fern:#A9C77E; --sun:#E9B23A; --sun-soft:#F7DE9B; --terra:#E0763A; --terra-ink:#8A3A08;
+  --display:'Fraunces',Georgia,serif; --body:'Figtree',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1A14; --paper-2:#13241B; --card:#16291F; --ink:#F1ECD9; --muted:#B4BFA8; --line:#2A4234;
+  --forest:#8FD3B6; --moss:#9CC587; --fern:#5E8B4E; --sun:#F2C55C; --sun-soft:#3A2F12; --terra:#FF9A55; --terra-ink:#FFC59C; color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#0E1A14; --paper-2:#13241B; --card:#16291F; --ink:#F1ECD9; --muted:#B4BFA8; --line:#2A4234;
+  --forest:#8FD3B6; --moss:#9CC587; --fern:#5E8B4E; --sun:#F2C55C; --sun-soft:#3A2F12; --terra:#FF9A55; --terra-ink:#FFC59C; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16.5px/1.62 var(--body);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--moss) 22%,transparent) 1px,transparent 1.6px);background-size:22px 22px}
+a{color:var(--forest);text-decoration-thickness:1.5px;text-underline-offset:3px}
+a:hover{color:var(--terra)}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--card);padding:8px 12px;border-radius:10px;z-index:9}
+.skip:focus{left:12px}
+
+/* Hero: forest canopy, rising sun, court lines */
+.hero{position:relative;overflow:hidden;color:#F6F0DC;background:
+  radial-gradient(120% 90% at 85% 115%,rgba(233,178,58,.55),rgba(233,178,58,0) 55%),
+  radial-gradient(60% 60% at 10% -10%,rgba(169,199,126,.35),transparent 60%),
+  linear-gradient(160deg,#173F33 0%,#1F5C4A 55%,#2B6B4C 100%);
+  padding:max(18px,env(safe-area-inset-top)) 16px 96px;border-radius:0 0 44px 44px / 0 0 28px 28px}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;
+  background:
+    linear-gradient(90deg,transparent calc(50% - 1px),#F6F0DC calc(50% - 1px),#F6F0DC calc(50% + 1px),transparent calc(50% + 1px)),
+    linear-gradient(0deg,transparent 61%,#F6F0DC 61%,#F6F0DC calc(61% + 2px),transparent calc(61% + 2px));
+  -webkit-mask:radial-gradient(90% 100% at 50% 0%,#000 30%,transparent 80%);mask:radial-gradient(90% 100% at 50% 0%,#000 30%,transparent 80%)}
+.sun{position:absolute;right:-60px;bottom:-120px;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,#FFE9A8,#E9B23A 55%,#E0763A 100%);opacity:.9;filter:saturate(1.05);
+  box-shadow:0 0 0 18px rgba(233,178,58,.14),0 0 0 40px rgba(233,178,58,.08);animation:rise 1.4s cubic-bezier(.2,.8,.2,1) both}
+.leaf{position:absolute;fill:#A9C77E;opacity:.32}
+.leaf .vein{fill:none;stroke:#173F33;stroke-width:3;stroke-linecap:round;opacity:.55}
+.leaf.l1{width:120px;left:-28px;bottom:-20px;transform:rotate(-12deg);animation:sway 7s ease-in-out infinite alternate}
+.leaf.l2{width:64px;right:30%;top:22px;transform:rotate(140deg);opacity:.22;animation:sway 9s ease-in-out infinite alternate-reverse}
+.wrap{position:relative;max-width:1060px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px}
+.brand{display:inline-flex;align-items:center;gap:8px;color:#F6F0DC;text-decoration:none;font:800 22px/1 var(--display);letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.brand i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFD9A0,#FF8A3D 60%,#C85A1E);box-shadow:inset -3px -3px 0 rgba(0,0,0,.12)}
+.back{color:#F6F0DC;font:600 14px/1 var(--body);text-decoration:none;border:1px solid rgba(246,240,220,.35);padding:10px 14px;border-radius:999px;min-height:40px;display:inline-flex;align-items:center;gap:6px;background:rgba(246,240,220,.06)}
+.back:hover{color:#F6F0DC;background:rgba(246,240,220,.14)}
+.kicker{margin:40px 0 6px;font:500 12.5px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#F7DE9B;animation:up .7s .1s both}
+.hero h1{margin:0;font:900 clamp(46px,13vw,104px)/.9 var(--display);letter-spacing:-.035em;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 144;max-width:12ch;animation:up .8s .18s both}
+.hero h1 em{font-style:italic;font-weight:200;color:#F7DE9B}
+.lede{max-width:46ch;margin:16px 0 0;font:300 clamp(17px,4.4vw,21px)/1.45 var(--body);color:rgba(246,240,220,.88);animation:up .8s .28s both}
+.meta-line{margin:18px 0 0;font:500 12.5px/1.4 var(--mono);color:rgba(246,240,220,.72);letter-spacing:.04em;animation:up .8s .36s both}
+
+/* Tabs between the three pages */
+.tabs{display:flex;gap:6px;margin-top:22px;padding:5px;border-radius:999px;background:rgba(9,30,22,.35);width:max-content;max-width:100%;overflow-x:auto;animation:up .8s .44s both;scrollbar-width:none}
+.tabs a{flex:none;color:#F6F0DC;text-decoration:none;font:600 14.5px/1 var(--body);padding:11px 16px;border-radius:999px;min-height:40px;display:flex;align-items:center}
+.tabs a[aria-current="page"]{background:#F6F0DC;color:#173F33}
+.tabs a:not([aria-current]):hover{background:rgba(246,240,220,.12)}
+
+/* Body */
+main{position:relative;max-width:1060px;margin:-64px auto 0;padding:0 16px 40px;display:grid;gap:28px}
+.summary{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:28px 28px 28px 6px;padding:22px 20px 20px;
+  box-shadow:0 18px 40px -24px rgba(19,38,30,.45);animation:up .9s .5s both;overflow:hidden}
+.summary::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,var(--sun-soft),transparent 70%)}
+.summary h2{margin:0 0 12px;font:800 22px/1.15 var(--display);font-variation-settings:"SOFT" 100;letter-spacing:-.01em;position:relative}
+.summary h2 span{font:500 11.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--terra-ink);display:block;margin-bottom:8px}
+.summary ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;position:relative}
+.summary li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start}
+.summary li::before{content:"";width:14px;height:14px;margin-top:6px;border-radius:14px 0 14px 0;background:linear-gradient(135deg,var(--fern),var(--moss));transform:rotate(-8deg)}
+.layout{display:grid;gap:28px}
+.toc{background:var(--paper-2);border:1px solid var(--line);border-radius:20px;padding:4px 16px}
+.toc summary{cursor:pointer;list-style:none;min-height:48px;display:flex;align-items:center;justify-content:space-between;font:600 15px/1 var(--body)}
+.toc summary::-webkit-details-marker{display:none}
+.toc summary::after{content:"+";font:300 26px/1 var(--display);color:var(--forest)}
+.toc[open] summary::after{content:"–"}
+.toc ol{margin:0 0 12px;padding:0;list-style:none;counter-reset:t}
+.toc li{counter-increment:t}
+.toc a{display:flex;gap:12px;padding:9px 0;text-decoration:none;color:var(--ink);border-top:1px dashed var(--line);font-size:15px}
+.toc a::before{content:counter(t,decimal-leading-zero);font:500 12px/1.9 var(--mono);color:var(--terra-ink);min-width:22px}
+.toc a:hover{color:var(--forest)}
+.sections{display:grid;gap:14px;min-width:0}
+.sec{position:relative;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 20px 18px;scroll-margin-top:16px}
+.sec .num{display:flex;align-items:center;gap:10px;margin:0 0 6px;font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--terra-ink);text-transform:uppercase}
+.sec .num::after{content:"";flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 10px)}
+.sec h2{margin:0 0 10px;font:800 clamp(24px,6.2vw,32px)/1.08 var(--display);letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 0}
+.sec p{margin:0 0 12px;max-width:68ch}
+.sec ul{margin:0 0 12px;padding-left:0;list-style:none;display:grid;gap:8px;max-width:68ch}
+.sec ul li{position:relative;padding-left:22px}
+.sec ul li::before{content:"";position:absolute;left:2px;top:.62em;width:9px;height:9px;border-radius:50%;border:2px solid var(--moss)}
+.sec b{font-weight:700}
+.sec > :last-child{margin-bottom:0}
+
+/* Refund table */
+.rtable{display:grid;border:1.5px solid var(--line);border-radius:18px;overflow:hidden;font-size:15px}
+.rrow{display:grid;grid-template-columns:1fr;gap:4px 12px;padding:12px 14px;border-top:1px solid var(--line)}
+.rrow:first-child{border-top:0}
+.rhead{display:none}
+.rrow span[role="cell"]:first-child{font-weight:600}
+.rrow .yes,.rrow .no{display:inline-flex;align-items:center;gap:6px;font:500 13px/1.3 var(--mono)}
+.rrow .yes::before{content:"";width:10px;height:10px;border-radius:10px 0 10px 0;background:var(--moss)}
+.rrow .no::before{content:"";width:10px;height:10px;border-radius:50%;border:2px solid var(--terra)}
+.rrow .yes:nth-child(2)::after{content:" · game price"}
+.rrow .no:nth-child(2)::after{content:" · game price"}
+.rrow span:nth-child(3)::after{content:" · booking fee"}
+
+/* Footer */
+footer{max-width:1060px;margin:0 auto;padding:8px 16px calc(32px + env(safe-area-inset-bottom));color:var(--muted);font-size:14px}
+.foot{border-top:1.5px solid var(--line);padding-top:18px;display:grid;gap:10px}
+.foot b{color:var(--ink)}
+.foot .mono{font:500 12.5px/1.5 var(--mono)}
+.foot nav{display:flex;flex-wrap:wrap;gap:6px 16px}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(60px) scale(.9)}to{opacity:.9;transform:none}}
+@keyframes sway{from{transform:rotate(-14deg) translateY(0)}to{transform:rotate(-4deg) translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+@media (min-width:720px){
+  .hero{padding:24px 32px 120px}
+  .sun{width:420px;height:420px;right:-40px;bottom:-200px}
+  main{padding:0 32px 56px;margin-top:-84px}
+  .summary{padding:28px 30px 26px}
+  .summary ul{grid-template-columns:1fr 1fr;gap:12px 28px}
+  .sec{padding:28px 30px 24px}
+  .rrow{grid-template-columns:1.6fr 1fr 1fr;align-items:center}
+  .rhead{display:grid;background:var(--paper-2);font:600 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .rrow .yes::after,.rrow .no::after,.rrow span:nth-child(3)::after{content:none!important}
+  footer{padding:8px 32px 40px}
+}
+@media (min-width:1000px){
+  .layout{grid-template-columns:240px 1fr;align-items:start}
+  .toc{position:sticky;top:20px;padding:6px 18px}
+  .toc summary{pointer-events:none}
+  .toc summary::after,.toc[open] summary::after{content:none}
+}
+@media print{.hero{background:none;color:#000;padding:0}.hero::before,.sun,.leaf,.tabs,.back,.toc{display:none}main{margin:0}.sec,.summary{border:0;box-shadow:none;padding:12px 0}body{background:#fff}}</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the refund policy</a>
+<header class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <svg class="leaf l1" viewBox="0 0 120 120" aria-hidden="true"><path d="M14 106C14 52 52 14 106 14c0 54-38 92-92 92Z"/><path class="vein" d="M14 106 78 42M38 82l-2-22M56 64l-2-20M38 82l22 2M56 64l20 2"/></svg><svg class="leaf l2" viewBox="0 0 120 120" aria-hidden="true"><path d="M14 106C14 52 52 14 106 14c0 54-38 92-92 92Z"/><path class="vein" d="M14 106 78 42M38 82l-2-22M56 64l-2-20M38 82l22 2M56 64l20 2"/></svg>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="./"><i aria-hidden="true"></i>bounce</a>
+      <a class="back" href="./">&larr; Back to Bounce</a>
+    </div>
+    <p class="kicker">Fair play with money</p>
+    <h1>Refund <em>policy</em></h1>
+    <p class="lede">What happens to your money when plans change, for games you pay for through Bounce.</p>
+    <p class="meta-line">Last updated <time datetime="2026-10-21">21 October 2026</time></p>
+    <nav class="tabs" aria-label="Bounce policies"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refunds.html" aria-current="page">Refunds</a></nav>
+  </div>
+</header>
+<main id="content">
+  <section class="summary" aria-labelledby="sum-h">
+    <h2 id="sum-h"><span>In short</span>The plain-English version</h2>
+    <ul><li><span>Organiser cancels the game: you get everything back, including the booking fee.</span></li><li><span>You leave more than 24 hours before the start: you get the game price back.</span></li><li><span>You leave within 24 hours of the start: no refund, because your spot is hard to fill.</span></li><li><span>Refunds are automatic and go back to the card you paid with.</span></li></ul>
+  </section>
+  <div class="layout">
+    <details class="toc" open>
+      <summary>On this page</summary>
+      <ol><li><a href="#table">At a glance</a></li><li><a href="#how">How refunds work</a></li><li><a href="#waitlist">Waitlists on paid games</a></li><li><a href="#outside">Paying at the court</a></li><li><a href="#problems">If something goes wrong</a></li></ol>
+    </details>
+    <div class="sections"><section class="sec" id="table" aria-labelledby="table-h"><p class="num">01</p><h2 id="table-h">At a glance</h2><div class="rtable" role="table" aria-label="Refund rules">
+<div class="rrow rhead" role="row"><span role="columnheader">What happens</span><span role="columnheader">Game price</span><span role="columnheader">A$0.99 booking fee</span></div>
+<div class="rrow" role="row"><span role="cell">The organiser cancels or deletes the game</span><span role="cell" class="yes">Refunded</span><span role="cell" class="yes">Refunded</span></div>
+<div class="rrow" role="row"><span role="cell">The organiser removes you from the game</span><span role="cell" class="yes">Refunded</span><span role="cell" class="yes">Refunded</span></div>
+<div class="rrow" role="row"><span role="cell">The game filled up before your payment went through</span><span role="cell" class="yes">Refunded</span><span role="cell" class="yes">Refunded</span></div>
+<div class="rrow" role="row"><span role="cell">You leave more than 24 hours before the start</span><span role="cell" class="yes">Refunded</span><span role="cell" class="no">Kept</span></div>
+<div class="rrow" role="row"><span role="cell">You leave within 24 hours of the start, or don’t show up</span><span role="cell" class="no">Not refunded</span><span role="cell" class="no">Kept</span></div>
+</div></section><section class="sec" id="how" aria-labelledby="how-h"><p class="num">02</p><h2 id="how-h">How refunds work</h2><ul>
+<li>Refunds happen automatically in the app. You don’t need to ask.</li>
+<li>Money goes back to the card or wallet you paid with. Banks usually take <b>5–10 business days</b> to show it.</li>
+<li>The app tells you before you leave a paid game whether you’ll get money back.</li>
+<li>The game price comes back from the organiser, and the booking fee from Bounce.</li>
+</ul></section><section class="sec" id="waitlist" aria-labelledby="waitlist-h"><p class="num">03</p><h2 id="waitlist-h">Waitlists on paid games</h2><p>You’re never charged for joining a waitlist. When a spot opens in a paid game, everyone on the waitlist gets a notification and the first person to pay gets the spot.</p></section><section class="sec" id="outside" aria-labelledby="outside-h"><p class="num">04</p><h2 id="outside-h">Paying at the court</h2><p>If you pay the organiser directly (cash, bank transfer or another app), the organiser’s own refund rules apply. Please sort it out with them.</p></section><section class="sec" id="problems" aria-labelledby="problems-h"><p class="num">05</p><h2 id="problems-h">If something goes wrong</h2><p>If a game didn’t go ahead, wasn’t as described, or you think a refund is wrong, talk to the organiser first. If that doesn’t fix it, email <a href="mailto:benjibajout@gmail.com">benjibajout@gmail.com</a> with the game name and date and we’ll help.</p>
+<p>Our services come with guarantees that can’t be excluded under the Australian Consumer Law. If there’s a major failure, you’re entitled to a refund, and nothing in this policy limits those rights.</p></section></div>
+  </div>
+</main>
+<footer>
+  <div class="foot">
+    <p style="margin:0"><b>Bounce</b> is run by Benjamin Gerard, trading as Bounce. ABN 83 386 303 756. Victoria, Australia.</p>
+    <p class="mono" style="margin:0">Questions: <a href="mailto:benjibajout@gmail.com">benjibajout@gmail.com</a></p>
+    <nav aria-label="More"><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="./">Open Bounce</a></nav>
+  </div>
+</footer>
+<script>
+// Phones start with the contents list closed; larger screens keep it open beside the text.
+(function(){var d=document.querySelector('.toc');if(d&&window.matchMedia('(max-width: 999px)').matches)d.removeAttribute('open');})();
+</script>
+</body>
+</html>

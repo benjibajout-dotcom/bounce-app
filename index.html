@@ -296,6 +296,10 @@ form.stack,.stack{display:flex;flex-direction:column;gap:14px}
 .flabel{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
 .seg.pay-to button{min-height:40px;border:0;border-radius:10px;background:transparent;font:inherit;font-weight:700;font-size:14.5px;color:var(--muted);cursor:pointer;padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .seg.pay-to button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+/* Policies */
+.legal-links{display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:center;padding:6px 0 4px;font-size:13.5px}
+.legal-links a{color:var(--muted);min-height:36px;display:inline-flex;align-items:center}
+.paynote a{color:inherit;text-decoration:underline}
 /* Payments */
 .paynote{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13px;color:var(--muted)}
 .paynote svg{flex:none;margin-top:1px;color:var(--brand-text)}
@@ -1357,6 +1361,9 @@ function viewMine(){
   return h;
 }
 
+function legalLinks(){
+  return '<nav class="legal-links" aria-label="Bounce policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav>';
+}
 function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
   if(!S.pf)return skeletons(2);
@@ -1386,6 +1393,7 @@ function viewProfile(){
   } else h+='<p class="meta">You haven’t joined a club yet.</p>';
   h+='<div class="cta"><a class="btn btn-line" href="#clubs">Find a club</a><a class="btn btn-line" href="#club-new">Start a club</a></div></section>';
   h+='<button type="button" class="btn btn-line" data-act="signout">Sign out</button>';
+  h+=legalLinks();
   return h;
 }
 
@@ -1944,7 +1952,7 @@ function viewLogin(){
     }
   }
   if(L.error)h+='<p class="err" role="alert">'+esc(L.error)+'</p>';
-  return h+'<p class="foot">By continuing you agree to play fair and be a good sport.</p></section>';
+  return h+'<p class="foot">By continuing you agree to Bounce’s <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>, and to play fair and be a good sport. You must be 18 or older.</p></section>';
 }
 
 function viewSetup(){
@@ -2781,7 +2789,7 @@ function viewPayouts(){
     '<li><b>Players pay a $0.99 booking fee</b> on top, which keeps Bounce running.</li>'+
     '<li><b>Cancel a game</b> and everyone is refunded in full automatically.</li>'+
     '<li><b>A player leaves</b> more than 24 hours before: their game price is refunded. Inside 24 hours: no refund.</li>'+
-    '<li><b>Card details never touch Bounce.</b> Checkout and payouts are handled by Stripe.</li></ul></section>';
+    '<li><b>Card details never touch Bounce.</b> Checkout and payouts are handled by Stripe.</li></ul><p class="meta">Full details: <a href="refunds.html" target="_blank" rel="noopener">refund policy</a> and <a href="terms.html#payments" target="_blank" rel="noopener">payment terms</a>.</p></section>';
   var adm=(S.myClubs||[]).filter(function(m){return m.role==='admin'&&m.club;});
   if(adm.length)h+='<section class="card"><h2>Your clubs</h2><p class="meta">Club games can pay the club’s own bank account instead of yours.</p><div class="cta">'+adm.map(function(m){
     var cs=clubPayoutState(m.club.id);return '<a class="btn btn-line" href="#b-'+esc(m.club.id)+'">'+esc(m.club.name)+(cs==='ready'?' · payouts on':cs==='none'?' · set up':' · finish setup')+'</a>';}).join('')+'</div></section>';
@@ -2803,7 +2811,7 @@ function payJoinCTA(g){
   return '<button type="button" class="btn btn-accent btn-wide" data-act="pay-join" data-id="'+esc(g.id)+'"'+(S.paying?' disabled':'')+'>'+(S.paying===g.id?'Opening checkout…':S.uid?'Pay '+payTotal(g)+' and join':'Sign in to join')+'</button>';
 }
 function payNoteHTML(g){
-  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee'+(g.payClub&&g.club&&g.club.name?', paid to '+esc(g.club.name):'')+'. Secure checkout by Stripe.</span></p>';
+  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee'+(g.payClub&&g.club&&g.club.name?', paid to '+esc(g.club.name):'')+'. Secure checkout by Stripe. <a href="refunds.html" target="_blank" rel="noopener">Refund policy</a></span></p>';
   return n;
 }
 function leaveConfirmHTML(g){
