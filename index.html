@@ -18,7 +18,7 @@
 <meta property="og:image" content="icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 /* ===== Bounce settings: paste your two Supabase values here ===== */
@@ -792,6 +792,82 @@ fieldset.dupr legend{padding:0 6px}
   .member-row:hover .acts,.member-row:focus-within .acts{opacity:1}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+/* ===== Solarpunk theme: parchment, forest, sun gold and terracotta; Fraunces headings, leafy shapes, court lines ===== */
+:root{
+  --bg:#F6F0DC; --surface:#FFFBEF; --line:#E4D9B8; --line-strong:#CDBF97;
+  --ink:#13261E; --muted:#4E5D50;
+  --brand:#1F5C4A; --on-brand:#F6F0DC; --brand-text:#1F5C4A; --brand-soft:#E3ECCF;
+  --accent:#EE8436; --on-accent:#1A0E05; --accent-soft:#FBE5C9; --accent-text:#8A3A08;
+  --hero-bg:#173F33; --hero-fg:#F6F0DC; --hero-muted:#C9D6C4; --hero-line:#3F6A57;
+  --sun:#E9B23A; --sun-soft:#F7E0A3; --moss:#5E8B4E; --fern:#A9C77E;
+  --display:'Fraunces',Georgia,'Times New Roman',serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --shadow:0 1px 2px rgba(19,38,30,.06),0 10px 24px -18px rgba(19,38,30,.35);
+  --r-card:20px; --r-band:26px; --r-control:14px;
+  --grain:radial-gradient(circle at 1px 1px,rgba(94,139,78,.20) 1px,transparent 1.6px);
+  --forest:radial-gradient(120% 110% at 100% 115%,rgba(233,178,58,.55),rgba(233,178,58,0) 55%),radial-gradient(70% 70% at -5% -10%,rgba(169,199,126,.30),transparent 60%),linear-gradient(155deg,#173F33 0%,#1F5C4A 58%,#2B6B4C 100%);
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0E1A14; --surface:#16291F; --line:#284032; --line-strong:#3A5546;
+  --ink:#F1ECD9; --muted:#B4BFA8;
+  --brand:#8FD3B6; --on-brand:#0E1A14; --brand-text:#9BDCBF; --brand-soft:#1D3527;
+  --accent:#FF9A55; --on-accent:#1A0E05; --accent-soft:#3A2416; --accent-text:#FFC59C;
+  --hero-bg:#1A3A2D; --hero-fg:#F1ECD9; --hero-muted:#BFCDBA; --hero-line:#43705C;
+  --sun:#F2C55C; --sun-soft:#3A2F12; --moss:#9CC587; --fern:#5E8B4E;
+  --shadow:none; --grain:radial-gradient(circle at 1px 1px,rgba(156,197,135,.10) 1px,transparent 1.6px);
+  --forest:radial-gradient(120% 110% at 100% 115%,rgba(242,197,92,.38),rgba(242,197,92,0) 55%),linear-gradient(155deg,#10291F 0%,#173F33 60%,#1F4A3A 100%);
+}}
+/* Typography: Fraunces display, soft and a little wonky; extremes of weight */
+h1,h2,h3,.wordmark{font-family:var(--display);font-variation-settings:"SOFT" 100,"WONK" 0;letter-spacing:-.02em}
+h1{font-weight:900;font-variation-settings:"SOFT" 100,"WONK" 1,"opsz" 96}
+h2{font-weight:750}
+.hello h1{font-size:clamp(30px,8.4vw,44px);line-height:1.02}
+.hello h1 em,.band h1 em{font-style:italic;font-weight:300;color:var(--sun)}
+.wordmark{font-weight:900;letter-spacing:-.03em}
+.eyebrow,.spill,.day small,.list-head .meta{font-family:var(--mono);letter-spacing:.06em}
+.eyebrow{font-weight:500}
+/* Atmosphere: parchment with a fine seed-dot grain */
+#app,main{background-color:var(--bg)}
+main{background-image:var(--grain);background-size:22px 22px;background-attachment:local}
+.top{background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:saturate(1.2) blur(10px);backdrop-filter:saturate(1.2) blur(10px)}
+/* Forest bands with a rising sun and court lines */
+.band,.clubband,.alert,.ralert{background:var(--forest);color:var(--hero-fg);border-radius:var(--r-band) var(--r-band) var(--r-band) 10px;position:relative;overflow:hidden;isolation:isolate}
+.band::before,.clubband::before,.alert::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.14;
+  background:linear-gradient(90deg,transparent calc(62% - 1px),#F6F0DC calc(62% - 1px),#F6F0DC calc(62% + 1px),transparent calc(62% + 1px)),
+             linear-gradient(0deg,transparent 70%,#F6F0DC 70%,#F6F0DC calc(70% + 2px),transparent calc(70% + 2px))}
+.band::after,.clubband::after,.alert::after{content:"";position:absolute;z-index:-1;right:-34px;bottom:-46px;width:132px;height:132px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M14 106C14 52 52 14 106 14c0 54-38 92-92 92Z' fill='%23A9C77E' fill-opacity='.30'/%3E%3Cpath d='M14 106 78 42M38 82l-2-22M56 64l-2-20M38 82l22 2M56 64l20 2' stroke='%23173F33' stroke-opacity='.45' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") no-repeat center/contain;transform:rotate(-14deg)}
+.band .court{opacity:.12}
+.alert .sub,.clubband .sub,.ralert .sub{color:var(--hero-muted)}
+/* Cards and rows: warm paper, softly organic corners */
+.card,.game,.summary{background:var(--surface);border-color:var(--line);box-shadow:var(--shadow)}
+.card{border-radius:var(--r-card) var(--r-card) var(--r-card) 8px}
+.game{border-radius:18px}
+/* Buttons: sun-to-terracotta for the main action, forest for the rest */
+.btn{border-radius:var(--r-control)}
+.btn-accent{background:linear-gradient(135deg,#F4AE48 0%,#EE8436 55%,#E06E2C 100%);color:var(--on-accent);box-shadow:0 8px 18px -10px rgba(224,110,44,.7)}
+.btn-accent:active{transform:translateY(1px)}
+.btn-brand{background:linear-gradient(160deg,#246A55,#1F5C4A);color:var(--on-brand)}
+@media (prefers-color-scheme: dark){.btn-brand{background:var(--brand)}}
+.btn-line{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+/* Chips, days, segmented controls: forest instead of black */
+.chip[aria-pressed="true"],.seg a[aria-selected="true"],.seg button[aria-pressed="true"],.seg.pay-to button[aria-pressed="true"],.cal-day[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.mine .bubble{background:var(--brand);color:var(--on-brand)}
+.alert .btn-line,.band .btn-line,.clubband .btn-line,.ralert .btn-line{background:rgba(246,240,220,.08);border-color:var(--hero-line);color:var(--hero-fg)}
+.day[aria-pressed="true"]{background:var(--forest);border-color:transparent;color:#F6F0DC}
+.day[aria-pressed="true"] small{color:#F6F0DC}
+/* Tab bar: a little leaf marks where you are */
+.tab[aria-current="page"]{color:var(--brand-text)}
+.tab[aria-current="page"]::after{top:3px;width:18px;height:8px;border-radius:0 0 18px 0;background:linear-gradient(135deg,var(--fern),var(--moss));transform:translateX(-50%) rotate(-6deg)}
+.pill{border-radius:var(--r-control)}
+.spill-good{background:var(--brand-soft)}
+/* Page entrance: content rises in a gentle stagger */
+.inner.enter>*{animation:sp-rise .55s cubic-bezier(.2,.8,.2,1) both}
+.inner.enter>*:nth-child(2){animation-delay:.05s}.inner.enter>*:nth-child(3){animation-delay:.1s}.inner.enter>*:nth-child(4){animation-delay:.15s}
+.inner.enter>*:nth-child(5){animation-delay:.2s}.inner.enter>*:nth-child(n+6){animation-delay:.25s}
+.inner.enter{animation:none}
+@keyframes sp-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.inner.enter>*{animation:none}}
+@media (min-width:768px){.tab[aria-current="page"]::after{width:3px;height:auto;border-radius:0 3px 3px 0;transform:none;background:var(--sun)}}
 </style>
 </head>
 <body>
