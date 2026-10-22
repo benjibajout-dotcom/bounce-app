@@ -2,7 +2,7 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Bounce Up</title>
 <meta name="description" content="Find a game near you, fill a spot when a team is one short, or host your own. Pickleball, basketball, futsal, tennis, running and more.">
 <meta name="theme-color" content="#1F5C4A">
@@ -900,6 +900,27 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .bu-hero .bu-ball{transform-box:fill-box;transform-origin:center;animation:bu-bounce 2.4s cubic-bezier(.33,0,.25,1) infinite}
 @keyframes bu-bounce{0%,62%,100%{transform:translateY(0)}31%{transform:translateY(-9px)}}
 @media (prefers-reduced-motion:reduce){.bu-hero .bu-ball{animation:none}}
+
+/* ===== Phones and touch screens ===== */
+/* Club chat fills the space that's left, with the message box pinned above the tab bar */
+@media (max-width:767px){
+  .inner.pg-clubchat{height:100%;padding-bottom:12px}
+  .pg-clubchat .club-chat{flex:1 1 auto;min-height:0}
+  .pg-clubchat .club-chat .msgs{flex:1 1 0;height:auto;max-height:none;min-height:120px}
+}
+/* While typing on a phone */
+@media (max-width:767px){
+  body.typing .tabs,body.typing .actionbar{display:none}
+}
+/* Phones turned sideways: slim header, icon-only tab bar */
+@media (max-width:767px) and (max-height:500px){
+  .top{padding-top:calc(4px + env(safe-area-inset-top,0px));padding-bottom:4px}
+  .wordmark{min-height:36px}
+  .tab{min-height:46px;font-size:0;gap:0}
+  .inner{padding-block:10px 16px}
+  .actionbar,.host-actions{padding-block:6px}
+  .pg-clubchat .chat-title{display:none}
+}
 </style>
 </head>
 <body>
@@ -3888,6 +3909,13 @@ function route(){
 }
 function currentHash(){return S.route==='venue'?'v-'+S.venueId:S.route==='coach'?'o-'+S.coachId:S.route==='league'?'l-'+S.leagueId:S.route==='game'?'g-'+S.gameId:S.route==='club'?'c-'+S.clubId:S.route==='clubbiz'?'b-'+S.clubId:S.route==='player'?'p-'+S.playerId:S.route==='clubchat'?'m-'+S.chatClubId:S.route;}
 window.addEventListener('hashchange',route);
+/* Phones: while the keyboard is up, hide the tab bar (and a game's join bar) so the field you're typing in stays in view. The Host form keeps its Next/Post button. */
+(function(){
+  var mq=window.matchMedia?window.matchMedia('(pointer:coarse) and (max-width:767px)'):null,t=null;
+  function isText(el){if(!el)return false;if(el.tagName==='TEXTAREA')return true;if(el.tagName!=='INPUT')return false;return !/^(checkbox|radio|range|file|button|submit|reset|color|image|hidden)$/.test(el.type);}
+  document.addEventListener('focusin',function(e){if(mq&&mq.matches&&isText(e.target)){clearTimeout(t);document.body.classList.add('typing');}});
+  document.addEventListener('focusout',function(){clearTimeout(t);t=setTimeout(function(){if(!isText(document.activeElement))document.body.classList.remove('typing');},120);});
+})();
 function goLogin(next){try{sessionStorage.setItem('bounce-next',next||'discover');}catch(e){}S.login.step='choose';S.login.error='';location.hash='login';}
 function popNext(){var n=null;try{n=sessionStorage.getItem('bounce-next');sessionStorage.removeItem('bounce-next');}catch(e){}return n&&/^[A-Za-z0-9-]+$/.test(n)&&n!=='login'?n:null;}
 function needLogin(next){if(S.uid)return false;goLogin(next);return true;}
