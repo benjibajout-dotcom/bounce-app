@@ -902,6 +902,13 @@ p.meta .link-btn{min-height:0;font-weight:600}
 @media (prefers-reduced-motion:reduce){.bu-hero .bu-ball{animation:none}}
 
 /* ===== Phones and touch screens ===== */
+/* Tab labels stay on one line, even on the smallest phones */
+.tab{white-space:nowrap}
+@media (max-width:359px){.tabs{padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}}
+@media (max-width:299px){.tab{font-size:10.5px}}
+/* Search: the whole box takes the tap */
+.search input{align-self:stretch}
+.search,.top-search{cursor:text}
 /* Club chat fills the space that's left, with the message box pinned above the tab bar */
 @media (max-width:767px){
   .inner.pg-clubchat{height:100%;padding-bottom:12px}
@@ -920,6 +927,37 @@ p.meta .link-btn{min-height:0;font-weight:600}
   .inner{padding-block:10px 16px}
   .actionbar,.host-actions{padding-block:6px}
   .pg-clubchat .chat-title{display:none}
+}
+/* Short phones: a smaller sign-in logo so the form shows straight away */
+@media (max-height:700px){
+  .login{gap:14px;padding-top:0}
+  .login-hero{gap:6px}
+  .login-hero .bu-hero{width:56px;height:56px;margin-bottom:0}
+  .login-hero h1{font-size:24px}
+}
+@media (max-height:600px){.login-hero .bu-hero{display:none}}
+/* Touch screens: bigger tap areas, same look */
+@media (pointer:coarse){
+  :where(.me-btn,.msg > a,.post-head > a,.switch,.chip,.btn,.seg button,.seg a,.legal-links a,.pw-toggle){position:relative;z-index:1}
+  :where(.hostline a,.facts a,.lesson-top b > a,.list-head a.meta,.link-btn,.post-club,.linkish){position:relative;z-index:1}
+  .me-btn::after{content:"";position:absolute;inset:-4px;border-radius:50%}
+  .msg > a::after{content:"";position:absolute;inset:-8px}
+  .post-head > a::after{content:"";position:absolute;inset:-2px}
+  .switch::after{content:"";position:absolute;inset:-6px -2px}
+  .chip::after,.btn::after,.seg a::after{content:"";position:absolute;inset:-3px -1px}
+  .legal-links a::after{content:"";position:absolute;inset:-5px -3px}
+  .seg button::after{content:"";position:absolute;inset:-4px 0}
+  .pw-toggle::after{content:"";position:absolute;inset:-2px}
+  .scroller,.ib-filters{padding-block:3px;margin-block:-3px}
+  .hostline a,.facts a,.lesson-top b > a{padding:15px 5px;margin:0 -5px}
+  .list-head a.meta,.link-btn{padding-block:13px;margin-block:-13px}
+  .post-club{padding-block:12px;margin-block:-12px}
+  .linkish{min-height:44px;margin-top:-12px;margin-bottom:-6px}
+  .member-row a{padding-block:4px;margin-block:-4px}
+}
+@media (pointer:coarse) and (max-width:767px) and (max-height:500px){
+  .wordmark{position:relative}
+  .wordmark::after{content:"";position:absolute;inset:-4px 0}
 }
 </style>
 </head>
@@ -3356,11 +3394,13 @@ function paint(){
   try{if(aid&&act.selectionStart!=null){ss=act.selectionStart;se=act.selectionEnd;}}catch(e){}
   var mOld=document.getElementById('msgs'),atBottom=!mOld||(mOld.scrollHeight-mOld.scrollTop-mOld.clientHeight<48),mTop=mOld?mOld.scrollTop:0;
   var enter=S.resetScroll,top=enter?0:$main.scrollTop;S.resetScroll=false;
+  if(S.restoreTop!=null){if(Date.now()<S.restoreUntil)top=S.restoreTop;else S.restoreTop=null;}
   var markup='<div class="inner gut pg-'+S.route+(enter?' enter':'')+'">'+html+'</div>',cur=$main.firstElementChild;
   // New page: swap everything. Same page: update only what changed, so maps, photos, scroll rows and focus stay put.
   if(enter||!cur||!cur.classList.contains('inner'))$main.innerHTML=markup;
   else{var tpl=document.createElement('template');tpl.innerHTML=markup;morphNode(cur,tpl.content.firstElementChild);}
   $main.scrollTop=top;
+  if(S.restoreTop!=null&&Math.abs($main.scrollTop-S.restoreTop)<2)S.restoreTop=null;
   var m=document.getElementById('msgs');if(m)m.scrollTop=atBottom?m.scrollHeight:mTop;
   if(aid){var el=document.getElementById(aid);if(el&&el!==document.activeElement){try{el.focus({preventScroll:true});if(ss!=null)el.setSelectionRange(ss,se);}catch(e){}}}
   var inv=document.getElementById('invite');if(inv&&S.selectInvite){inv.focus();inv.select();S.selectInvite=false;}
@@ -3847,8 +3887,16 @@ function flushRefresh(){
 }
 
 /* ---------- routing ---------- */
+var NAV={stack:[],mem:{}};
+function navMemo(h){
+  var cur=NAV.stack[NAV.stack.length-1];
+  if(cur!=null&&$main)NAV.mem[cur]=$main.scrollTop;
+  if(NAV.stack.length>1&&NAV.stack[NAV.stack.length-2]===h){NAV.stack.pop();S.restoreTop=NAV.mem[h]||0;S.restoreUntil=Date.now()+2500;}
+  else{if(cur!==h)NAV.stack.push(h);if(NAV.stack.length>60)NAV.stack.shift();S.restoreTop=null;}
+}
 function route(){
   var h=location.hash.replace(/^#/,'');
+  navMemo(h);
   var pre=h.slice(0,2),rest=h.slice(2);
   S.gameId=null;S.clubId=null;S.playerId=null;S.venueId=null;S.coachId=null;S.leagueId=null;var prevChat=S.chatClubId;S.chatClubId=null;
   if(pre==='g-'&&ID_RE.test(rest)){
@@ -3915,7 +3963,15 @@ window.addEventListener('hashchange',route);
   function isText(el){if(!el)return false;if(el.tagName==='TEXTAREA')return true;if(el.tagName!=='INPUT')return false;return !/^(checkbox|radio|range|file|button|submit|reset|color|image|hidden)$/.test(el.type);}
   document.addEventListener('focusin',function(e){if(mq&&mq.matches&&isText(e.target)){clearTimeout(t);document.body.classList.add('typing');}});
   document.addEventListener('focusout',function(){clearTimeout(t);t=setTimeout(function(){if(!isText(document.activeElement))document.body.classList.remove('typing');},120);});
+  // A scroll the person starts themselves cancels any pending "go back to where you were"
+  ['touchstart','wheel'].forEach(function(ev){$main.addEventListener(ev,function(){S.restoreTop=null;},{passive:true});});
 })();
+/* Search boxes: a tap anywhere on the box goes to the text field */
+document.addEventListener('click',function(e){
+  var box=e.target.closest&&e.target.closest('.search,.top-search');
+  if(!box||e.target.closest('input,button,a,select,label'))return;
+  var i=box.querySelector('input');if(i&&i!==document.activeElement)i.focus();
+});
 function goLogin(next){try{sessionStorage.setItem('bounce-next',next||'discover');}catch(e){}S.login.step='choose';S.login.error='';location.hash='login';}
 function popNext(){var n=null;try{n=sessionStorage.getItem('bounce-next');sessionStorage.removeItem('bounce-next');}catch(e){}return n&&/^[A-Za-z0-9-]+$/.test(n)&&n!=='login'?n:null;}
 function needLogin(next){if(S.uid)return false;goLogin(next);return true;}
