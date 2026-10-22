@@ -1036,6 +1036,16 @@ function dayKey(off){var d=new Date();d.setDate(d.getDate()+(off||0));return key
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function fmtTime(d){var h=d.getHours(),m=d.getMinutes(),ap=h>=12?'pm':'am';h=h%12||12;return m?h+':'+pad(m)+ap:h+ap;}
 function fmtDay(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(1))return 'Tomorrow';return DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()];}
+var DOW_LONG=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function everyDay(d){return 'every '+DOW_LONG[d.getDay()];}
+function seriesErrorText(e){
+  e=String(e||'');
+  if(/CLUB_PAYOUTS_NOT_READY/.test(e))return 'the club’s payouts aren’t set up';
+  if(/PAYOUTS_NOT_READY/.test(e))return 'your payouts aren’t set up';
+  if(/CLINIC_NEEDS_COACH/.test(e))return 'your coach profile is switched off';
+  if(/NOT_CLUB_ADMIN/.test(e))return 'you’re no longer on the club committee';
+  return 'something went wrong';
+}
 function shortDow(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(1))return 'Tmrw';return DOW[d.getDay()];}
 function endOf(g){return new Date(g.start.getTime()+g.durationMin*60000);}
 function isUpcoming(g){return endOf(g).getTime()>Date.now();}
@@ -1083,7 +1093,7 @@ function normGame(r){
     areaLat:typeof r.area_lat==='number'?r.area_lat:null,areaLng:typeof r.area_lng==='number'?r.area_lng:null,
     lat:typeof r.lat==='number'&&isFinite(r.lat)?r.lat:null,lng:typeof r.lng==='number'&&isFinite(r.lng)?r.lng:null,
     waiting:(r.waitlist&&r.waitlist[0]&&r.waitlist[0].count)||0,
-    venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
+    venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',seriesId:r.series_id||null,weekly:!!(r.series&&r.series.active),seriesError:r.series&&r.series.active&&r.series.last_error?String(r.series.last_error):'',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
 }
 /* Maps: an embedded Google map plus a Directions link that opens Google Maps (app or web) */
 function hasPin(o){return o&&o.lat!=null&&o.lng!=null;}
@@ -1216,7 +1226,7 @@ var S={route:'discover',photoBusy:null,clubBiz:null,clubPayouts:{},clubPayments:
 function defaultForm(){
   var p=S.profile||{};
   return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',need:'7',hostPlays:true,
-    venue:'',address:'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
+    venue:'',address:'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,weekly:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
 }
 /* A club game starts from the club's home court, and the organiser isn't counted as a player unless they switch it on */
 function applyClubToForm(cid){
@@ -1242,7 +1252,7 @@ function cardHTML(g,preview){
   var tag=preview?'div':'a';
   var card='<'+tag+' class="game"'+(preview?'':' href="#g-'+esc(g.id)+'"')+'>'+
     '<div class="when"><small>'+esc(shortDow(g.start))+'</small><b>'+esc(fmtTime(g.start))+'</b></div>'+
-    '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.kind==='clinic'?'<span class="tag tag-brand">CLINIC</span>':'')+(duprRange(g.duprMin,g.duprMax)?'<span class="tag">'+esc(duprRange(g.duprMin,g.duprMax))+'</span>':'')+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+
+    '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.kind==='clinic'?'<span class="tag tag-brand">CLINIC</span>':'')+(duprRange(g.duprMin,g.duprMax)?'<span class="tag">'+esc(duprRange(g.duprMin,g.duprMax))+'</span>':'')+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+(g.weekly?'<span class="tag">WEEKLY</span>':'')+
       (left===0&&!preview&&isUpcoming(g)?'<span class="tag">WAITLIST'+(g.waiting?' · '+g.waiting:'')+'</span>':'')+'</div>'+
     '<div class="gtitle">'+esc(g.title)+'</div><div class="meta">'+esc((g.club&&g.club.name?g.club.name+' · ':'')+place(g)+(preview?'':kmTag(g)))+'</div></div>'+
     '<div class="gright"><span class="'+cls+'">'+(left===0?'Full':g.count+'/'+g.capacity)+'<span class="sr"> going</span></span><span class="price">'+esc(priceLabel(g))+'</span></div></'+tag+'>';
@@ -1348,7 +1358,7 @@ function viewGame(){
   // Two panes on desktop (details left, actions and chat right); one column on phones and tablets.
   var h=back+'<div class="gp"><div class="gp-main">';
   h+='<section class="band">'+I.court+'<div class="eyebrow">'+esc(SPORT_LABEL[g.sport]+(g.kind==='clinic'?' · Coaching clinic':''))+'</div><h1>'+esc(g.title)+'</h1>'+
-    '<div class="facts"><div><span>When</span><b>'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+'–'+fmtTime(end))+'</b></div>'+
+    '<div class="facts"><div><span>When</span><b>'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+'–'+fmtTime(end)+(g.weekly?' · '+everyDay(g.start):''))+'</b></div>'+
     '<div><span>Where</span><b>'+(g.venueId?'<a href="#v-'+esc(g.venueId)+'" style="color:inherit">'+esc(place(g,', '))+'</a>':esc(place(g,', ')))+'</b></div><div><span>Level</span><b>'+esc([g.level,duprRange(g.duprMin,g.duprMax)].filter(Boolean).join(' · '))+'</b></div>'+
     '<div><span>Cost</span><b>'+esc(g.price>0?dollars(g.price)+' per player':'Free')+'</b></div></div>'+
     '<div class="hostline">'+(g.club&&g.club.name
@@ -1374,7 +1384,10 @@ function viewGame(){
   if(isHost&&!past){
     h+='<section class="card" aria-label="Host tools"><h2>Host tools</h2><div class="switch-row"><div><b>One Short alert</b><p>Puts your game at the top of Discover for nearby players until it fills.</p></div>'+
       '<button type="button" class="switch" role="switch" aria-label="One Short alert" aria-checked="'+g.oneShort+'" data-act="oneshort" data-id="'+esc(g.id)+'"><i></i></button></div>';
-    h+=S.confirmDel?'<div class="confirm"><b>Delete this game for everyone?</b><p class="meta">Players and chat messages go with it. This can’t be undone.'+(g.payOnline&&g.price>0?' Everyone who paid gets a full refund.':'')+'</p><div class="actions"><button type="button" class="btn btn-danger" data-act="del-yes" data-id="'+esc(g.id)+'">Delete game</button><button type="button" class="btn btn-line" data-act="del-no">Keep game</button></div></div>'
+    h+='<div class="switch-row"><div><b>Repeats every week</b><p>'+(g.weekly?'Next '+DOW_LONG[g.start.getDay()]+'’s game posts itself when this one finishes, and your regulars get a “You in?” alert. Cancelling one week doesn’t stop it.':'Post this game every '+DOW_LONG[g.start.getDay()]+' automatically. Your regulars get a “You in?” alert each week.')+'</p>'+
+      (g.seriesError?'<p class="err">Last week’s game wasn’t posted because '+esc(seriesErrorText(g.seriesError))+'.</p>':'')+'</div>'+
+      '<button type="button" class="switch" role="switch" aria-label="Repeats every week" aria-checked="'+g.weekly+'" data-act="weekly" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'><i></i></button></div>';
+    h+=S.confirmDel?'<div class="confirm"><b>Delete this game for everyone?</b><p class="meta">Players and chat messages go with it. This can’t be undone.'+(g.payOnline&&g.price>0?' Everyone who paid gets a full refund.':'')+(g.weekly?' Only this week is cancelled: next week’s game still posts. To stop it, turn off Repeats every week.':'')+'</p><div class="actions"><button type="button" class="btn btn-danger" data-act="del-yes" data-id="'+esc(g.id)+'">Delete game</button><button type="button" class="btn btn-line" data-act="del-no">Keep game</button></div></div>'
       :'<button type="button" class="btn btn-danger self-start" data-act="del">Delete game</button>';
     h+='</section>';
   }
@@ -1432,6 +1445,7 @@ function viewHost(){
     '<div class="row2"><div class="field"><label for="f-duration">Length</label><select id="f-duration">'+DURATIONS.map(function(o){return '<option value="'+o[0]+'"'+(f.duration===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'+
     '<div class="field"><label for="f-need">Players you need</label><input id="f-need" type="number" inputmode="numeric" min="1" max="50" value="'+esc(f.need)+'"></div></div>'+
     '<label class="check check-plain" for="f-hostPlays"><input id="f-hostPlays" type="checkbox"'+(f.hostPlays?' checked':'')+'><div><b>I’m playing too</b><span>Takes one more spot. Turn off if you’re only organising.</span></div></label>'+
+    '<label class="check check-plain" for="f-weekly"><input id="f-weekly" type="checkbox"'+(f.weekly?' checked':'')+'><div><b>Repeats every week</b><span>Next week’s game posts itself when this one finishes, and your regulars get a “You in?” alert.</span></div></label>'+
     '<p class="meta" id="f-total">'+esc(totalLine(f))+'</p>';
   var where=venuePicker(f)+'<div class="row2"><div class="field"><label for="f-venue">Venue</label><input id="f-venue" maxlength="80" placeholder="Court, park or centre" value="'+esc(f.venue)+'"></div>'+
     '<div class="field"><label for="f-suburb">Suburb</label>'+subInput('f',f,'Start typing, e.g. Point Cook')+'</div></div>'+
@@ -1462,7 +1476,7 @@ function durLabel(v){for(var i=0;i<DURATIONS.length;i++)if(DURATIONS[i][0]===v)r
 function hostSummary(i){
   var f=S.form;
   if(i===0)return [SPORT_LABEL[f.sport],f.level,f.title.trim()].filter(Boolean).join(' · ');
-  if(i===1){var d=new Date(f.date+'T'+f.time),n=Math.round(Number(f.need));return [isNaN(d.getTime())?'':fmtDay(d)+' '+fmtTime(d),durLabel(f.duration),n>0?'need '+n+(f.hostPlays?' + you':''):''].filter(Boolean).join(' · ');}
+  if(i===1){var d=new Date(f.date+'T'+f.time),n=Math.round(Number(f.need));return [isNaN(d.getTime())?'':fmtDay(d)+' '+fmtTime(d),durLabel(f.duration),n>0?'need '+n+(f.hostPlays?' + you':''):'',f.weekly?'weekly':''].filter(Boolean).join(' · ');}
   if(i===2)return [f.venue.trim(),f.address.trim(),f.suburb.trim()].filter(Boolean).join(', ')||(hasPin(f)?'Pinned on the map':'Add the venue and suburb');
   var p=toPrice(f.price);return (p>0?dollars(p)+' per player':'Free')+(f.oneShort?' · One Short alert':'');
 }
@@ -1473,7 +1487,7 @@ function previewHTML(){
   if(f.clubId){var m=S.myClubs.filter(function(x){return x.club&&String(x.club.id)===f.clubId;})[0];if(m)club={id:m.club.id,name:m.club.name};}
   var cap=formCapacity(f);if(!(cap>=1&&cap<=50))cap=8;
   return cardHTML({id:'preview',sport:f.sport,title:f.title.trim()||'Your game name',start:d,durationMin:Number(f.duration)||90,venue:f.venue.trim()||'Venue',suburb:f.suburb.trim()||'Suburb',
-    level:f.level,price:Math.max(0,toPrice(f.price)||0),capacity:cap,oneShort:!!f.oneShort,count:f.hostPlays?1:0,club:club},true);
+    level:f.level,price:Math.max(0,toPrice(f.price)||0),capacity:cap,oneShort:!!f.oneShort,weekly:!!f.weekly,count:f.hostPlays?1:0,club:club},true);
 }
 function updatePreview(){
   var el=document.getElementById('host-preview');if(el)el.innerHTML=previewHTML();
@@ -1734,7 +1748,7 @@ function postGameHTML(g){
   else if(left===0)act='<button type="button" class="btn btn-brand btn-sm" data-act="wait-join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>Join waitlist</button>';
   else act='<button type="button" class="btn btn-accent btn-sm" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>I’m in · '+esc(priceLabel(g))+'</button>';
   return '<div class="pgame"><a class="pgame-link" href="#g-'+esc(g.id)+'"><div class="when"><small>'+esc(shortDow(g.start))+'</small><b>'+esc(fmtTime(g.start))+'</b></div>'+
-    '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.kind==='clinic'?'<span class="tag tag-brand">CLINIC</span>':'')+(duprRange(g.duprMin,g.duprMax)?'<span class="tag">'+esc(duprRange(g.duprMin,g.duprMax))+'</span>':'')+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+'</div><div class="gtitle">'+esc(g.title)+'</div>'+
+    '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.kind==='clinic'?'<span class="tag tag-brand">CLINIC</span>':'')+(duprRange(g.duprMin,g.duprMax)?'<span class="tag">'+esc(duprRange(g.duprMin,g.duprMax))+'</span>':'')+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+(g.weekly?'<span class="tag">WEEKLY</span>':'')+'</div><div class="gtitle">'+esc(g.title)+'</div>'+
     '<div class="meta">'+esc(place(g))+'</div><div class="meta">'+(left>0?'<b>'+left+(left===1?' spot':' spots')+' left</b>':'<b>Full</b>'+(g.waiting?' · '+g.waiting+' waiting':''))+' · '+g.count+'/'+g.capacity+' going</div></div></a>'+
     '<div class="pgame-act">'+act+'</div></div>';
 }
@@ -2907,6 +2921,7 @@ function fieldExtra(e){
   else if(id.indexOf('ld-')===0&&S.ladderForm){S.ladderForm[id.slice(3)]=t.value;}
   else if(id==='pf-duprId'||id==='pf-duprDoubles'||id==='pf-duprSingles'){if(S.pf){S.pf[id.slice(3,4).toLowerCase()+id.slice(4)]=t.value;S.pfDirty=true;}}
   else if(id==='f-venueId'){if(ch){var vv=(S.venues||[]).filter(function(x){return x.id===t.value;})[0];applyVenueToForm(vv||null);render();}}
+  else if(id==='f-weekly'){S.form.weekly=t.checked;updatePreview();}
   else if(id==='f-clinic'){S.form.clinic=t.checked;updatePreview();}
   else if(id==='f-payOnline'){S.form.payOnline=t.checked;render();}
   else if(id==='f-venue'){S.form.venue=t.value;if(S.form.venueId){var cur=(S.venues||[]).filter(function(x){return x.id===S.form.venueId;})[0];if(!cur||cur.name!==t.value)S.form.venueId='';}updatePreview();updateWhereMap();}
@@ -3559,7 +3574,7 @@ function loadGames(){
     S.loaded=true;
   });
 }
-var GAME_SELECT='*, game_players(count), waitlist(count), club:clubs(id, name, logo_url)';
+var GAME_SELECT='*, game_players(count), waitlist(count), club:clubs(id, name, logo_url), series:game_series!games_series_id_fkey(active, last_error)';
 function loadMine(){
   if(!S.uid){S.mine=null;S.myIds={};S.myWait=null;S.waitIds={};return Promise.resolve();}
   return Promise.all([
@@ -3593,7 +3608,7 @@ function loadGame(){
   if(S.route!=='game'||!S.gameId)return Promise.resolve();
   var id=S.gameId;
   return Promise.all([
-    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url), club:clubs(id, name, logo_url)').eq('id',id).maybeSingle(),
+    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url), club:clubs(id, name, logo_url), series:game_series!games_series_id_fkey(active, last_error)').eq('id',id).maybeSingle(),
     sb.from('game_players').select('user_id, joined_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('joined_at'),
     sb.from('waitlist').select('user_id, created_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('created_at')
   ]).then(function(res){
@@ -4061,6 +4076,15 @@ function toggleOneShort(id){
     refreshAll();
   });
 }
+function toggleWeekly(id){
+  var g=S.game;if(!g||S.busy)return;var next=!g.weekly;S.busy=true;render();
+  sb.rpc('set_weekly',{p_game:id,p_on:next}).then(function(r){
+    S.busy=false;
+    if(r.error)toast(friendlyError(r.error,'Couldn’t change the weekly repeat. Try again.'));
+    else toast(next?'Repeats every week. Next week’s game posts itself when this one finishes.':'Weekly repeat off. Games already posted stay on.');
+    loadGame().then(render);refreshAll();
+  });
+}
 function deleteGame(id){
   sb.from('games').delete().eq('id',id).then(function(r){
     if(r.error){toast(friendlyError(r.error,'Couldn’t delete the game. Try again.'));return;}
@@ -4071,7 +4095,7 @@ function invite(){
   var g=S.game;if(!g)return;
   var left=spotsLeft(g,S.players.length);
   var url=location.origin+location.pathname+'#g-'+g.id;
-  var text=SPORT_LABEL[g.sport]+': '+g.title+'\n'+fmtDay(g.start)+' '+fmtTime(g.start)+' at '+[g.venue,g.address,g.suburb].filter(Boolean).join(', ')+'\n'+(left>0?left+(left===1?' spot':' spots')+' left':'Full')+' · '+priceLabel(g)+' · '+g.level;
+  var text=SPORT_LABEL[g.sport]+': '+g.title+'\n'+fmtDay(g.start)+' '+fmtTime(g.start)+(g.weekly?' ('+everyDay(g.start)+')':'')+' at '+[g.venue,g.address,g.suburb].filter(Boolean).join(', ')+'\n'+(left>0?left+(left===1?' spot':' spots')+' left':'Full')+' · '+priceLabel(g)+' · '+g.level;
   function fallback(){
     try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Invite copied. Paste it in your group chat.');},function(){S.inviteText=text+'\n'+url;S.selectInvite=true;render();});}
     catch(e){S.inviteText=text+'\n'+url;S.selectInvite=true;render();}
@@ -4092,7 +4116,10 @@ function createGame(){
     dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null}).select('id').single().then(function(r){
     S.busy=false;
     if(r.error){S.formError=friendlyError(r.error,'Couldn’t post the game. Check your connection and try again.');render();return;}
-    S.form=defaultForm();S.hostStep=0;celebrate();toast('Game posted');location.hash='g-'+r.data.id;refreshAll();
+    var gid=r.data.id,weekly=!!f.weekly;
+    function done(msg){S.form=defaultForm();S.hostStep=0;celebrate();toast(msg);location.hash='g-'+gid;refreshAll();}
+    if(!weekly){done('Game posted');return;}
+    sb.rpc('set_weekly',{p_game:gid,p_on:true}).then(function(w){done(w.error?'Game posted, but the weekly repeat didn’t turn on. Turn it on in Host tools.':'Game posted. It repeats every week.');});
   });
 }
 function sendMsg(){
@@ -4366,6 +4393,7 @@ document.addEventListener('click',function(e){
   else if(a==='join')join(id);
   else if(a==='leave')leave(id);
   else if(a==='oneshort')toggleOneShort(id);
+  else if(a==='weekly')toggleWeekly(id);
   else if(a==='del'){S.confirmDel=true;render();}
   else if(a==='del-no'){S.confirmDel=false;render();}
   else if(a==='del-yes')deleteGame(id);
