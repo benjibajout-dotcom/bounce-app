@@ -879,6 +879,16 @@ main{background-image:var(--grain);background-size:22px 22px;background-attachme
 .sub-none{display:block;padding:10px 12px;color:var(--muted);font-size:14px}
 .data-credit{margin-top:6px;font-size:12px}
 @media (max-width:599px){.row2:has(.sub-pick){grid-template-columns:minmax(0,1fr)}}
+
+/* Password sign-in */
+.login-mode{margin-bottom:4px}
+.pw-field{position:relative;display:block}
+.pw-field input{padding-right:76px}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-height:40px;min-width:60px;padding:0 12px;border:0;border-radius:10px;background:none;color:var(--brand-text);font:inherit;font-weight:700;cursor:pointer}
+.pw-toggle:hover{background:var(--brand-soft)}
+.login-links{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
+.link-btn{min-height:44px;padding:0;border:0;background:none;color:var(--brand-text);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+p.meta .link-btn{min-height:0;font-weight:600}
 </style>
 </head>
 <body>
@@ -1122,7 +1132,7 @@ var S={route:'discover',photoBusy:null,clubBiz:null,clubPayouts:{},clubPayments:
   form:null,formError:'',busy:false,draft:'',confirmDel:false,inviteText:'',resetScroll:true,
   clubs:null,clubQ:'',clubSport:'all',myClubs:[],club:null,clubId:null,clubState:'idle',clubMembers:[],clubGames:[],
   clubForm:null,clubEditing:false,clubFormError:'',confirmClubDel:false,player:null,playerId:null,playerClubs:[],playerState:'idle',
-  login:{step:'choose',email:'',code:'',link:'',error:'',busy:false}};
+  login:{step:'choose',mode:'password',email:'',password:'',show:false,code:'',link:'',error:'',busy:false}};
 function defaultForm(){
   var p=S.profile||{};
   return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',need:'7',hostPlays:true,
@@ -1461,7 +1471,7 @@ function viewProfile(){
   var pic=S.profile&&S.profile.avatar_url,pbusy=S.photoBusy==='me';
   var h='<section class="profile-head"><label class="photo-pick'+(pbusy?' busy':'')+'" for="pf-photo" aria-label="'+(pic?'Change your photo':'Add a profile photo')+'">'+avatar(S.uid,pf.display_name,pic,76)+'<span class="cam">'+I.photo+'</span></label>'+
     '<input id="pf-photo" class="sr" type="file" accept="image/*"'+(pbusy?' disabled':'')+'>'+
-    '<div><h1>'+esc(pf.display_name||'Your profile')+'</h1><p class="meta">Signed in with '+prov+'</p>'+
+    '<div><h1>'+esc(pf.display_name||'Your profile')+'</h1><p class="meta">Signed in with '+prov+' · <button type="button" class="link-btn" data-act="set-password">Set a password</button></p>'+
     '<div class="photo-actions"><label class="btn btn-line btn-sm" for="pf-photo">'+(pbusy?'Uploading…':pic?'Change photo':'Add photo')+'</label>'+
     (pic&&!pbusy?'<button type="button" class="btn btn-line btn-sm" data-act="pf-photo-remove">Remove</button>':'')+'</div></div></section>';
   h+='<form class="stack" id="profile-form">'+
@@ -2020,8 +2030,34 @@ function viewLogin(){
     if(showGoogle)h+='<button type="button" class="btn btn-google" data-act="oauth" data-v="google">'+I.google+'Continue with Google</button>';
     h+='</div>';
     if(showApple||showGoogle)h+='<div class="divider"><span>or use your email</span></div>';
-    h+='<form class="stack" id="email-form" novalidate><div class="field"><label for="login-email">Email</label><input id="login-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+esc(L.email)+'"></div>'+
-      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':CONFIG.EMAIL_CODE?'Email me a sign-in code':'Email me a sign-in link')+'</button></form>';
+    h+='<div class="seg login-mode" role="group" aria-label="How to sign in"><button type="button" data-act="login-mode" data-v="password" aria-pressed="'+(L.mode!=='link')+'">Password</button><button type="button" data-act="login-mode" data-v="link" aria-pressed="'+(L.mode==='link')+'">Email link</button></div>';
+    if(L.mode!=='link'){
+      h+='<form class="stack" id="pw-form" novalidate>'+emailField(L)+pwField(L,'Password','current-password')+
+        '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Signing in…':'Sign in')+'</button>'+
+        '<div class="login-links"><button type="button" class="link-btn" data-act="pw-forgot">Forgot password?</button><button type="button" class="link-btn" data-act="pw-signup">New here? Create an account</button></div></form>';
+    } else {
+      h+='<form class="stack" id="email-form" novalidate>'+emailField(L)+
+        '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':CONFIG.EMAIL_CODE?'Email me a sign-in code':'Email me a sign-in link')+'</button><p class="meta">No password needed. We email you a link that signs you in.</p></form>';
+    }
+  } else if(L.step==='signup'){
+    h+='<form class="stack" id="signup-form" novalidate><h2>Create your account</h2>'+emailField(L)+pwField(L,'Choose a password','new-password')+
+      '<span class="hint">At least 8 characters.</span>'+
+      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Creating…':'Create account')+'</button>'+
+      '<button type="button" class="btn btn-line" data-act="login-back">I already have an account</button></form>';
+  } else if(L.step==='confirm'||L.step==='reset'){
+    var homeApp2=S.push.standalone,iphone2=S.push.ios||homeApp2,isReset=L.step==='reset';
+    h+='<div class="stack"><div class="card"><h2>'+(isReset?'Check your email':'Confirm your email')+'</h2>'+
+      '<p>We sent '+(isReset?'a link to choose a new password':'a link to confirm your account')+' to <b>'+esc(L.email)+'</b>. Open it on this phone.</p>'+
+      (iphone2?'<p class="meta">Using Bounce from your Home Screen? On iPhone the link opens Safari. Press and hold the button in the email, tap <b>Copy Link</b>, then paste it below.</p>':'')+
+      '<p class="meta">No email after a minute? Check your spam folder.</p></div>';
+    if(iphone2)h+='<form class="stack" id="link-form" novalidate><button type="button" class="btn btn-brand" data-act="paste-link"'+(L.busy?' disabled':'')+'>'+(L.busy?'Checking…':'Paste the link')+'</button>'+
+      '<div class="field"><label for="login-link">Or paste the link here</label><input id="login-link" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…supabase.co/auth/v1/verify…" value="'+esc(L.link)+'"></div>'+
+      '<button class="btn btn-line" type="submit"'+(L.busy?' disabled':'')+'>Use this link</button></form>';
+    h+='<button type="button" class="btn btn-line" data-act="login-back">Back to sign in</button></div>';
+  } else if(L.step==='newpass'){
+    h+='<form class="stack" id="newpass-form" novalidate><h2>'+(S.uid?'Set your password':'Choose a new password')+'</h2><p class="meta">Use it to sign in with your email next time.</p>'+
+      pwField(L,'New password','new-password')+'<span class="hint">At least 8 characters.</span>'+
+      '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Saving…':'Save password')+'</button></form>';
   } else {
     if(CONFIG.EMAIL_CODE){
       h+='<form class="stack" id="code-form" novalidate><p>We sent a sign-in email to <b>'+esc(L.email)+'</b>. Tap the link in it, or type the 6-digit code here.</p>'+
@@ -3815,7 +3851,7 @@ function route(){
   if(S.route!=='coach-edit')S.coachForm=null;
   if(S.route!=='league-new')S.leagueForm=null;
   S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.confirmLeave=false;S.payoutBusy=false;S.abnEditing=false;S.confirmAbnDel=false;S.abnError='';S.venueError='';S.coachError='';S.leagueError='';
-  if(S.route==='login'&&S.uid){location.replace('#'+(popNext()||'discover'));return;}
+  if(S.route==='login'&&S.uid&&S.login.step!=='newpass'){location.replace('#'+(popNext()||'discover'));return;}
   if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',state:(S.profile&&S.profile.state)||'',postcode:(S.profile&&S.profile.postcode)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
   S.sheet=null;hideHover();
@@ -4056,6 +4092,65 @@ function inviteClub(){
   else fallback();
 }
 
+function emailField(L){return '<div class="field"><label for="login-email">Email</label><input id="login-email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" value="'+esc(L.email)+'"></div>';}
+function pwField(L,label,ac){
+  return '<div class="field"><label for="login-password">'+esc(label)+'</label><span class="pw-field"><input id="login-password" type="'+(L.show?'text':'password')+'" autocomplete="'+ac+'" autocapitalize="off" spellcheck="false" maxlength="72" value="'+esc(L.password)+'">'+
+    '<button type="button" class="pw-toggle" data-act="pw-show" aria-pressed="'+(!!L.show)+'" aria-label="'+(L.show?'Hide password':'Show password')+'">'+(L.show?'Hide':'Show')+'</button></span></div>';
+}
+function emailOk(e){return /^\S+@\S+\.\S+$/.test(String(e||'').trim());}
+function pwMsg(err){
+  var m=String(err&&err.message||'').toLowerCase();
+  if(m.indexOf('invalid login')>=0)return 'Email or password is wrong. Forgot it? Tap Forgot password.';
+  if(m.indexOf('not confirmed')>=0)return 'Confirm your email first: open the link we emailed when you signed up.';
+  if(m.indexOf('already registered')>=0||m.indexOf('already exists')>=0)return 'There’s already an account with that email. Sign in, or tap Forgot password to set a password.';
+  if(m.indexOf('password')>=0&&(m.indexOf('weak')>=0||m.indexOf('least')>=0||m.indexOf('short')>=0||m.indexOf('characters')>=0))return 'Choose a stronger password: at least 8 characters.';
+  if(m.indexOf('rate')>=0||m.indexOf('too many')>=0||(err&&err.status===429))return 'Too many tries. Wait a minute, then try again.';
+  return 'That didn’t work. Check your connection and try again.';
+}
+function pwSignIn(){
+  var L=S.login;L.error='';
+  if(!emailOk(L.email)){L.error='Enter your email address.';render();return;}
+  if(!L.password){L.error='Enter your password.';render();return;}
+  L.busy=true;render();
+  sb.auth.signInWithPassword({email:L.email.trim(),password:L.password}).then(function(r){
+    L.busy=false;if(r.error){L.error=pwMsg(r.error);render();}else{L.password='';}
+  });
+}
+function pwSignUp(){
+  var L=S.login;L.error='';
+  if(!emailOk(L.email)){L.error='Enter the email address you use every day.';render();return;}
+  if(String(L.password).length<8){L.error='Choose a password of at least 8 characters.';render();return;}
+  L.busy=true;render();
+  sb.auth.signUp({email:L.email.trim(),password:L.password,options:{emailRedirectTo:location.origin+location.pathname}}).then(function(r){
+    L.busy=false;
+    if(r.error){L.error=pwMsg(r.error);render();return;}
+    L.password='';
+    if(r.data&&r.data.session)return;
+    var u=r.data&&r.data.user;
+    if(u&&Array.isArray(u.identities)&&!u.identities.length){L.step='choose';L.mode='password';L.error='There’s already an account with that email. Sign in, or tap Forgot password to set a password.';render();return;}
+    L.step='confirm';render();
+  });
+}
+function pwForgot(){
+  var L=S.login;L.error='';
+  if(!emailOk(L.email)){L.error='Type your email above, then tap Forgot password.';render();var i=document.getElementById('login-email');if(i)i.focus();return;}
+  L.busy=true;render();
+  sb.auth.resetPasswordForEmail(L.email.trim(),{redirectTo:location.origin+location.pathname}).then(function(r){
+    L.busy=false;if(r.error)L.error=pwMsg(r.error);else L.step='reset';render();
+  });
+}
+function pwSave(){
+  var L=S.login;L.error='';
+  if(String(L.password).length<8){L.error='Choose a password of at least 8 characters.';render();return;}
+  L.busy=true;render();
+  sb.auth.updateUser({password:L.password}).then(function(r){
+    L.busy=false;
+    if(r.error){L.error=pwMsg(r.error);render();return;}
+    L.password='';L.show=false;L.step='choose';toast('Password saved. Use it to sign in next time.');
+    location.hash=popNext()||'discover';
+  });
+}
+function startRecovery(){S.login.step='newpass';S.login.password='';S.login.error='';S.login.busy=false;if(location.hash!=='#login')location.hash='login';else render();}
 function oauth(provider){
   S.login.error='';
   sb.auth.signInWithOAuth({provider:provider,options:{redirectTo:location.origin+location.pathname}}).then(function(r){
@@ -4082,8 +4177,8 @@ function linkSignIn(){
   L.busy=true;render();
   sb.auth.verifyOtp({token_hash:tok,type:['signup','invite','recovery','email_change','email'].indexOf(typ)>=0?typ:'magiclink'}).then(function(r){
     L.busy=false;
-    if(r.error){L.error='That link has expired or was already used. Tap Use a different email, send a new one, and paste the newest link.';render();}
-    else{L.link='';}
+    if(r.error){L.error='That link has expired or was already used. Go back, send a new one, and paste the newest link.';render();}
+    else{L.link='';if(typ==='recovery')startRecovery();}
   });
 }
 function pasteLink(){
@@ -4157,8 +4252,13 @@ document.addEventListener('click',function(e){
   else if(a==='del-yes')deleteGame(id);
   else if(a==='invite')invite();
   else if(a==='login')goLogin(v);
-  else if(a==='login-back'){S.login.step='choose';S.login.code='';S.login.link='';S.login.error='';render();}
+  else if(a==='login-back'){S.login.step='choose';S.login.code='';S.login.link='';S.login.password='';S.login.error='';render();}
   else if(a==='paste-link')pasteLink();
+  else if(a==='login-mode'){S.login.mode=v==='link'?'link':'password';S.login.error='';render();}
+  else if(a==='pw-signup'){S.login.step='signup';S.login.error='';render();}
+  else if(a==='pw-forgot')pwForgot();
+  else if(a==='pw-show'){var L=S.login;L.show=!L.show;var pi=document.getElementById('login-password');if(pi)pi.type=L.show?'text':'password';b.setAttribute('aria-pressed',String(L.show));b.setAttribute('aria-label',L.show?'Hide password':'Show password');b.textContent=L.show?'Hide':'Show';}
+  else if(a==='set-password'){try{sessionStorage.setItem('bounce-next','profile');}catch(e){}startRecovery();}
   else if(a==='oauth')oauth(v==='apple'?'apple':'google');
   else if(a==='signout'){forgetDevice().then(function(){return sb.auth.signOut();}).then(function(){location.hash='discover';});}
   else if(a==='pfsport'){var i=S.pf.sports.indexOf(v);if(i>=0)S.pf.sports.splice(i,1);else S.pf.sports.push(v);S.pfDirty=true;render();}
@@ -4208,6 +4308,7 @@ function onField(e){
   else if(id==='club-q'){S.clubQ=t.value;render();}
   else if(id.indexOf('cf-')===0&&S.clubForm){S.clubForm[id.slice(3)]=t.value;}
   else if(id==='login-email')S.login.email=t.value;
+  else if(id==='login-password')S.login.password=t.value;
   else if(id==='login-link')S.login.link=t.value;
   else if(id==='login-code'){var c=t.value.replace(/\D/g,'').slice(0,6);if(c!==t.value)t.value=c;S.login.code=c;}
 }
@@ -4220,6 +4321,9 @@ document.addEventListener('submit',function(e){
   else if(id==='chat-form')sendMsg();
   else if(id==='profile-form')saveProfile();
   else if(id==='email-form')sendCode();
+  else if(id==='pw-form')pwSignIn();
+  else if(id==='signup-form')pwSignUp();
+  else if(id==='newpass-form')pwSave();
   else if(id==='code-form')verifyCode();
   else if(id==='link-form')linkSignIn();
   else if(id==='club-form')saveClub();
@@ -4273,8 +4377,9 @@ sb=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY,{au
 sb.auth.onAuthStateChange(function(evt,session){
   setTimeout(function(){
     var wasIn=!!S.uid;setSession(session);S.authReady=true;
-    if(evt==='SIGNED_IN'&&!wasIn){
-      cleanUrl();S.login={step:'choose',email:'',code:'',error:'',busy:false};
+    if(evt==='PASSWORD_RECOVERY'){cleanUrl();startRecovery();refreshAll();return;}
+    if(evt==='SIGNED_IN'&&!wasIn&&S.login.step!=='newpass'){
+      cleanUrl();S.login={step:'choose',mode:'password',email:'',password:'',show:false,code:'',link:'',error:'',busy:false};
       var next=popNext();
       if(next||S.route==='login')location.hash=next||'discover';
       toast('Signed in. Welcome to Bounce.');
