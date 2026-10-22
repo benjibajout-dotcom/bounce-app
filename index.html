@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bounce</title>
+<title>Bounce Up</title>
 <meta name="description" content="Find a game near you, fill a spot when a team is one short, or host your own. Pickleball, basketball, futsal, tennis, running and more.">
 <meta name="theme-color" content="#1F5C4A">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Bounce">
+<meta name="apple-mobile-web-app-title" content="Bounce Up">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta property="og:title" content="Bounce: find a game">
+<meta property="og:title" content="Bounce Up: find a game">
 <meta property="og:description" content="Join pickup games, fill a spot when a team is one short, or host your own.">
 <meta property="og:image" content="icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Unbounded:wght@800&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
-/* ===== Bounce settings: paste your two Supabase values here ===== */
+/* ===== Bounce Up settings: paste your two Supabase values here ===== */
 var CONFIG = {
   SUPABASE_URL: 'https://kwpahyaxwgfhbnipsxdx.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3cGFoeWF4d2dmaGJuaXBzeGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTMxMzcsImV4cCI6MjEwNzk2OTEzN30.M3fXwGmLMUkomS0THF3fgoAQTK6V4qRKgNbiykENO5M',
@@ -372,7 +372,7 @@ fieldset.dupr legend{padding:0 6px}
 .side-ico svg{width:17px;height:17px}
 @media (max-width:767px){.explore .xtile{flex-direction:column;align-items:center;text-align:center;gap:6px;padding:10px 6px}.explore .xtile small{display:none}.explore .xtile b{font-size:14px}}
 @media (max-width:420px){.row3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.row3 .field:first-child{grid-column:1/-1}.kv{grid-template-columns:minmax(0,1fr)}}
-/* The Bounce ball, in 3D. loop = opening, loading and sign-in; idle = header (one hop every 4s); plain = celebration */
+/* The Bounce Up ball, in 3D. loop = opening, loading and sign-in; idle = header (one hop every 4s); plain = celebration */
 .ballsvg{overflow:visible;flex:none}
 .ballsvg .ball,.ballsvg .squash,.ballsvg .face{transform-box:view-box}
 .ballsvg .squash{transform-origin:156px 222px}
@@ -889,13 +889,24 @@ main{background-image:var(--grain);background-size:22px 22px;background-attachme
 .login-links{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 .link-btn{min-height:44px;padding:0;border:0;background:none;color:var(--brand-text);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 p.meta .link-btn{min-height:0;font-weight:600}
+
+/* Bounce Up logo */
+.wordmark{gap:8px;font-family:'Unbounded',var(--display);font-weight:800;font-size:20px;letter-spacing:-.045em;font-variation-settings:normal}
+.wordmark .wm-up{color:var(--accent-text)}
+.bu-u{stroke:var(--brand-text)}
+.bu-ball{fill:var(--accent)}
+.bu-mark{flex:none}
+.login-hero .bu-hero{display:block;margin:0 auto 8px}
+.bu-hero .bu-ball{transform-box:fill-box;transform-origin:center;animation:bu-bounce 2.4s cubic-bezier(.33,0,.25,1) infinite}
+@keyframes bu-bounce{0%,62%,100%{transform:translateY(0)}31%{transform:translateY(-9px)}}
+@media (prefers-reduced-motion:reduce){.bu-hero .bu-ball{animation:none}}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><radialGradient id="bb-body" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="#FFC995"/><stop offset=".34" stop-color="#FF8F42"/><stop offset=".74" stop-color="#F06A1F"/><stop offset="1" stop-color="#B9480E"/></radialGradient><radialGradient id="bb-rim" cx="50%" cy="50%" r="50%"><stop offset=".72" stop-color="#7A2E06" stop-opacity="0"/><stop offset="1" stop-color="#7A2E06" stop-opacity=".42"/></radialGradient><radialGradient id="bb-bounce" cx="50%" cy="100%" r="62%"><stop offset="0" stop-color="#2E8B6A" stop-opacity=".32"/><stop offset="1" stop-color="#2E8B6A" stop-opacity="0"/></radialGradient><radialGradient id="bb-spec" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/><stop offset=".45" stop-color="#FFF3E6" stop-opacity=".55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient><radialGradient id="bb-shadow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#0A1C15" stop-opacity=".75"/><stop offset=".6" stop-color="#0A1C15" stop-opacity=".35"/><stop offset="1" stop-color="#0A1C15" stop-opacity="0"/></radialGradient><clipPath id="bb-clip"><circle cx="156" cy="170" r="52"/></clipPath></defs></svg>
 <div id="app">
   <header class="top gut">
-    <a class="wordmark" href="#discover" aria-label="Bounce home"><svg class="ballsvg idle" width="36" height="36" viewBox="30 40 200 200" aria-hidden="true" focusable="false"><g class="trail"><circle cx="96" cy="67" r="9.8"/><circle cx="85" cy="76" r="9"/><circle cx="76" cy="92" r="8.2"/><circle cx="67" cy="113" r="7.2"/><circle cx="59" cy="141" r="6.4"/><circle cx="52" cy="175" r="5.7"/></g><ellipse class="shadow" cx="156" cy="226" rx="44" ry="9" fill="url(#bb-shadow)"/><g class="ball"><g class="squash"><circle cx="156" cy="170" r="52" fill="url(#bb-body)"/><g clip-path="url(#bb-clip)"><g class="face"><ellipse class="eye" cx="140.8" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><ellipse class="eye" cx="171.2" cy="161.3" rx="6.4" ry="8.2" fill="#1A0E05"/><path d="M136.7 180.8 Q156 198 175.3 180.8" fill="none" stroke="#1A0E05" stroke-width="7.6" stroke-linecap="round"/></g><circle cx="156" cy="170" r="52" fill="url(#bb-bounce)"/><circle cx="156" cy="170" r="52" fill="url(#bb-rim)"/></g><ellipse cx="134" cy="143" rx="17" ry="12" transform="rotate(-35 134 143)" fill="url(#bb-spec)"/><circle cx="129.5" cy="139" r="3.6" fill="#FFFFFF" opacity=".9"/></g></g></svg>bounce</a>
+    <a class="wordmark" href="#discover" aria-label="Bounce Up home"><svg class="bu-mark" width="32" height="32" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path class="bu-u" d="M18 42 C 18 80, 82 80, 82 42" fill="none" stroke-width="16" stroke-linecap="round"/><circle class="bu-ball" cx="50" cy="22" r="15"/></svg><span class="wm-text">bounce<span class="wm-up">up</span></span></a>
     <div class="top-search" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><label class="sr" for="hq">Search games</label><input id="hq" type="search" placeholder="Search games, venues, suburbs" autocomplete="off"><kbd class="kbd" aria-hidden="true">/</kbd></div>
     <div class="top-right">
       <span class="where" id="where"></span>
@@ -969,7 +980,7 @@ function startsLabel(g){
   if(mins<180)return 'Starts in '+Math.floor(mins/60)+'h '+(mins%60)+'m';
   return fmtDay(g.start)+' · '+fmtTime(g.start);
 }
-/* The 3D Bounce ball (same drawing as the header logo). Gradients live in the hidden <svg> at the top of <body>. */
+/* The 3D Bounce Up ball (same drawing as the header logo). Gradients live in the hidden <svg> at the top of <body>. */
 function ballSVG(mode,trail,size){
   var vb=mode==='plain'?'98 112 116 116':trail?'30 40 200 200':'56 40 200 200';
   var dots=[[96,67,9.8],[85,76,9],[76,92,8.2],[67,113,7.2],[59,141,6.4],[52,175,5.7]];
@@ -1170,7 +1181,7 @@ function cardHTML(g,preview){
   return '<div class="gwrap">'+card+(canQuickJoin(g)?'<button type="button" class="btn btn-accent btn-sm qjoin" data-act="join" data-id="'+esc(g.id)+'" aria-label="Quick join: '+esc(g.title)+'">Quick join</button>':'')+'</div>';
 }
 function clubsStrip(list,cls){
-  return '<section class="stack-sm list-break '+cls+'" aria-label="Clubs near you"><div class="list-head"><h2>'+(S.profile&&S.profile.suburb?'Clubs near you':'Clubs on Bounce')+'</h2><a class="meta" href="#clubs">See all</a></div><div class="strip">'+
+  return '<section class="stack-sm list-break '+cls+'" aria-label="Clubs near you"><div class="list-head"><h2>'+(S.profile&&S.profile.suburb?'Clubs near you':'Clubs on Bounce Up')+'</h2><a class="meta" href="#clubs">See all</a></div><div class="strip">'+
     list.map(function(c){return '<a class="clubcard" href="#c-'+esc(c.id)+'">'+clubLogo(c,40)+'<b>'+esc(c.name)+'</b><span class="meta">'+esc([c.suburb,c.members+(c.members===1?' member':' members')].filter(Boolean).join(' · '))+'</span></a>';}).join('')+'</div></section>';
 }
 function miniClub(c){
@@ -1200,7 +1211,7 @@ function discoverRail(alerts,clubs){
     '<button type="button" class="chip" data-act="qf" data-v="free" aria-pressed="'+S.free+'">Free</button>'+
     '<button type="button" class="chip" data-act="qf" data-v="beginner" aria-pressed="'+(S.level==='Beginner')+'">Beginner friendly</button></div>'+
     (home?'':'<p class="meta"><a href="#profile">Add your home suburb</a> to use Near me.</p>')+'</section>';
-  if(clubs.length)h+='<section class="card rail-card"><div class="list-head"><h2>'+(S.profile&&S.profile.suburb?'Clubs near you':'Clubs on Bounce')+'</h2><a class="meta" href="#clubs">See all</a></div><div>'+clubs.slice(0,5).map(miniClub).join('')+'</div></section>';
+  if(clubs.length)h+='<section class="card rail-card"><div class="list-head"><h2>'+(S.profile&&S.profile.suburb?'Clubs near you':'Clubs on Bounce Up')+'</h2><a class="meta" href="#clubs">See all</a></div><div>'+clubs.slice(0,5).map(miniClub).join('')+'</div></section>';
   return h+'</aside>';
 }
 function skeletons(n){var h='<div class="list">';for(var i=0;i<n;i++)h+='<div class="skeleton"></div>';return h+'</div>';}
@@ -1262,7 +1273,7 @@ function viewGame(){
   if(!g)return back+'<div class="empty"><strong>This game isn’t here anymore</strong><p>The host may have deleted it.</p><a class="btn btn-accent" href="#discover">Find another game</a></div>';
   var end=endOf(g),count=S.players.length,left=spotsLeft(g,count);
   var isHost=!!S.uid&&g.hostId===S.uid,mine=!!S.uid&&S.players.some(function(p){return p.user_id===S.uid;}),past=!isUpcoming(g);
-  var hostName=(g.host&&g.host.display_name)||'A Bounce player';
+  var hostName=(g.host&&g.host.display_name)||'A Bounce Up player';
   var wPos=0;S.waiting.forEach(function(w,i){if(S.uid&&w.user_id===S.uid)wPos=i+1;});
   var canAct=!past&&!isHost&&!mine;
   // Two panes on desktop (details left, actions and chat right); one column on phones and tablets.
@@ -1462,7 +1473,7 @@ function viewMine(){
 }
 
 function legalLinks(){
-  return '<nav class="legal-links" aria-label="Bounce policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
+  return '<nav class="legal-links" aria-label="Bounce Up policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
 }
 function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
@@ -1522,7 +1533,7 @@ function viewClubs(){
 }
 function viewClubForm(editing){
   var f=S.clubForm||{};
-  var h=editing?'':'<a class="back" href="#clubs">'+I.back+'Clubs</a><section class="hello"><h1>Start a club</h1><p class="meta">Give your group a home on Bounce. You’ll be on the committee and can add others.</p></section>';
+  var h=editing?'':'<a class="back" href="#clubs">'+I.back+'Clubs</a><section class="hello"><h1>Start a club</h1><p class="meta">Give your group a home on Bounce Up. You’ll be on the committee and can add others.</p></section>';
   if(!S.uid)return h+signInPrompt('Sign in to start a club','It takes a few seconds with your email.','club-new');
   h+='<form class="stack" id="club-form" novalidate>';
   if(editing)h+='<h2>Edit club</h2>';
@@ -1614,8 +1625,8 @@ function viewPlayer(){
   if(S.playerState==='loading')return back+loader('Loading player…');
   var p=S.player;
   if(!p)return back+'<div class="empty"><strong>Player not found</strong><p>This profile may have been removed.</p></div>';
-  var me=p.id===S.uid,nm=p.display_name||'Bounce player';
-  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(p.id,nm,p.avatar_url,72)+'<div><h1>'+esc(nm)+'</h1><p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce player')+'</p></div></section>';
+  var me=p.id===S.uid,nm=p.display_name||'Bounce Up player';
+  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(p.id,nm,p.avatar_url,72)+'<div><h1>'+esc(nm)+'</h1><p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce Up player')+'</p></div></section>';
   if(p.bio)h+='<p class="notes">'+esc(p.bio)+'</p>';
   if(p.sports&&p.sports.length)h+='<section class="stack-sm"><h2>Plays</h2>'+sportsChips(p.sports.filter(function(s){return SPORT_LABEL[s];}))+'</section>';
   h+=duprLine(p);
@@ -1711,7 +1722,7 @@ function clubTabs(cur){
 }
 function viewFeed(){
   var mine=S.myClubs.filter(function(m){return m.club;}),admin=adminClubList();
-  var h='<section class="hello"><h1>Clubs</h1><p class="meta">'+(mine.length?'News, photos and sessions from your clubs.':'What clubs on Bounce are posting.')+'</p></section>'+clubTabs('feed');
+  var h='<section class="hello"><h1>Clubs</h1><p class="meta">'+(mine.length?'News, photos and sessions from your clubs.':'What clubs on Bounce Up are posting.')+'</p></section>'+clubTabs('feed');
   if(admin.length)h+=S.composer&&S.route==='feed'?composerHTML():'<button type="button" class="compose-prompt" data-act="post-new" data-id="'+esc(admin[0].id)+'">'+clubLogo(admin[0],36)+'<span>Share an update with your club…</span></button>';
   if(S.feed===null)return h+skeletons(2);
   if(!mine.length&&S.feed.length)h+='<p class="notice">Join a club to see its posts here first. <a href="#clubs">Find a club</a></p>';
@@ -1778,7 +1789,7 @@ function gameUrl(g){return location.origin+location.pathname+'#g-'+g.id;}
 function gameWhere(g){return [g.venue,g.address,g.suburb].filter(Boolean).join(', ');}
 function gameNote(g){return [g.club&&g.club.name?'Hosted by '+g.club.name:'',g.level,g.price>0?dollars(g.price)+' per player':'Free'].filter(Boolean).join(' · ');}
 function buildIcs(games){
-  var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Bounce//Bounce AU//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Bounce games'];
+  var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Bounce Up//Bounce Up AU//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Bounce Up games'];
   games.forEach(function(g){
     lines.push('BEGIN:VEVENT','UID:game-'+g.id+'@bounce-au.netlify.app','DTSTAMP:'+icsDate(new Date()),'DTSTART:'+icsDate(g.start),'DTEND:'+icsDate(endOf(g)),
       'SUMMARY:'+icsText(SPORT_LABEL[g.sport]+': '+g.title),'LOCATION:'+icsText(gameWhere(g)),
@@ -1960,7 +1971,7 @@ function saveSub(sub){
 function enablePush(){
   var P=S.push;
   if(needLogin(currentHash()))return;
-  if(P.ios&&!P.standalone){toast('Add Bounce to your Home Screen first, then turn notifications on from there.');return;}
+  if(P.ios&&!P.standalone){toast('Add Bounce Up to your Home Screen first, then turn notifications on from there.');return;}
   if(!P.supported){toast('This browser can’t show notifications.');return;}
   P.busy=true;render();
   Notification.requestPermission().then(function(perm){
@@ -1987,7 +1998,7 @@ function forgetDevice(){
 function testPush(){
   sb.functions.invoke('push',{body:{type:'test'}}).then(function(r){
     var n=r&&r.data&&r.data.sent;
-    toast(n?'Test sent. It should arrive in a few seconds.':'Test sent. If nothing arrives, allow notifications for Bounce in Settings.');
+    toast(n?'Test sent. It should arrive in a few seconds.':'Test sent. If nothing arrives, allow notifications for Bounce Up in Settings.');
   },function(){toast('Couldn’t send a test. Try again.');});
 }
 function setNotifyPref(key){
@@ -2001,7 +2012,7 @@ function pushNudge(kind){
   var needHome=P.ios&&!P.standalone;
   if(!P.supported&&!needHome)return '';
   var text=kind==='game'?'Get a reminder 2 hours before the game, and a ping if plans change.':'Hear about new messages and club news straight away.';
-  return '<div class="nudge">'+'<span class="nudge-ico" aria-hidden="true">'+I.bell+'</span><div class="gbody"><b>'+(needHome?'Add Bounce to your Home Screen':'Turn on notifications')+'</b>'+
+  return '<div class="nudge">'+'<span class="nudge-ico" aria-hidden="true">'+I.bell+'</span><div class="gbody"><b>'+(needHome?'Add Bounce Up to your Home Screen':'Turn on notifications')+'</b>'+
     '<span class="meta">'+(needHome?'On iPhone, notifications come from the Home Screen app. Tap Share, then Add to Home Screen.':esc(text))+'</span></div>'+
     (needHome?'':'<button type="button" class="btn btn-accent btn-sm" data-act="push-on">Turn on</button>')+
     '<button type="button" class="cmt-del" data-act="nudge-x" aria-label="Not now">×</button></div>';
@@ -2009,9 +2020,9 @@ function pushNudge(kind){
 function notifCard(){
   var P=S.push,nt=(S.profile&&S.profile.notify)||{},h='<section class="card" aria-label="Notifications"><h2>Notifications</h2>';
   var needHome=P.ios&&!P.standalone;
-  if(needHome)h+='<div class="howto"><b>One step first on iPhone</b><ol><li>Tap <b>Share</b> at the bottom of Safari</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b></li><li>Open Bounce from the new icon and turn notifications on here</li></ol></div>';
+  if(needHome)h+='<div class="howto"><b>One step first on iPhone</b><ol><li>Tap <b>Share</b> at the bottom of Safari</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b></li><li>Open Bounce Up from the new icon and turn notifications on here</li></ol></div>';
   else if(!P.supported)h+='<p class="meta">This browser can’t show notifications. Try Safari or Chrome on your phone.</p>';
-  else if(P.permission==='denied')h+='<p class="meta">Notifications are blocked for Bounce. Turn them on in your phone’s Settings, under Notifications.</p>';
+  else if(P.permission==='denied')h+='<p class="meta">Notifications are blocked for Bounce Up. Turn them on in your phone’s Settings, under Notifications.</p>';
   else if(!P.subscribed)h+='<p class="meta">Reminders before games, a ping when a waitlist spot opens, and news from your clubs.</p><button type="button" class="btn btn-accent self-start" data-act="push-on"'+(P.busy?' disabled':'')+'>'+I.bell+(P.busy?'Turning on…':'Turn on notifications')+'</button>';
   else h+='<div class="switch-row"><div><b>On for this device ✓</b><p>Choose what you hear about below.</p></div><button type="button" class="btn btn-line btn-sm" data-act="push-test">Send a test</button></div>';
   h+='<div class="pref-list">'+PUSH_PREFS.map(function(p){var on=nt[p[0]]!==false;
@@ -2022,7 +2033,7 @@ function notifCard(){
 
 function viewLogin(){
   var L=S.login;
-  var h='<section class="login"><div class="login-hero">'+I.ball+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p></div>';
+  var h='<section class="login"><div class="login-hero">'+BU_MARK+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p></div>';
   if(L.step==='choose'){
     h+='<div class="stack">';
     var showApple=CONFIG.SHOW_APPLE||!!S.providers.apple,showGoogle=CONFIG.SHOW_GOOGLE||!!S.providers.google;
@@ -2048,7 +2059,7 @@ function viewLogin(){
     var homeApp2=S.push.standalone,iphone2=S.push.ios||homeApp2,isReset=L.step==='reset';
     h+='<div class="stack"><div class="card"><h2>'+(isReset?'Check your email':'Confirm your email')+'</h2>'+
       '<p>We sent '+(isReset?'a link to choose a new password':'a link to confirm your account')+' to <b>'+esc(L.email)+'</b>. Open it on this phone.</p>'+
-      (iphone2?'<p class="meta">Using Bounce from your Home Screen? On iPhone the link opens Safari. Press and hold the button in the email, tap <b>Copy Link</b>, then paste it below.</p>':'')+
+      (iphone2?'<p class="meta">Using Bounce Up from your Home Screen? On iPhone the link opens Safari. Press and hold the button in the email, tap <b>Copy Link</b>, then paste it below.</p>':'')+
       '<p class="meta">No email after a minute? Check your spam folder.</p></div>';
     if(iphone2)h+='<form class="stack" id="link-form" novalidate><button type="button" class="btn btn-brand" data-act="paste-link"'+(L.busy?' disabled':'')+'>'+(L.busy?'Checking…':'Paste the link')+'</button>'+
       '<div class="field"><label for="login-link">Or paste the link here</label><input id="login-link" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…supabase.co/auth/v1/verify…" value="'+esc(L.link)+'"></div>'+
@@ -2069,7 +2080,7 @@ function viewLogin(){
       var homeApp=S.push.standalone,iphone=S.push.ios||homeApp;
       h+='<div class="stack"><div class="card"><h2>Check your email</h2>'+(homeApp
         ?'<p>We sent a sign-in email to <b>'+esc(L.email)+'</b>. On iPhone its link opens Safari, not this app, so sign in here instead:</p><ol class="howto-steps"><li>In the email, press and hold <b>Log In</b>, then tap <b>Copy Link</b>.</li><li>Come back here and tap <b>Paste sign-in link</b>.</li></ol>'
-        :'<p>We sent a sign-in link to <b>'+esc(L.email)+'</b>. Open the email on this phone and tap <b>Log In</b>. Bounce opens already signed in.</p>'+(iphone?'<p class="meta">Using Bounce from your Home Screen? Copy the link instead (press and hold <b>Log In</b>, then <b>Copy Link</b>) and paste it below.</p>':''))+
+        :'<p>We sent a sign-in link to <b>'+esc(L.email)+'</b>. Open the email on this phone and tap <b>Log In</b>. Bounce Up opens already signed in.</p>'+(iphone?'<p class="meta">Using Bounce Up from your Home Screen? Copy the link instead (press and hold <b>Log In</b>, then <b>Copy Link</b>) and paste it below.</p>':''))+
         '<p class="meta">No email after a minute? Check your spam folder.</p></div>';
       if(iphone)h+='<form class="stack" id="link-form" novalidate><button type="button" class="btn btn-brand" data-act="paste-link"'+(L.busy?' disabled':'')+'>'+(L.busy?'Signing in…':'Paste sign-in link')+'</button>'+
         '<div class="field"><label for="login-link">Or paste the link here</label><input id="login-link" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…supabase.co/auth/v1/verify…" value="'+esc(L.link)+'"></div>'+
@@ -2078,11 +2089,11 @@ function viewLogin(){
     }
   }
   if(L.error)h+='<p class="err" role="alert">'+esc(L.error)+'</p>';
-  return h+'<p class="foot">By continuing you agree to Bounce’s <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>, and to play fair and be a good sport. You must be 18 or older.</p></section>';
+  return h+'<p class="foot">By continuing you agree to Bounce Up’s <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>, and to play fair and be a good sport. You must be 18 or older.</p></section>';
 }
 
 function viewSetup(){
-  return '<section class="stack setup">'+I.ball+'<h1>Almost there</h1><p>Bounce needs its Supabase connection. Open <code>index.html</code>, paste your Supabase Project URL and anon public key into the settings near the top, and upload it again.</p></section>';
+  return '<section class="stack setup">'+I.ball+'<h1>Almost there</h1><p>Bounce Up needs its Supabase connection. Open <code>index.html</code>, paste your Supabase Project URL and anon public key into the settings near the top, and upload it again.</p></section>';
 }
 
 /* ---------- render ---------- */
@@ -2105,7 +2116,7 @@ var XI={
   lesson:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>'
 };
 function exploreStrip(){
-  return '<nav class="explore" aria-label="More on Bounce">'+
+  return '<nav class="explore" aria-label="More on Bounce Up">'+
     '<a class="xtile" href="#venues">'+iconBox(XI.venue)+'<span><b>Venues</b><small>Courts near you</small></span></a>'+
     '<a class="xtile" href="#coaches">'+iconBox(XI.coach)+'<span><b>Coaches</b><small>Lessons and clinics</small></span></a>'+
     '<a class="xtile" href="#leagues">'+iconBox(XI.league)+'<span><b>Leagues</b><small>Round robins, ladders</small></span></a></nav>';
@@ -2149,7 +2160,7 @@ function venueFormDefaults(v){
 }
 function viewVenueForm(editing){
   var f=S.venueForm||(S.venueForm=venueFormDefaults());
-  var h=editing?'':'<a class="back" href="#venues">'+I.back+'Venues</a><section class="hello"><h1>Add a venue</h1><p class="meta">A court, park or centre where people play. Anyone on Bounce can then host games there.</p></section>';
+  var h=editing?'':'<a class="back" href="#venues">'+I.back+'Venues</a><section class="hello"><h1>Add a venue</h1><p class="meta">A court, park or centre where people play. Anyone on Bounce Up can then host games there.</p></section>';
   if(!S.uid)return h+signInPrompt('Sign in to add a venue','It takes a few seconds.','venue-new');
   h+='<form class="stack" id="venue-form" novalidate>'+(editing?'<h2>Edit venue</h2>':'')+
     '<div class="field"><label for="vn-name">Venue name</label><input id="vn-name" maxlength="80" placeholder="Marrickville Tennis Centre" value="'+esc(f.name)+'"></div>'+
@@ -2292,7 +2303,7 @@ function viewCoach(){
   var back='<a class="back" href="#coaches">'+I.back+'Coaches</a>';
   if(S.coachState==='loading')return back+loader('Loading coach…');
   var c=S.coach;
-  if(!c)return back+'<div class="empty"><strong>Coach not found</strong><p>They may have stopped coaching on Bounce.</p><a class="btn btn-accent" href="#coaches">See all coaches</a></div>';
+  if(!c)return back+'<div class="empty"><strong>Coach not found</strong><p>They may have stopped coaching on Bounce Up.</p><a class="btn btn-accent" href="#coaches">See all coaches</a></div>';
   var me=c.id===S.uid;
   var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(c.id,c.name,c.avatar,72)+'<div><h1>'+esc(c.name)+'</h1><p class="meta">'+esc(c.headline)+'</p></div></section>';
   h+='<div class="kv">'+
@@ -2490,7 +2501,7 @@ function leagueFormDefaults(clubId){
     venueId:'',venue:'',max:'12',fee:'0',duprMin:'',duprMax:'',about:''};
 }
 function viewLeagueForm(){
-  var h='<a class="back" href="#leagues">'+I.back+'Leagues</a><section class="hello"><h1>Start a league</h1><p class="meta">Players enter on Bounce. You make the fixtures with one tap, players report scores, and the table updates itself.</p></section>';
+  var h='<a class="back" href="#leagues">'+I.back+'Leagues</a><section class="hello"><h1>Start a league</h1><p class="meta">Players enter on Bounce Up. You make the fixtures with one tap, players report scores, and the table updates itself.</p></section>';
   if(!S.uid)return h+signInPrompt('Sign in to start a league','It takes a few seconds.','league-new');
   var f=S.leagueForm||(S.leagueForm=leagueFormDefaults());
   var adminClubs=S.myClubs.filter(function(m){return m.role==='admin'&&m.club;});
@@ -2502,7 +2513,7 @@ function viewLeagueForm(){
     '<div class="field"><span class="lbl" id="lg-format-l">Format</span><div class="seg2" role="group" aria-labelledby="lg-format-l">'+
       '<button type="button" class="chip" data-act="lg-format" data-v="round_robin" aria-pressed="'+(f.format==='round_robin')+'">Round robin</button>'+
       '<button type="button" class="chip" data-act="lg-format" data-v="ladder" aria-pressed="'+(f.format==='ladder')+'">Ladder</button></div>'+
-      '<span class="hint">'+(f.format==='ladder'?'Players challenge anyone and report results any time. The table ranks by wins.':'Everyone plays everyone once. Bounce makes the fixtures when you start the league.')+'</span></div>'+
+      '<span class="hint">'+(f.format==='ladder'?'Players challenge anyone and report results any time. The table ranks by wins.':'Everyone plays everyone once. Bounce Up makes the fixtures when you start the league.')+'</span></div>'+
     '<div class="row2"><div class="field"><label for="lg-startsOn">Starts</label><input id="lg-startsOn" type="date" value="'+esc(f.startsOn)+'"></div>'+
     '<div class="field"><label for="lg-endsOn">Ends (optional)</label><input id="lg-endsOn" type="date" value="'+esc(f.endsOn)+'"></div></div>'+
     '<div class="field"><label for="lg-schedule">When matches are played</label><input id="lg-schedule" maxlength="80" placeholder="Tuesdays 7–9pm" value="'+esc(f.schedule)+'"></div>'+
@@ -2587,7 +2598,7 @@ function viewLeague(){
     '<div><span>Entries</span><b>'+n+' of '+l.max+' · '+esc(ENTRY_TYPES[l.entryType])+'</b></div>'+
     '<div><span>Entry fee</span><b>'+esc(l.fee>0?'$'+l.fee+' per entry':'Free')+'</b></div>'+
     (duprRange(l.duprMin,l.duprMax)?'<div><span>Level</span><b>'+esc(duprRange(l.duprMin,l.duprMax))+'</b></div>':'')+
-    '</div><div class="hostline">'+(l.club&&l.club.name?clubLogo({id:l.club.id,name:l.club.name,logo_url:l.club.logo_url},26)+'<span>Run by <a href="#c-'+esc(l.club.id)+'" style="color:inherit;font-weight:800">'+esc(l.club.name)+'</a></span>':'<span>Run by '+(l.createdBy===S.uid?'you':'a Bounce player')+'</span>')+'</div></section>';
+    '</div><div class="hostline">'+(l.club&&l.club.name?clubLogo({id:l.club.id,name:l.club.name,logo_url:l.club.logo_url},26)+'<span>Run by <a href="#c-'+esc(l.club.id)+'" style="color:inherit;font-weight:800">'+esc(l.club.name)+'</a></span>':'<span>Run by '+(l.createdBy===S.uid?'you':'a Bounce Up player')+'</span>')+'</div></section>';
   h+='<div class="cta">'+leagueStatus(l);
   if(l.status==='open'&&!me){
     if(!S.uid)h+='<button type="button" class="btn btn-accent" data-act="login" data-v="l-'+esc(l.id)+'">Sign in to enter</button>';
@@ -2741,7 +2752,7 @@ function deleteLeague(id){
 }
 function shareLeague(){
   var l=S.league;if(!l)return;
-  var url=location.origin+location.pathname+'#l-'+l.id,text=l.name+' on Bounce. Enter here:';
+  var url=location.origin+location.pathname+'#l-'+l.id,text=l.name+' on Bounce Up. Enter here:';
   if(navigator.share)navigator.share({title:l.name,text:text,url:url}).catch(function(){});
   else if(navigator.clipboard)navigator.clipboard.writeText(text+' '+url).then(function(){toast('Link copied');},function(){toast(url);});
   else toast(url);
@@ -2750,7 +2761,7 @@ function clubLeaguesHTML(c,admin){
   var lg=(S.leagues||[]).filter(function(l){return String(l.clubId)===c.id;});
   if(!lg.length&&!admin)return '';
   return '<section class="list"><div class="list-head"><h2>Leagues <span class="meta">'+lg.length+'</span></h2>'+(admin?'<button type="button" class="btn btn-line btn-sm" data-act="club-league" data-id="'+esc(c.id)+'">Start a club league</button>':'')+'</div>'+
-    (lg.length?lg.map(leagueCard).join(''):'<p class="meta">Run a round robin or ladder for members. Bounce makes the fixtures and keeps the table.</p>')+'</section>';
+    (lg.length?lg.map(leagueCard).join(''):'<p class="meta">Run a round robin or ladder for members. Bounce Up makes the fixtures and keeps the table.</p>')+'</section>';
 }
 
 /* ---------- DUPR on the profile ---------- */
@@ -2915,10 +2926,10 @@ function viewPayouts(){
   h+='</section>';
   h+='<section class="card"><h2>How it works</h2><ul class="howto-list">'+
     '<li><b>You get your full price.</b> A $10 game pays you $10.</li>'+
-    '<li><b>Players pay a $0.99 booking fee</b> on top, which keeps Bounce running.</li>'+
+    '<li><b>Players pay a $0.99 booking fee</b> on top, which keeps Bounce Up running.</li>'+
     '<li><b>Cancel a game</b> and everyone is refunded in full automatically.</li>'+
     '<li><b>A player leaves</b> more than 24 hours before: their game price is refunded. Inside 24 hours: no refund.</li>'+
-    '<li><b>Card details never touch Bounce.</b> Checkout and payouts are handled by Stripe.</li></ul><p class="meta">Full details: <a href="refunds.html" target="_blank" rel="noopener">refund policy</a> and <a href="terms.html#payments" target="_blank" rel="noopener">payment terms</a>.</p></section>';
+    '<li><b>Card details never touch Bounce Up.</b> Checkout and payouts are handled by Stripe.</li></ul><p class="meta">Full details: <a href="refunds.html" target="_blank" rel="noopener">refund policy</a> and <a href="terms.html#payments" target="_blank" rel="noopener">payment terms</a>.</p></section>';
   var adm=(S.myClubs||[]).filter(function(m){return m.role==='admin'&&m.club;});
   if(adm.length)h+='<section class="card"><h2>Your clubs</h2><p class="meta">Club games can pay the club’s own bank account instead of yours.</p><div class="cta">'+adm.map(function(m){
     var cs=clubPayoutState(m.club.id);return '<a class="btn btn-line" href="#b-'+esc(m.club.id)+'">'+esc(m.club.name)+(cs==='ready'?' · payouts on':cs==='none'?' · set up':' · finish setup')+'</a>';}).join('')+'</div></section>';
@@ -3137,7 +3148,7 @@ function viewClubBiz(){
         :'<div class="cta"><button type="button" class="btn btn-line" data-act="abn-recheck"'+(S.abnBusy?' disabled':'')+'>'+(S.abnBusy?'Checking…':'Check again')+'</button><button type="button" class="btn btn-line" data-act="abn-change">Change ABN</button><button type="button" class="btn btn-line" data-act="abn-del">Remove</button></div>';
     }
   } else if(admin){
-    h+='<p>Add your club’s ABN to show members, venues and sponsors it’s a registered club. Clubs without one can still use Bounce.</p>'+
+    h+='<p>Add your club’s ABN to show members, venues and sponsors it’s a registered club. Clubs without one can still use Bounce Up.</p>'+
       '<form class="stack-sm" id="abn-form" novalidate><div class="field"><label for="abn-input">ABN (11 digits)</label><input id="abn-input" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="51 824 753 556" value="'+esc(S.abnDraft||'')+'"'+(S.abnError?' aria-invalid="true" aria-describedby="abn-err"':'')+'>'+
       (S.abnError?'<p class="err" id="abn-err" role="alert">'+esc(S.abnError)+'</p>':'<span class="hint">Don’t know it? Search the club’s name on <a href="https://abr.business.gov.au" target="_blank" rel="noopener">ABN Lookup</a>.</span>')+'</div>'+
       '<div class="cta"><button type="submit" class="btn btn-accent"'+(S.abnBusy?' disabled':'')+'>'+(S.abnBusy?'Checking…':'Check and save')+'</button>'+(S.abnEditing?'<button type="button" class="btn btn-line" data-act="abn-cancel">Cancel</button>':'')+'</div></form>';
@@ -3430,9 +3441,9 @@ function closeSheet(){if(!S.sheet)return;S.sheet=null;render();}
 var hc={timer:null,el:null,cache:{}};
 function hideHover(){clearTimeout(hc.timer);hc.el=null;var c=document.getElementById('hovercard');if(c)c.remove();}
 function showHover(a,p){
-  var nm=p.display_name||'Bounce player';
+  var nm=p.display_name||'Bounce Up player';
   var c=document.createElement('div');c.id='hovercard';c.className='hovercard';c.setAttribute('aria-hidden','true');
-  c.innerHTML='<div class="profile-head">'+avatar(p.id,nm,p.avatar_url,44)+'<div style="min-width:0"><h3>'+esc(nm)+'</h3><p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce player')+'</p></div></div>'+
+  c.innerHTML='<div class="profile-head">'+avatar(p.id,nm,p.avatar_url,44)+'<div style="min-width:0"><h3>'+esc(nm)+'</h3><p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce Up player')+'</p></div></div>'+
     (p.bio?'<p class="bio">'+esc(p.bio)+'</p>':'')+(p.sports&&p.sports.length?sportsChips(p.sports.filter(function(s){return SPORT_LABEL[s];}).slice(0,4)):'');
   document.body.appendChild(c);
   var r=a.getBoundingClientRect(),w=c.offsetWidth,ht=c.offsetHeight;
@@ -3471,7 +3482,7 @@ function celebrate(){
 function loadGames(){
   var since=new Date(Date.now()-6*3600*1000).toISOString();
   return sb.from('games').select(GAME_SELECT).gte('starts_at',since).order('starts_at').limit(300).then(function(r){
-    if(r.error){S.loadError='Couldn’t load games. Check your connection and reopen Bounce.';}
+    if(r.error){S.loadError='Couldn’t load games. Check your connection and reopen Bounce Up.';}
     else{S.loadError='';S.games=(r.data||[]).map(normGame);}
     S.loaded=true;
   });
@@ -3638,7 +3649,7 @@ function deletePost(pid){
 function sharePost(pid){
   var p=findPost(pid);if(!p)return;
   var url=location.origin+location.pathname+'#c-'+p.clubId;
-  var text=p.club.name+' on Bounce'+(p.body?': '+p.body.slice(0,140)+(p.body.length>140?'…':''):'');
+  var text=p.club.name+' on Bounce Up'+(p.body?': '+p.body.slice(0,140)+(p.body.length>140?'…':''):'');
   function fallback(){
     try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Link copied. Paste it in your group chat.');},function(){toast('Copy this link: '+url);});}
     catch(e){toast('Copy this link: '+url);}
@@ -4083,7 +4094,7 @@ function deleteClub(id){
 function inviteClub(){
   var c=S.club;if(!c)return;
   var url=location.origin+location.pathname+'#c-'+c.id;
-  var text='Join '+c.name+' on Bounce'+(c.suburb?' ('+c.suburb+')':'')+(c.sports.length?': '+c.sports.map(function(s){return SPORT_LABEL[s];}).join(', '):'');
+  var text='Join '+c.name+' on Bounce Up'+(c.suburb?' ('+c.suburb+')':'')+(c.sports.length?': '+c.sports.map(function(s){return SPORT_LABEL[s];}).join(', '):'');
   function fallback(){
     try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Invite copied. Paste it in your group chat.');},function(){S.inviteText=text+'\n'+url;S.selectInvite=true;render();});}
     catch(e){S.inviteText=text+'\n'+url;S.selectInvite=true;render();}
@@ -4092,6 +4103,7 @@ function inviteClub(){
   else fallback();
 }
 
+var BU_MARK='<svg class="bu-hero" width="104" height="104" viewBox="0 0 100 100" role="img" aria-label="Bounce Up"><path class="bu-u" d="M18 42 C 18 80, 82 80, 82 42" fill="none" stroke-width="15" stroke-linecap="round"/><circle class="bu-ball" cx="50" cy="22" r="14"/></svg>';
 function emailField(L){return '<div class="field"><label for="login-email">Email</label><input id="login-email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" value="'+esc(L.email)+'"></div>';}
 function pwField(L,label,ac){
   return '<div class="field"><label for="login-password">'+esc(label)+'</label><span class="pw-field"><input id="login-password" type="'+(L.show?'text':'password')+'" autocomplete="'+ac+'" autocapitalize="off" spellcheck="false" maxlength="72" value="'+esc(L.password)+'">'+
@@ -4224,7 +4236,7 @@ document.addEventListener('click',function(e){
   else if(a==='cal-day'){var cd=String(v||'').split('|');if(cd.length===2&&/^\d{4}-\d{2}-\d{2}$/.test(cd[1])&&S.cal[cd[0]]){S.cal[cd[0]].d=S.cal[cd[0]].d===cd[1]?null:cd[1];render();}}
   else if(a==='cal-add')openSheet({type:'addcal',id:id});
   else if(a==='ics'){var ig=lookupGame(id);S.sheet=null;renderSheet();if(ig)downloadIcs([ig],ig.title);}
-  else if(a==='ics-all')downloadIcs(myUpcoming(),'Bounce games');
+  else if(a==='ics-all')downloadIcs(myUpcoming(),'Bounce Up games');
   else if(a==='wait-join')joinWaitlist(id);
   else if(a==='wait-leave')leaveWaitlist(id);
   else if(a==='wait-remove')removeWaiting(id);
@@ -4382,7 +4394,7 @@ sb.auth.onAuthStateChange(function(evt,session){
       cleanUrl();S.login={step:'choose',mode:'password',email:'',password:'',show:false,code:'',link:'',error:'',busy:false};
       var next=popNext();
       if(next||S.route==='login')location.hash=next||'discover';
-      toast('Signed in. Welcome to Bounce.');
+      toast('Signed in. Welcome to Bounce Up.');
     }
     refreshAll();
   },0);

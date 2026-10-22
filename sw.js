@@ -1,6 +1,6 @@
 /* Bounce service worker: phone notifications, and opening the app on poor signal. */
-const CACHE = 'bounce-v1';
-const SHELL = ['./', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'bounceup-v2';
+const SHELL = ['./', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.svg'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
