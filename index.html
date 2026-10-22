@@ -868,6 +868,17 @@ main{background-image:var(--grain);background-size:22px 22px;background-attachme
 @keyframes sp-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){.inner.enter>*{animation:none}}
 @media (min-width:768px){.tab[aria-current="page"]::after{width:3px;height:auto;border-radius:0 3px 3px 0;transform:none;background:var(--sun)}}
+
+/* Suburb picker */
+.sub-pick{position:relative;display:block}
+.sub-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:40;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-control);box-shadow:0 12px 28px -12px rgba(15,31,26,.35);max-height:300px;overflow:auto;padding:4px}
+.sub-list[hidden]{display:none}
+.sub-list button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:var(--tap);padding:8px 12px;border:0;border-radius:10px;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.sub-list button small{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.sub-list button[aria-selected="true"],.sub-list button:hover{background:var(--brand-soft)}
+.sub-none{display:block;padding:10px 12px;color:var(--muted);font-size:14px}
+.data-credit{margin-top:6px;font-size:12px}
+@media (max-width:599px){.row2:has(.sub-pick){grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -938,7 +949,7 @@ function fmtDay(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(
 function shortDow(d){var k=keyOf(d);if(k===dayKey(0))return 'Today';if(k===dayKey(1))return 'Tmrw';return DOW[d.getDay()];}
 function endOf(g){return new Date(g.start.getTime()+g.durationMin*60000);}
 function isUpcoming(g){return endOf(g).getTime()>Date.now();}
-function priceLabel(g){return g.price>0?'$'+g.price:'Free';}
+function priceLabel(g){return g.price>0?dollars(g.price):'Free';}
 function spotsLeft(g,count){return Math.max(0,g.capacity-(count==null?g.count:count));}
 function place(g,sep){return [g.venue,g.suburb].filter(Boolean).join(sep||' · ');}
 function startsLabel(g){
@@ -978,14 +989,15 @@ function normGame(r){
     durationMin:Number(r.duration_min)||90,venue:String(r.venue||''),suburb:String(r.suburb||''),level:LEVELS.indexOf(r.level)>=0?r.level:'All levels',
     price:Number(r.price)||0,capacity:Number(r.capacity)||2,hostId:r.host_id,oneShort:!!r.one_short,notes:String(r.notes||''),
     count:(r.game_players&&r.game_players[0]&&r.game_players[0].count)||0,host:r.host||null,
-    clubId:r.club_id||null,club:r.club||null,address:String(r.address||''),
+    clubId:r.club_id||null,club:r.club||null,address:String(r.address||''),state:r.state||'',postcode:r.postcode||'',
+    areaLat:typeof r.area_lat==='number'?r.area_lat:null,areaLng:typeof r.area_lng==='number'?r.area_lng:null,
     lat:typeof r.lat==='number'&&isFinite(r.lat)?r.lat:null,lng:typeof r.lng==='number'&&isFinite(r.lng)?r.lng:null,
     waiting:(r.waitlist&&r.waitlist[0]&&r.waitlist[0].count)||0,
     venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
 }
 /* Maps: an embedded Google map plus a Directions link that opens Google Maps (app or web) */
 function hasPin(o){return o&&o.lat!=null&&o.lng!=null;}
-function mapQ(o){return hasPin(o)?o.lat.toFixed(6)+','+o.lng.toFixed(6):[o.venue,o.address,o.suburb].filter(Boolean).join(', ')+', Australia';}
+function mapQ(o){return hasPin(o)?o.lat.toFixed(6)+','+o.lng.toFixed(6):[o.venue,o.address,[o.suburb,o.state,o.postcode].filter(Boolean).join(' ')].filter(Boolean).join(', ')+', Australia';}
 function mapSrc(o){
   var q=mapQ(o);
   return CONFIG.GOOGLE_MAPS_KEY?'https://www.google.com/maps/embed/v1/place?key='+encodeURIComponent(CONFIG.GOOGLE_MAPS_KEY)+'&q='+encodeURIComponent(q)
@@ -1004,7 +1016,8 @@ function mapBlock(o,heading){
 function normClub(r){
   r=r||{};
   return {id:String(r.id),name:String(r.name||''),kind:CLUB_KINDS.indexOf(r.kind)>=0?r.kind:'Club',
-    sports:(r.sports||[]).filter(function(s){return SPORT_LABEL[s];}),suburb:String(r.suburb||''),about:String(r.about||''),
+    sports:(r.sports||[]).filter(function(s){return SPORT_LABEL[s];}),suburb:String(r.suburb||''),state:r.state||'',postcode:r.postcode||'',
+    areaLat:typeof r.area_lat==='number'?r.area_lat:null,areaLng:typeof r.area_lng==='number'?r.area_lng:null,about:String(r.about||''),
     website:typeof r.website==='string'&&/^https?:\/\//i.test(r.website)?r.website:'',
     instagram:typeof r.instagram==='string'&&/^[A-Za-z0-9._]{1,30}$/.test(r.instagram)?r.instagram:'',
     members:(r.club_members&&r.club_members[0]&&r.club_members[0].count)||0,createdBy:r.created_by,
@@ -1025,7 +1038,7 @@ function sortClubs(list){
   var home=S.profile&&S.profile.suburb?S.profile.suburb.trim().toLowerCase():'';
   var mine=S.profile&&S.profile.sports?S.profile.sports:[];
   return list.slice().sort(function(a,b){
-    var ha=home&&a.suburb.toLowerCase()===home?0:1,hb=home&&b.suburb.toLowerCase()===home?0:1;
+    var ha=isNear(a)?0:1,hb=isNear(b)?0:1;
     if(ha!==hb)return ha-hb;
     var sa=a.sports.some(function(s){return mine.indexOf(s)>=0;})?0:1,sb2=b.sports.some(function(s){return mine.indexOf(s)>=0;})?0:1;
     if(sa!==sb2)return sa-sb2;
@@ -1049,10 +1062,10 @@ function filterGames(up,ignoreDay){
     if(!ignoreDay&&S.day!=='all'&&keyOf(g.start)!==S.day)return false;
     if(S.level!=='all'&&g.level!==S.level&&g.level!=='All levels')return false;
     if(S.free&&g.price>0)return false;
-    if(S.near&&home&&g.suburb.trim().toLowerCase()!==home)return false;
+    if(S.near&&(home||homeLoc())&&!isNear(g))return false;
     return !q||[g.title,g.venue,g.suburb,SPORT_LABEL[g.sport],g.level,g.club&&g.club.name].join(' ').toLowerCase().indexOf(q)>=0;
   });
-  if(home)list.sort(function(a,b){var da=keyOf(a.start),db=keyOf(b.start);if(da!==db)return da<db?-1:1;var ha=a.suburb.toLowerCase()===home?0:1,hb=b.suburb.toLowerCase()===home?0:1;return ha-hb||a.start-b.start;});
+  if(home||homeLoc())list.sort(function(a,b){var da=keyOf(a.start),db=keyOf(b.start);if(da!==db)return da<db?-1:1;return (isNear(a)?0:1)-(isNear(b)?0:1)||a.start-b.start;});
   return list;
 }
 function sportChips(act,cur){
@@ -1113,7 +1126,7 @@ var S={route:'discover',photoBusy:null,clubBiz:null,clubPayouts:{},clubPayments:
 function defaultForm(){
   var p=S.profile||{};
   return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',need:'7',hostPlays:true,
-    venue:'',address:'',suburb:p.suburb||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
+    venue:'',address:'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
 }
 /* A club game starts from the club's home court, and the organiser isn't counted as a player unless they switch it on */
 function applyClubToForm(cid){
@@ -1122,7 +1135,7 @@ function applyClubToForm(cid){
   if(!m){f.hostPlays=true;return;}
   var c=normClub(m.club);
   f.hostPlays=false;
-  if(c.venue){f.venue=c.venue;f.address=c.address;if(c.suburb)f.suburb=c.suburb;f.lat=null;f.lng=null;}
+  if(c.venue){f.venue=c.venue;f.address=c.address;if(c.suburb){f.suburb=c.suburb;f.state=c.state;f.postcode=c.postcode;}f.lat=null;f.lng=null;}
   if(c.sports.length&&c.sports.indexOf(f.sport)<0)f.sport=c.sports[0];
 }
 function formCapacity(f){var n=Math.round(Number(f.need));return isFinite(n)?n+(f.hostPlays?1:0):NaN;}
@@ -1141,7 +1154,7 @@ function cardHTML(g,preview){
     '<div class="when"><small>'+esc(shortDow(g.start))+'</small><b>'+esc(fmtTime(g.start))+'</b></div>'+
     '<div class="gbody"><div class="sport">'+esc(SPORT_LABEL[g.sport])+(g.kind==='clinic'?'<span class="tag tag-brand">CLINIC</span>':'')+(duprRange(g.duprMin,g.duprMax)?'<span class="tag">'+esc(duprRange(g.duprMin,g.duprMax))+'</span>':'')+(g.oneShort&&left>0?'<span class="tag tag-accent">ONE SHORT</span>':'')+
       (left===0&&!preview&&isUpcoming(g)?'<span class="tag">WAITLIST'+(g.waiting?' · '+g.waiting:'')+'</span>':'')+'</div>'+
-    '<div class="gtitle">'+esc(g.title)+'</div><div class="meta">'+esc((g.club&&g.club.name?g.club.name+' · ':'')+place(g))+'</div></div>'+
+    '<div class="gtitle">'+esc(g.title)+'</div><div class="meta">'+esc((g.club&&g.club.name?g.club.name+' · ':'')+place(g)+(preview?'':kmTag(g)))+'</div></div>'+
     '<div class="gright"><span class="'+cls+'">'+(left===0?'Full':g.count+'/'+g.capacity)+'<span class="sr"> going</span></span><span class="price">'+esc(priceLabel(g))+'</span></div></'+tag+'>';
   if(preview)return card;
   return '<div class="gwrap">'+card+(canQuickJoin(g)?'<button type="button" class="btn btn-accent btn-sm qjoin" data-act="join" data-id="'+esc(g.id)+'" aria-label="Quick join: '+esc(g.title)+'">Quick join</button>':'')+'</div>';
@@ -1173,7 +1186,7 @@ function discoverRail(alerts,clubs){
   h+='</section>';
   var home=homeSuburb();
   h+='<section class="card rail-card"><h2>Quick filters</h2><div class="wrap-chips">'+
-    '<button type="button" class="chip" data-act="qf" data-v="near" aria-pressed="'+(S.near&&!!home)+'"'+(home?'':' disabled')+'>Near me</button>'+
+    '<button type="button" class="chip" data-act="qf" data-v="near" aria-pressed="'+(S.near&&!!home)+'"'+(home?'':' disabled')+'>Near me'+(homeLoc()?' · '+nearKm()+' km':'')+'</button>'+
     '<button type="button" class="chip" data-act="qf" data-v="free" aria-pressed="'+S.free+'">Free</button>'+
     '<button type="button" class="chip" data-act="qf" data-v="beginner" aria-pressed="'+(S.level==='Beginner')+'">Beginner friendly</button></div>'+
     (home?'':'<p class="meta"><a href="#profile">Add your home suburb</a> to use Near me.</p>')+'</section>';
@@ -1247,7 +1260,7 @@ function viewGame(){
   h+='<section class="band">'+I.court+'<div class="eyebrow">'+esc(SPORT_LABEL[g.sport]+(g.kind==='clinic'?' · Coaching clinic':''))+'</div><h1>'+esc(g.title)+'</h1>'+
     '<div class="facts"><div><span>When</span><b>'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+'–'+fmtTime(end))+'</b></div>'+
     '<div><span>Where</span><b>'+(g.venueId?'<a href="#v-'+esc(g.venueId)+'" style="color:inherit">'+esc(place(g,', '))+'</a>':esc(place(g,', ')))+'</b></div><div><span>Level</span><b>'+esc([g.level,duprRange(g.duprMin,g.duprMax)].filter(Boolean).join(' · '))+'</b></div>'+
-    '<div><span>Cost</span><b>'+esc(g.price>0?'$'+g.price+' per player':'Free')+'</b></div></div>'+
+    '<div><span>Cost</span><b>'+esc(g.price>0?dollars(g.price)+' per player':'Free')+'</b></div></div>'+
     '<div class="hostline">'+(g.club&&g.club.name
       ?clubLogo({id:g.club.id,name:g.club.name,logo_url:g.club.logo_url},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
       :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>'+(g.kind==='clinic'?'Coached by ':'Hosted by ')+(isHost?'you':'<a href="#'+(g.kind==='clinic'?'o-':'p-')+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+'</div></section>';
@@ -1331,13 +1344,13 @@ function viewHost(){
     '<label class="check check-plain" for="f-hostPlays"><input id="f-hostPlays" type="checkbox"'+(f.hostPlays?' checked':'')+'><div><b>I’m playing too</b><span>Takes one more spot. Turn off if you’re only organising.</span></div></label>'+
     '<p class="meta" id="f-total">'+esc(totalLine(f))+'</p>';
   var where=venuePicker(f)+'<div class="row2"><div class="field"><label for="f-venue">Venue</label><input id="f-venue" maxlength="80" placeholder="Court, park or centre" value="'+esc(f.venue)+'"></div>'+
-    '<div class="field"><label for="f-suburb">Suburb</label><input id="f-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div></div>'+
+    '<div class="field"><label for="f-suburb">Suburb</label>'+subInput('f',f,'Start typing, e.g. Point Cook')+'</div></div>'+
     '<div class="field"><label for="f-address">Street address</label><input id="f-address" maxlength="160" autocomplete="street-address" placeholder="12 Court St (helps players find you)" value="'+esc(f.address)+'"></div>'+
     '<div class="pin-row">'+(hasPin(f)
       ?'<span class="pill pill-sm">'+I.pin+'Pinned at your location</span><button type="button" class="btn btn-line btn-sm" data-act="pin-clear">Remove pin</button>'
       :'<button type="button" class="btn btn-line btn-sm" data-act="pin-here"'+(S.locating?' disabled':'')+'>'+I.locate+(S.locating?'Finding you…':'Use my location')+'</button><span class="meta">At the court? Drop a pin for exact directions.</span>')+'</div>'+
     '<div id="where-map-slot">'+whereMap(f)+'</div>';
-  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="numeric" min="0" max="500" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games.</span></div>'+payOnlineField(f)+
+  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="decimal" min="0" max="500" step="0.01" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games.</span></div>'+payOnlineField(f)+
     '<div class="field"><label for="f-notes">Notes for players</label><textarea id="f-notes" maxlength="600" placeholder="What to bring, parking, who it suits">'+esc(f.notes)+'</textarea></div>'+
     '<label class="check" for="f-oneshort"><input id="f-oneshort" type="checkbox"'+(f.oneShort?' checked':'')+'><div><b>Send a One Short alert</b><span>Shows your game at the top of Discover until it fills.</span></div></label>';
   // Phones: four steps, one open at a time. Tablet and desktop: all four open as sections, plus a live preview on desktop.
@@ -1361,7 +1374,7 @@ function hostSummary(i){
   if(i===0)return [SPORT_LABEL[f.sport],f.level,f.title.trim()].filter(Boolean).join(' · ');
   if(i===1){var d=new Date(f.date+'T'+f.time),n=Math.round(Number(f.need));return [isNaN(d.getTime())?'':fmtDay(d)+' '+fmtTime(d),durLabel(f.duration),n>0?'need '+n+(f.hostPlays?' + you':''):''].filter(Boolean).join(' · ');}
   if(i===2)return [f.venue.trim(),f.address.trim(),f.suburb.trim()].filter(Boolean).join(', ')||(hasPin(f)?'Pinned on the map':'Add the venue and suburb');
-  var p=Math.round(Number(f.price));return (p>0?'$'+p+' per player':'Free')+(f.oneShort?' · One Short alert':'');
+  var p=toPrice(f.price);return (p>0?dollars(p)+' per player':'Free')+(f.oneShort?' · One Short alert':'');
 }
 function previewHTML(){
   var f=S.form,d=new Date(f.date+'T'+f.time);
@@ -1370,7 +1383,7 @@ function previewHTML(){
   if(f.clubId){var m=S.myClubs.filter(function(x){return x.club&&String(x.club.id)===f.clubId;})[0];if(m)club={id:m.club.id,name:m.club.name};}
   var cap=formCapacity(f);if(!(cap>=1&&cap<=50))cap=8;
   return cardHTML({id:'preview',sport:f.sport,title:f.title.trim()||'Your game name',start:d,durationMin:Number(f.duration)||90,venue:f.venue.trim()||'Venue',suburb:f.suburb.trim()||'Suburb',
-    level:f.level,price:Math.max(0,Math.round(Number(f.price))||0),capacity:cap,oneShort:!!f.oneShort,count:f.hostPlays?1:0,club:club},true);
+    level:f.level,price:Math.max(0,toPrice(f.price)||0),capacity:cap,oneShort:!!f.oneShort,count:f.hostPlays?1:0,club:club},true);
 }
 function updatePreview(){
   var el=document.getElementById('host-preview');if(el)el.innerHTML=previewHTML();
@@ -1379,7 +1392,7 @@ function updatePreview(){
 function totalLine(f){var c=formCapacity(f);return c>0?'Total spots: '+c+(f.hostPlays?' (you + '+(c-1)+')':'')+'. When they fill, players can join the waitlist.':'';}
 function whereMap(f){
   if(!hasPin(f)&&!f.venue.trim()&&!f.address.trim())return '<p class="map-empty">Add the venue or street address to check it on the map.</p>';
-  return mapFrame({venue:f.venue.trim(),address:f.address.trim(),suburb:f.suburb.trim(),lat:f.lat,lng:f.lng},f.venue||'game location','where-map');
+  return mapFrame({venue:f.venue.trim(),address:f.address.trim(),suburb:f.suburb.trim(),state:f.state,postcode:f.postcode,lat:f.lat,lng:f.lng},f.venue||'game location','where-map');
 }
 var mapTimer=null;
 function updateWhereMap(){
@@ -1387,12 +1400,12 @@ function updateWhereMap(){
   mapTimer=setTimeout(function(){
     var slot=document.getElementById('where-map-slot');if(!slot)return;
     var fr=document.getElementById('where-map'),html=whereMap(S.form);
-    if(fr&&html.indexOf('<iframe')>=0){var src=mapSrc({venue:S.form.venue.trim(),address:S.form.address.trim(),suburb:S.form.suburb.trim(),lat:S.form.lat,lng:S.form.lng});if(fr.getAttribute('src')!==src)fr.setAttribute('src',src);}
+    if(fr&&html.indexOf('<iframe')>=0){var src=mapSrc({venue:S.form.venue.trim(),address:S.form.address.trim(),suburb:S.form.suburb.trim(),state:S.form.state,postcode:S.form.postcode,lat:S.form.lat,lng:S.form.lng});if(fr.getAttribute('src')!==src)fr.setAttribute('src',src);}
     else slot.innerHTML=html;
   },900);
 }
 function hostErrors(){
-  var f=S.form,need=Math.round(Number(f.need)),cap=formCapacity(f),price=Math.round(Number(f.price)),start=new Date(f.date+'T'+f.time);
+  var f=S.form,need=Math.round(Number(f.need)),cap=formCapacity(f),price=toPrice(f.price),start=new Date(f.date+'T'+f.time);
   if(f.title.trim().length<3)return [0,'Give your game a name, like “Social doubles”.'];
   if(!f.date||!f.time||isNaN(start.getTime()))return [1,'Pick a date and start time.'];
   if(start.getTime()<Date.now())return [1,'That time has already passed. Pick a later one.'];
@@ -1400,6 +1413,7 @@ function hostErrors(){
   if(cap>50)return [1,'A game can have up to 50 players.'];
   if(!f.venue.trim())return [2,'Add the venue so players know where to go.'];
   if(!f.suburb.trim())return [2,'Add the suburb.'];
+  if(!subPicked(f))return [2,'Pick the suburb from the list, so players nearby get the alert.'];
   if(f.sport==='pickleball'&&((f.duprMin!==''&&duprNum(f.duprMin)==null)||(f.duprMax!==''&&duprNum(f.duprMax)==null)))return [0,'DUPR ratings go from 2.0 to 8.0.'];
   if(f.sport==='pickleball'&&duprNum(f.duprMin)!=null&&duprNum(f.duprMax)!=null&&duprNum(f.duprMin)>duprNum(f.duprMax))return [0,'The lower DUPR is above the upper one.'];
   if(!(price>=0&&price<=500))return [3,'Cost must be between $0 and $500.'];
@@ -1438,7 +1452,7 @@ function viewMine(){
 }
 
 function legalLinks(){
-  return '<nav class="legal-links" aria-label="Bounce policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav>';
+  return '<nav class="legal-links" aria-label="Bounce policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
 }
 function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
@@ -1452,7 +1466,7 @@ function viewProfile(){
     (pic&&!pbusy?'<button type="button" class="btn btn-line btn-sm" data-act="pf-photo-remove">Remove</button>':'')+'</div></div></section>';
   h+='<form class="stack" id="profile-form">'+
     '<div class="field"><label for="pf-name">Name</label><input id="pf-name" maxlength="40" placeholder="First name and last initial" value="'+esc(pf.display_name)+'"><span class="hint">Shown to other players in games you join.</span></div>'+
-    '<div class="field"><label for="pf-suburb">Home suburb</label><input id="pf-suburb" maxlength="50" placeholder="Newtown" value="'+esc(pf.suburb)+'"><span class="hint">Games near you show first.</span></div>'+
+    '<div class="field"><label for="pf-suburb">Home suburb</label>'+subInput('pf',pf,'Start typing, e.g. Deanside')+'<span class="hint">Pick it from the list. Used for Near me and One Short alerts.</span></div>'+kmPicker(pf.alertKm)+
     '<div class="field"><label for="pf-bio">About you</label><textarea id="pf-bio" maxlength="160" placeholder="Social player, keen for weeknight doubles" style="min-height:70px">'+esc(pf.bio)+'</textarea><span class="hint">Shown on your player profile. Up to 160 characters.</span></div>'+
     '<div class="field"><label for="pf-level">Usual level</label><select id="pf-level">'+LEVELS.map(function(l){return '<option'+(pf.level===l?' selected':'')+'>'+esc(l)+'</option>';}).join('')+'</select></div>'+
     duprFieldsHTML(pf)+
@@ -1508,7 +1522,7 @@ function viewClubForm(editing){
     '<div class="photo-actions" style="margin:0"><label class="btn btn-line btn-sm" for="cf-logofile">'+(f.logoBusy?'Preparing…':lg?'Change logo':'Upload logo')+'</label><input id="cf-logofile" class="sr" type="file" accept="image/*">'+
     (lg?'<button type="button" class="btn btn-line btn-sm" data-act="cf-logo-remove">Remove</button>':'')+'</div></div><span class="hint">Shown on your club page, posts and chats. The whole logo fits on a white square.</span></div>';
   h+='<div class="row2"><div class="field"><label for="cf-kind">Type</label><select id="cf-kind">'+CLUB_KINDS.map(function(k){return '<option'+(f.kind===k?' selected':'')+'>'+esc(k)+'</option>';}).join('')+'</select></div>'+
-    '<div class="field"><label for="cf-suburb">Suburb</label><input id="cf-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div></div>';
+    '<div class="field"><label for="cf-suburb">Suburb</label>'+subInput('cf',f,'Start typing, e.g. Werribee')+'</div></div>';
   h+='<div class="field"><span class="lbl" id="cf-sports-l">Sports</span><div class="wrap-chips" role="group" aria-labelledby="cf-sports-l">'+
     SPORTS.map(function(s){return '<button type="button" class="chip" data-act="cf-sport" data-v="'+s[0]+'" aria-pressed="'+((f.sports||[]).indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div></div>';
   h+='<div class="field"><label for="cf-about">About the club</label><textarea id="cf-about" maxlength="600" placeholder="Who you are, when you play, who’s welcome">'+esc(f.about)+'</textarea></div>';
@@ -1752,7 +1766,7 @@ function icsText(v){return String(v||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\
 function icsFold(line){var out='';while(line.length>73){out+=line.slice(0,73)+'\r\n ';line=line.slice(73);}return out+line;}
 function gameUrl(g){return location.origin+location.pathname+'#g-'+g.id;}
 function gameWhere(g){return [g.venue,g.address,g.suburb].filter(Boolean).join(', ');}
-function gameNote(g){return [g.club&&g.club.name?'Hosted by '+g.club.name:'',g.level,g.price>0?'$'+g.price+' per player':'Free'].filter(Boolean).join(' · ');}
+function gameNote(g){return [g.club&&g.club.name?'Hosted by '+g.club.name:'',g.level,g.price>0?dollars(g.price)+' per player':'Free'].filter(Boolean).join(' · ');}
 function buildIcs(games){
   var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Bounce//Bounce AU//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Bounce games'];
   games.forEach(function(g){
@@ -2065,7 +2079,8 @@ function statusPill(txt,kind){return '<span class="spill'+(kind?' spill-'+kind:'
 /* ---------- Venues ---------- */
 function normVenue(r){
   r=r||{};
-  return {id:String(r.id),name:String(r.name||''),suburb:String(r.suburb||''),address:String(r.address||''),
+  return {id:String(r.id),name:String(r.name||''),suburb:String(r.suburb||''),address:String(r.address||''),state:r.state||'',postcode:r.postcode||'',
+    areaLat:typeof r.area_lat==='number'?r.area_lat:null,areaLng:typeof r.area_lng==='number'?r.area_lng:null,
     lat:typeof r.lat==='number'?r.lat:null,lng:typeof r.lng==='number'?r.lng:null,
     sports:(r.sports||[]).filter(function(s){return SPORT_LABEL[s];}),setting:r.setting||'outdoor',courts:r.courts||null,
     price:r.price_hour!=null?Number(r.price_hour):null,booking:httpsUrl(r.booking_url),notes:String(r.notes||''),createdBy:r.created_by};
@@ -2086,13 +2101,14 @@ function viewVenues(){
   if(S.venues===null)return h+loader('Loading venues…');
   var q=S.venueQ.trim().toLowerCase(),home=homeSuburb();
   var list=S.venues.filter(function(v){return (S.venueSport==='all'||v.sports.indexOf(S.venueSport)>=0)&&(!q||(v.name+' '+v.suburb+' '+v.address).toLowerCase().indexOf(q)>=0);})
-    .sort(function(a,b){var ha=home&&a.suburb.toLowerCase()===home?0:1,hb=home&&b.suburb.toLowerCase()===home?0:1;return ha-hb||venueGamesUp(b.id).length-venueGamesUp(a.id).length||a.name.localeCompare(b.name);});
+    .sort(function(a,b){return closeness(a)-closeness(b)||venueGamesUp(b.id).length-venueGamesUp(a.id).length||a.name.localeCompare(b.name);});
   if(!list.length)return h+'<div class="empty"><strong>'+(S.venues.length?'No venues match':'No venues yet')+'</strong><p>Add the courts you play at so others can find them and the games on there.</p><a class="btn btn-accent" href="#venue-new">Add a venue</a></div>';
   return h+'<div class="list">'+list.map(venueCard).join('')+'</div>';
 }
 function venueFormDefaults(v){
   v=v||{};
-  return {name:v.name||'',suburb:v.suburb||(S.profile&&S.profile.suburb)||'',address:v.address||'',sports:(v.sports||((S.profile&&S.profile.sports)||[])).slice(0,10),
+  var pp=S.profile||{},own=!!v.suburb;
+  return {name:v.name||'',suburb:own?v.suburb:(pp.suburb||''),state:own?(v.state||''):(pp.state||''),postcode:own?(v.postcode||''):(pp.postcode||''),address:v.address||'',sports:(v.sports||((S.profile&&S.profile.sports)||[])).slice(0,10),
     setting:v.setting||'outdoor',courts:v.courts?String(v.courts):'',price:v.price!=null?String(v.price):'',booking:v.booking||'',notes:v.notes||''};
 }
 function viewVenueForm(editing){
@@ -2101,7 +2117,7 @@ function viewVenueForm(editing){
   if(!S.uid)return h+signInPrompt('Sign in to add a venue','It takes a few seconds.','venue-new');
   h+='<form class="stack" id="venue-form" novalidate>'+(editing?'<h2>Edit venue</h2>':'')+
     '<div class="field"><label for="vn-name">Venue name</label><input id="vn-name" maxlength="80" placeholder="Marrickville Tennis Centre" value="'+esc(f.name)+'"></div>'+
-    '<div class="row2"><div class="field"><label for="vn-suburb">Suburb</label><input id="vn-suburb" maxlength="50" placeholder="Marrickville" value="'+esc(f.suburb)+'"></div>'+
+    '<div class="row2"><div class="field"><label for="vn-suburb">Suburb</label>'+subInput('vn',f,'Start typing, e.g. Werribee')+'</div>'+
     '<div class="field"><label for="vn-setting">Courts are</label><select id="vn-setting">'+SETTINGS.map(function(s){return '<option value="'+s[0]+'"'+(f.setting===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join('')+'</select></div></div>'+
     '<div class="field"><label for="vn-address">Street address</label><input id="vn-address" maxlength="160" autocomplete="street-address" placeholder="52 Centennial St" value="'+esc(f.address)+'"><span class="hint">Used for the map and directions.</span></div>'+
     '<div class="field"><span class="lbl" id="vn-sports-l">Sports played here</span><div class="wrap-chips" role="group" aria-labelledby="vn-sports-l">'+
@@ -2165,11 +2181,12 @@ function saveVenue(){
   var name=f.name.trim(),sub=f.suburb.trim(),book=f.booking.trim(),courts=f.courts===''?null:Math.round(Number(f.courts)),price=f.price===''?null:Number(f.price),err='';
   if(name.length<3)err='Give the venue a name of at least 3 letters.';
   else if(!sub)err='Add the suburb so people nearby can find it.';
+  else if(f.subTyped&&!subPicked(f))err='Pick the suburb from the list.';
   else if(courts!=null&&!(courts>=1&&courts<=99))err='Number of courts should be between 1 and 99.';
   else if(price!=null&&!(price>=0&&price<=999))err='Court hire should be between $0 and $999 per hour.';
   else if(book&&!/^https:\/\/\S+\.\S+/i.test(book))err='The booking link should start with https://';
   S.venueError=err;if(err){render();return;}
-  var data={name:name.slice(0,80),suburb:sub.slice(0,50),address:f.address.trim().slice(0,160)||null,sports:f.sports.slice(0,10),setting:f.setting,
+  var data={name:name.slice(0,80),suburb:sub.slice(0,50),state:f.state||null,postcode:f.postcode||null,address:f.address.trim().slice(0,160)||null,sports:f.sports.slice(0,10),setting:f.setting,
     courts:courts,price_hour:price,booking_url:book||null,notes:f.notes.trim().slice(0,400)||null};
   S.busy=true;render();
   var editing=S.venueEditing&&S.venueId;
@@ -2195,7 +2212,7 @@ function venueHost(id){
 function applyVenueToForm(v){
   var f=S.form;
   if(!v){f.venueId='';return;}
-  f.venueId=v.id;f.venue=v.name;f.address=v.address;if(v.suburb)f.suburb=v.suburb;f.lat=v.lat;f.lng=v.lng;
+  f.venueId=v.id;f.venue=v.name;f.address=v.address;if(v.suburb){f.suburb=v.suburb;f.state=v.state;f.postcode=v.postcode;}f.lat=v.lat;f.lng=v.lng;
   if(v.sports.length&&v.sports.indexOf(f.sport)<0)f.sport=v.sports[0];
 }
 function venuePicker(f){
@@ -2887,7 +2904,7 @@ function payJoinCTA(g){
   return '<button type="button" class="btn btn-accent btn-wide" data-act="pay-join" data-id="'+esc(g.id)+'"'+(S.paying?' disabled':'')+'>'+(S.paying===g.id?'Opening checkout…':S.uid?'Pay '+payTotal(g)+' and join':'Sign in to join')+'</button>';
 }
 function payNoteHTML(g){
-  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc('$'+g.price)+' game + $0.99 booking fee'+(g.payClub&&g.club&&g.club.name?', paid to '+esc(g.club.name):'')+'. Secure checkout by Stripe. <a href="refunds.html" target="_blank" rel="noopener">Refund policy</a></span></p>';
+  var n='<p class="paynote">'+I.lock+'<span>Apple Pay, Google Pay or card. '+esc(dollars(g.price))+' game + $0.99 booking fee'+(g.payClub&&g.club&&g.club.name?', paid to '+esc(g.club.name):'')+'. Secure checkout by Stripe. <a href="refunds.html" target="_blank" rel="noopener">Refund policy</a></span></p>';
   return n;
 }
 function leaveConfirmHTML(g){
@@ -3136,6 +3153,120 @@ function fieldBiz(e){
 }
 function submitBiz(id){if(id==='abn-form'){saveAbn(false);return true;}return false;}
 
+/* ---------- Australian suburbs, distance and money ---------- */
+var AU_STATES=['ACT','NSW','NT','QLD','SA','TAS','VIC','WA'];
+var KM_OPTIONS=[5,10,20,50];
+function dollars(n){n=Math.round((Number(n)||0)*100)/100;return '$'+(n%1?n.toFixed(2):String(n));}
+function toPrice(v){var s=String(v==null?'':v).trim().replace(/^\$/,'').replace(',','.');if(s==='')return 0;var n=Number(s);return isFinite(n)?Math.round(n*100)/100:NaN;}
+function subName(t){return String(t||'').replace(/\s+(ACT|NSW|NT|QLD|SA|TAS|VIC|WA)(\s+\d{4})?\s*$/i,'').replace(/\s+\d{4}\s*$/,'').replace(/\s+/g,' ').trim();}
+function subLabel(f){return f&&f.suburb?f.suburb+(f.state?' '+f.state+(f.postcode?' '+f.postcode:''):''):'';}
+function subPicked(f){return !!(f&&f.suburb&&String(f.suburb).trim()&&AU_STATES.indexOf(f.state)>=0);}
+function subForm(p){return p==='pf'?S.pf:p==='f'?S.form:p==='vn'?S.venueForm:p==='cf'?S.clubForm:null;}
+function subInput(p,f,ph){
+  return '<span class="sub-pick"><input id="'+p+'-suburb" maxlength="64" autocomplete="off" autocapitalize="words" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="'+p+'-sublist" placeholder="'+esc(ph||'Start typing your suburb')+'" value="'+esc(subLabel(f))+'">'+
+    '<span class="sub-list" id="'+p+'-sublist" role="listbox" aria-label="Suburbs" hidden></span></span>';
+}
+var subTimer=null,subSeq=0;
+function subSearch(p,text){
+  clearTimeout(subTimer);
+  var q=String(text||'').trim(),my=++subSeq;
+  if(q.length<2){subShow(p,[],'');return;}
+  subTimer=setTimeout(function(){
+    var pc=(q.match(/\b(\d{4})\b/)||[])[1],st=((q.match(/\b(ACT|NSW|NT|QLD|SA|TAS|VIC|WA)\b/i)||[])[1]||'').toUpperCase();
+    var name=subName(q).toLowerCase().replace(/[^a-z0-9' .-]/g,'').trim();
+    if(/^\d+$/.test(name))name='';
+    var qy=sb.from('localities').select('name,state,postcode');
+    if(pc&&!name)qy=qy.eq('postcode',pc);
+    else{if(!name){subShow(p,[],q);return;}qy=qy.like('search',name+'%');if(pc)qy=qy.eq('postcode',pc);}
+    if(st)qy=qy.eq('state',st);
+    qy.order('search').limit(40).then(function(r){
+      if(my!==subSeq)return;
+      var home=(S.profile&&S.profile.state)||'',rows=(r.data||[]).slice();
+      rows.sort(function(a,b){
+        var ea=a.name.toLowerCase()===name?0:1,eb=b.name.toLowerCase()===name?0:1;if(ea!==eb)return ea-eb;
+        var ha=a.state===home?0:1,hb=b.state===home?0:1;if(ha!==hb)return ha-hb;
+        return a.name.length-b.name.length||a.name.localeCompare(b.name)||String(a.postcode).localeCompare(String(b.postcode));
+      });
+      subShow(p,rows.slice(0,8),q);
+    },function(){if(my===subSeq)subShow(p,[],q);});
+  },160);
+}
+function subShow(p,rows,q){
+  S.subPick={p:p,items:rows,hi:0};
+  var el=document.getElementById(p+'-sublist'),inp=document.getElementById(p+'-suburb');if(!el)return;
+  if(!rows.length){
+    var show=!!(q&&q.length>=2);
+    el.innerHTML=show?'<span class="sub-none">No suburb found. Check the spelling, or type the postcode.</span>':'';
+    el.hidden=!show;if(inp){inp.setAttribute('aria-expanded',String(show));inp.removeAttribute('aria-activedescendant');}
+    return;
+  }
+  el.innerHTML=rows.map(function(r,i){return '<button type="button" role="option" id="'+p+'-opt-'+i+'" data-act="sub-pick" data-v="'+p+'|'+i+'" aria-selected="'+(i===0)+'"><span>'+esc(r.name)+'</span><small>'+esc(r.state+' '+r.postcode)+'</small></button>';}).join('');
+  el.hidden=false;if(inp){inp.setAttribute('aria-expanded','true');inp.setAttribute('aria-activedescendant',p+'-opt-0');}
+}
+function subHide(p){var el=document.getElementById(p+'-sublist'),inp=document.getElementById(p+'-suburb');if(el)el.hidden=true;if(inp){inp.setAttribute('aria-expanded','false');inp.removeAttribute('aria-activedescendant');}}
+function subTouched(p){
+  if(p==='pf')S.pfDirty=true;
+  else if(p==='f'){updatePreview();updateWhereMap();}
+}
+function subChoose(p,i){
+  var f=subForm(p),it=S.subPick&&S.subPick.p===p?S.subPick.items[i]:null;if(!f||!it)return;
+  f.suburb=it.name;f.state=it.state;f.postcode=it.postcode;f.subTyped=false;
+  var inp=document.getElementById(p+'-suburb');if(inp)inp.value=subLabel(f);
+  subHide(p);subTouched(p);
+}
+function fieldAU(e){
+  var t=e.target,m=/^(pf|f|vn|cf)-suburb$/.exec(t.id||'');if(!m)return false;
+  if(e.type!=='input')return true;
+  var p=m[1],f=subForm(p);if(!f)return true;
+  f.suburb=subName(t.value).slice(0,50);f.state='';f.postcode='';f.subTyped=true;
+  subTouched(p);subSearch(p,t.value);
+  return true;
+}
+function clickAU(a,id,v){
+  if(a==='sub-pick'){var parts=String(v||'').split('|');subChoose(parts[0],Number(parts[1]));return true;}
+  if(a==='pf-km'&&S.pf){var k=Number(v);if(KM_OPTIONS.indexOf(k)>=0){S.pf.alertKm=k;S.pfDirty=true;render();}return true;}
+  return false;
+}
+document.addEventListener('keydown',function(e){
+  var t=e.target,m=/^(pf|f|vn|cf)-suburb$/.exec(t&&t.id||'');if(!m)return;
+  var p=m[1],el=document.getElementById(p+'-sublist'),P=S.subPick;
+  if(!el||el.hidden||!P||P.p!==p||!P.items.length){if(e.key==='Enter')e.preventDefault();return;}
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    e.preventDefault();P.hi=(P.hi+(e.key==='ArrowDown'?1:-1)+P.items.length)%P.items.length;
+    Array.prototype.forEach.call(el.querySelectorAll('[role=option]'),function(b,i){b.setAttribute('aria-selected',String(i===P.hi));});
+    t.setAttribute('aria-activedescendant',p+'-opt-'+P.hi);
+  }
+  else if(e.key==='Enter'){e.preventDefault();subChoose(p,P.hi);}
+  else if(e.key==='Escape'){e.stopPropagation();subHide(p);}
+},true);
+document.addEventListener('focusout',function(e){
+  var m=/^(pf|f|vn|cf)-suburb$/.exec(e.target&&e.target.id||'');if(!m)return;
+  setTimeout(function(){var a=document.activeElement;if(!a||!a.closest||!a.closest('.sub-pick'))subHide(m[1]);},250);
+});
+document.addEventListener('mousedown',function(e){if(e.target.closest&&e.target.closest('.sub-list'))e.preventDefault();});
+
+/* Distance from the player's home suburb */
+function kmBetween(a,b){
+  if(!a||!b)return null;var R=6371.0088,r=Math.PI/180,dl=(b[0]-a[0])*r,dg=(b[1]-a[1])*r;
+  var h=Math.pow(Math.sin(dl/2),2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.pow(Math.sin(dg/2),2);
+  return 2*R*Math.asin(Math.min(1,Math.sqrt(h)));
+}
+function homeLoc(){var p=S.profile;return p&&typeof p.area_lat==='number'&&typeof p.area_lng==='number'?[p.area_lat,p.area_lng]:null;}
+function locOf(o){if(!o)return null;if(o.lat!=null&&o.lng!=null)return [o.lat,o.lng];if(o.areaLat!=null&&o.areaLng!=null)return [o.areaLat,o.areaLng];return null;}
+function kmFromHome(o){return kmBetween(homeLoc(),locOf(o));}
+function nearKm(){var k=S.profile&&Number(S.profile.alert_km);return KM_OPTIONS.indexOf(k)>=0?k:10;}
+function fmtKm(d){return d==null?'':d<1?'under 1 km':(d<10?d.toFixed(1).replace(/\.0$/,''):String(Math.round(d)))+' km';}
+function kmTag(o){var d=kmFromHome(o);return d==null?'':' · '+fmtKm(d);}
+function isNear(o){
+  var d=kmFromHome(o);if(d!=null)return d<=nearKm();
+  var home=homeSuburb();return !!home&&String(o.suburb||'').trim().toLowerCase()===home;
+}
+function closeness(o){var d=kmFromHome(o);if(d!=null)return d;var home=homeSuburb();return home&&String(o.suburb||'').trim().toLowerCase()===home?0:9999;}
+function kmPicker(cur){
+  return '<div class="field"><span class="lbl" id="pf-km-l">Near me distance</span><div class="seg2" role="group" aria-labelledby="pf-km-l">'+
+    KM_OPTIONS.map(function(k){return '<button type="button" class="chip" data-act="pf-km" data-v="'+k+'" aria-pressed="'+(cur===k)+'">'+k+' km</button>';}).join('')+
+    '</div><span class="hint">Near me and One Short alerts cover games within this distance of your suburb.</span></div>';
+}
 function paint(){
   var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route;
   document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
@@ -3335,8 +3466,8 @@ function loadProfile(){
   if(!S.uid){S.profile=null;S.pf=null;return Promise.resolve();}
   return sb.from('profiles').select('*').eq('id',S.uid).maybeSingle().then(function(r){
     S.profile=r.data||null;
-    if(!S.pfDirty){var p=S.profile||{};S.pf={display_name:p.display_name||'',suburb:p.suburb||'',bio:p.bio||'',level:p.level||'All levels',sports:(p.sports||[]).slice(),duprId:p.dupr_id||'',duprDoubles:p.dupr_doubles!=null?String(Number(p.dupr_doubles)):'',duprSingles:p.dupr_singles!=null?String(Number(p.dupr_singles)):''};}
-    if(S.profile&&!S.form.suburb&&S.profile.suburb)S.form.suburb=S.profile.suburb;
+    if(!S.pfDirty){var p=S.profile||{};S.pf={display_name:p.display_name||'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',alertKm:KM_OPTIONS.indexOf(p.alert_km)>=0?p.alert_km:10,bio:p.bio||'',level:p.level||'All levels',sports:(p.sports||[]).slice(),duprId:p.dupr_id||'',duprDoubles:p.dupr_doubles!=null?String(Number(p.dupr_doubles)):'',duprSingles:p.dupr_singles!=null?String(Number(p.dupr_singles)):''};}
+    if(S.profile&&!S.form.suburb&&S.profile.suburb){S.form.suburb=S.profile.suburb;S.form.state=S.profile.state||'';S.form.postcode=S.profile.postcode||'';}
   });
 }
 function loadGame(){
@@ -3685,7 +3816,7 @@ function route(){
   if(S.route!=='league-new')S.leagueForm=null;
   S.venueEditing=false;S.confirmVenueDel=false;S.confirmCoachDel=false;S.confirmLeagueDel=false;S.entryForm=null;S.ladderForm=null;S.scoreEdit=null;S.confirmLeave=false;S.payoutBusy=false;S.abnEditing=false;S.confirmAbnDel=false;S.abnError='';S.venueError='';S.coachError='';S.leagueError='';
   if(S.route==='login'&&S.uid){location.replace('#'+(popNext()||'discover'));return;}
-  if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
+  if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',state:(S.profile&&S.profile.state)||'',postcode:(S.profile&&S.profile.postcode)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
   S.sheet=null;hideHover();
   render();
@@ -3795,13 +3926,13 @@ function invite(){
   else fallback();
 }
 function createGame(){
-  var f=S.form,cap=formCapacity(f),price=Math.round(Number(f.price)),start=new Date(f.date+'T'+f.time);
+  var f=S.form,cap=formCapacity(f),price=toPrice(f.price),start=new Date(f.date+'T'+f.time);
   var e=hostErrors();
   S.formError=e?e[1]:'';
   if(e){S.hostStep=e[0];render();return;}
   S.busy=true;render();
   sb.from('games').insert({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
-    venue:f.venue.trim(),suburb:f.suburb.trim(),address:f.address.trim()||null,lat:hasPin(f)?f.lat:null,lng:hasPin(f)?f.lng:null,host_plays:!!f.hostPlays,
+    venue:f.venue.trim(),suburb:f.suburb.trim(),state:f.state||null,postcode:f.postcode||null,address:f.address.trim()||null,lat:hasPin(f)?f.lat:null,lng:hasPin(f)?f.lng:null,host_plays:!!f.hostPlays,
     level:f.level,price:price,capacity:cap,one_short:!!f.oneShort,notes:f.notes.trim(),
     club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',pay_online:!!f.payOnline&&price>0&&canPayOnline(f),pay_club:!!f.payOnline&&price>0&&payClubFor(f),
     dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null}).select('id').single().then(function(r){
@@ -3824,8 +3955,9 @@ function saveProfile(){
   var did=String(pf.duprId||'').trim().toUpperCase(),dd=String(pf.duprDoubles||'').trim(),ds=String(pf.duprSingles||'').trim();
   if(did&&!/^[A-Z0-9]{4,12}$/.test(did)){toast('Your DUPR ID is letters and numbers only, like ABC123.');return;}
   if((dd&&duprNum(dd)==null)||(ds&&duprNum(ds)==null)){toast('DUPR ratings go from 2.000 to 8.000.');return;}
+  if(pf.subTyped&&pf.suburb.trim()&&!subPicked(pf)){toast('Pick your suburb from the list so we know which one you mean.');var si=document.getElementById('pf-suburb');if(si)si.focus();return;}
   S.busy=true;render();
-  sb.from('profiles').update({display_name:pf.display_name.trim().slice(0,40),suburb:pf.suburb.trim().slice(0,50)||null,bio:pf.bio.trim().slice(0,160)||null,level:pf.level,sports:pf.sports,
+  sb.from('profiles').update({display_name:pf.display_name.trim().slice(0,40),suburb:pf.suburb.trim().slice(0,50)||null,state:pf.suburb.trim()?pf.state:null,postcode:pf.suburb.trim()?pf.postcode:null,alert_km:KM_OPTIONS.indexOf(pf.alertKm)>=0?pf.alertKm:10,bio:pf.bio.trim().slice(0,160)||null,level:pf.level,sports:pf.sports,
     dupr_id:did||null,dupr_doubles:dd?duprNum(dd):null,dupr_singles:ds?duprNum(ds):null}).eq('id',S.uid).then(function(r){
     S.busy=false;
     if(r.error){toast('Couldn’t save your profile. Try again.');render();return;}
@@ -3835,7 +3967,7 @@ function saveProfile(){
 /* ---------- club actions ---------- */
 function newClub(){
   if(needLogin('club-new'))return;
-  S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
+  S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',state:(S.profile&&S.profile.state)||'',postcode:(S.profile&&S.profile.postcode)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.clubFormError='';
   if(location.hash==='#club-new')render();else location.hash='club-new';
 }
@@ -3845,9 +3977,10 @@ function saveClub(){
   if(name.length<3)err='Give the club a name of at least 3 letters.';
   else if(web&&!/^https?:\/\/\S+\.\S+/i.test(web))err='The website should start with https://';
   else if(ig&&!/^[A-Za-z0-9._]{1,30}$/.test(ig))err='Instagram names use letters, numbers, dots and underscores only.';
+  else if(f.subTyped&&f.suburb.trim()&&!subPicked(f))err='Pick the suburb from the list.';
   S.clubFormError=err;
   if(err){render();return;}
-  var data={name:name.slice(0,60),kind:CLUB_KINDS.indexOf(f.kind)>=0?f.kind:'Club',sports:f.sports||[],suburb:f.suburb.trim().slice(0,50)||null,
+  var data={name:name.slice(0,60),kind:CLUB_KINDS.indexOf(f.kind)>=0?f.kind:'Club',sports:f.sports||[],suburb:f.suburb.trim().slice(0,50)||null,state:f.suburb.trim()?(f.state||null):null,postcode:f.suburb.trim()?(f.postcode||null):null,
     about:f.about.trim().slice(0,600),website:web||null,instagram:ig||null,
     venue:String(f.venue||'').trim().slice(0,80)||null,address:String(f.address||'').trim().slice(0,160)||null};
   S.busy=true;render();
@@ -3972,7 +4105,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]');if(!b)return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id'),v=b.getAttribute('data-v');
   if(id&&!ID_RE.test(id))return;
-  if(clickBiz(a,id,v)||clickPay(a,id)||clickExtra(a,id,v))return;
+  if(clickAU(a,id,v)||clickBiz(a,id,v)||clickPay(a,id)||clickExtra(a,id,v))return;
   // The sheet backdrop closes only when tapped directly, not when tapping blank space inside the sheet.
   if(a==='sheet-close'){if((b.classList.contains('sheet-back')||b.classList.contains('lightbox'))&&e.target!==b)return;closeSheet();return;}
   if(S.sheet&&S.sheet.type==='member'&&(a==='club-role'||a==='club-remove')){S.sheet=null;renderSheet();}
@@ -4036,7 +4169,7 @@ document.addEventListener('click',function(e){
   else if(a==='club-leave')leaveClub(id);
   else if(a==='club-invite')inviteClub();
   else if(a==='club-host'){S.form=defaultForm();applyClubToForm(id);S.hostStep=0;location.hash='host';}
-  else if(a==='club-edit'&&S.club){var c=S.club;S.clubForm={name:c.name,kind:c.kind,suburb:c.suburb,sports:c.sports.slice(),about:c.about,website:c.website,instagram:c.instagram,venue:c.venue,address:c.address,logo:c.logo};S.clubFormError='';S.clubEditing=true;render();}
+  else if(a==='club-edit'&&S.club){var c=S.club;S.clubForm={name:c.name,kind:c.kind,suburb:c.suburb,state:c.state,postcode:c.postcode,sports:c.sports.slice(),about:c.about,website:c.website,instagram:c.instagram,venue:c.venue,address:c.address,logo:c.logo};S.clubFormError='';S.clubEditing=true;render();}
   else if(a==='club-edit-cancel'){clearFormLogo(S.clubForm);S.clubEditing=false;render();}
   else if(a==='cf-logo-remove'&&S.clubForm){clearFormLogo(S.clubForm);S.clubForm.logoRemove=true;render();}
   else if(a==='pf-photo-remove')removeAvatar();
@@ -4048,7 +4181,7 @@ document.addEventListener('click',function(e){
 });
 function onField(e){
   var t=e.target,id=t.id;if(!id)return;
-  if(fieldBiz(e)||fieldExtra(e))return;
+  if(fieldAU(e)||fieldBiz(e)||fieldExtra(e))return;
   if(id==='q'){S.q=t.value;render();}
   else if(id==='hq'){
     // Header search (desktop): typing anywhere takes you to Discover with the results.
