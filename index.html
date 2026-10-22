@@ -969,6 +969,83 @@ p.meta .link-btn{min-height:0;font-weight:600}
   .wordmark{position:relative}
   .wordmark::after{content:"";position:absolute;inset:-4px 0}
 }
+
+/* ===== Phones: floating dock, search button and menu ===== */
+:root{--dock-h:66px;--dock-clear:calc(var(--dock-h) + 22px + env(safe-area-inset-bottom,0px))}
+.next-game{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;background:var(--brand-soft);color:var(--ink);text-decoration:none}
+.next-game .gbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.next-game small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-text)}
+.next-game b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.next-game .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ng-go{font-size:26px;line-height:1;color:var(--brand-text)}
+@media (max-width:767px){
+  .tabs{position:fixed;z-index:15;left:max(12px,env(safe-area-inset-left,0px));right:calc(max(12px,env(safe-area-inset-right,0px)) + 68px);bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    display:flex;align-items:center;gap:4px;padding:6px;border:1px solid var(--line);border-radius:999px;
+    background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(15,31,26,.16)}
+  .tabs .tab[data-tab="host"],.tabs .tab[data-tab="clubs"],.tabs .side-extra,.tabs .kbd{display:none}
+  .tab{flex:1 1 0;min-width:0;min-height:52px;flex-direction:row;gap:7px;padding:0 10px;border-radius:999px;border:0;background:none;font:inherit;font-size:0;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap;transition:background-color .2s ease,color .2s ease,flex-grow .2s ease}
+  .tab[aria-current="page"]{flex:0 0 auto;padding:0 16px;background:var(--brand);color:var(--on-brand);font-size:14px;font-weight:800}
+  .tab[aria-current="page"]::after{display:none}
+  .tab-badge{top:6px;left:calc(50% + 4px)}
+  .tab[aria-current="page"] .tab-badge{position:static;margin-left:2px;box-shadow:none;background:var(--accent);color:var(--on-accent)}
+  .tab-more svg{width:24px;height:24px}
+  .tab-more .chev-x{display:none}
+  body.menu-open .tab-more{background:var(--ink);color:var(--bg)}
+  body.menu-open .tab-more .chev-up{display:none}
+  body.menu-open .tab-more .chev-x{display:block}
+  .fab-search{position:fixed;z-index:15;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:var(--dock-h);height:var(--dock-h);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;border:1px solid var(--line);color:var(--ink);cursor:pointer;
+    background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(15,31,26,.16)}
+  .fab-search svg{width:26px;height:26px}
+  .fab-search:active,.tab:active{transform:scale(.95)}
+  body.typing .tabs,body.typing .fab-search{display:none}
+  /* room for the dock under every page */
+  .inner{padding-bottom:var(--dock-clear)}
+  .inner:has(.actionbar),.inner:has(.host-actions){padding-bottom:var(--dock-clear)}
+  .actionbar,.host-actions{bottom:var(--dock-clear);margin:0;border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 28px rgba(15,31,26,.14);
+    background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .host-actions{padding:9px}
+  .inner.pg-clubchat{padding-bottom:var(--dock-clear)}
+  #toast{bottom:calc(var(--dock-clear) + 6px)}
+  body:has(.actionbar) #toast,body:has(.host-actions) #toast{bottom:calc(var(--dock-clear) + 84px)}
+  body.typing .inner{padding-bottom:16px}
+  body.typing .actionbar,body.typing .host-actions{bottom:0}
+  /* Home: simple. Search opens from the round button; Venues, Coaches, Leagues and Clubs live in the menu */
+  .pg-discover .search-row:not(.on){display:none}
+  .pg-discover .search-row.on .search{flex:1}
+  .pg-discover .feed:has(.search-row.on) .next-game,.pg-discover .feed:has(.search-row.on) .alert{display:none}
+  .pg-discover .explore,.pg-discover .list-break{display:none}
+  .pg-discover .hello h1{font-size:30px}
+  /* The menu */
+  .menu-back{position:fixed;inset:0;z-index:29;background:rgba(10,20,16,.22);animation:fade .15s ease-out}
+  .menu-pop{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(var(--dock-clear) - 12px);width:min(340px,calc(100vw - 24px));
+    max-height:calc(100dvh - var(--dock-clear) - env(safe-area-inset-top,0px) - 24px);overflow-y:auto;overscroll-behavior:contain;
+    background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:28px;box-shadow:0 18px 50px rgba(15,31,26,.25);padding:10px;
+    transform-origin:bottom left;animation:menu-in .18s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes menu-in{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  .menu-head{display:flex;align-items:center;gap:10px;padding:6px 6px 10px}
+  .menu-head > .gbody{flex:1;min-width:0;display:flex;flex-direction:column}
+  .menu-me{flex:1;min-width:0;display:flex;align-items:center;gap:12px;min-height:52px;padding:4px 6px;border-radius:16px;text-decoration:none;color:inherit}
+  .menu-me .gbody{min-width:0;display:flex;flex-direction:column}
+  .menu-me b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .menu-plus{flex:none;width:52px;height:52px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:30px;font-weight:600;line-height:1}
+  .menu-list{display:flex;flex-direction:column;gap:2px}
+  .menu-item{display:flex;align-items:center;gap:16px;min-height:52px;padding:0 16px;border-radius:999px;color:var(--ink);text-decoration:none;font-weight:700;font-size:17px}
+  .menu-item svg{width:24px;height:24px;flex:none}
+  .menu-item span{flex:1}
+  .menu-item.on{background:var(--brand);color:var(--on-brand)}
+  .menu-ico-plus{flex:none !important;width:24px;height:24px;border-radius:7px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;line-height:1}
+  .menu-badge{min-width:26px;height:26px;padding:0 8px;border-radius:13px;background:#E5484D;color:#fff;font-size:13px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+  .menu-sep{display:block;height:1px;background:var(--line);margin:6px 16px}
+}
+@media (max-width:389px){.tab[aria-current="page"]{font-size:0;padding:0 18px}.tab[aria-current="page"] .tab-badge{position:absolute;top:4px;right:4px;left:auto;margin:0}}
+@media (max-width:374px){.pg-discover .filters.not-xs{display:flex!important}}
+@media (max-width:767px) and (max-height:500px){
+  :root{--dock-h:58px}
+  .tab{min-height:44px}
+  .tab[aria-current="page"]{font-size:0}
+}
+@media (prefers-reduced-motion:reduce){.menu-pop,.menu-back{animation:none}}
 </style>
 </head>
 <body>
@@ -989,11 +1066,14 @@ p.meta .link-btn{min-height:0;font-weight:600}
     <a class="tab" href="#host" data-tab="host"><span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Host<kbd class="kbd" aria-hidden="true">N</kbd></a>
     <a class="tab" href="#clubs" data-tab="clubs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5l8-2 8 2v16"/><path d="M9 21v-5h6v5"/><path d="M9 9h.01M15 9h.01M9 12.5h.01M15 12.5h.01"/></svg>Clubs</a>
     <a class="tab" href="#inbox" data-tab="inbox" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/></svg>Inbox<span class="tab-badge" id="inbox-badge" aria-hidden="true" hidden></span></a>
+    <button type="button" class="tab tab-more only-phone" id="menu-btn" data-act="menu" aria-expanded="false" aria-controls="menu-root" aria-label="Menu"><svg class="chev-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10l5-5 5 5"/><path d="M7 15l5 5 5-5"/></svg><svg class="chev-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="tab-badge" id="menu-badge" aria-hidden="true" hidden></span></button>
     <div class="side-extra" id="side-extra"></div>
   </nav>
+  <button type="button" class="fab-search only-phone" data-act="search-open" aria-label="Search games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg></button>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <div id="sheet-root"></div>
+<div id="menu-root"></div>
 
 <script>
 (function(){
@@ -1304,8 +1384,10 @@ function viewDiscover(){
   var nf=filterCount();
 
   var h='<div class="split"><div class="feed">';
+  var nextG=S.uid?up.filter(function(g){return S.myIds[g.id];})[0]:null;
   h+='<section class="hello"><h1>Find your next game</h1><p class="meta">'+esc(S.profile&&S.profile.suburb?'Pickup games, socials and comps around '+S.profile.suburb:'Pickup games, socials and comps near you')+'</p></section>';
   if(S.loadError)h+='<p class="notice">'+esc(S.loadError)+'</p>';
+  if(nextG)h+='<a class="next-game only-phone" href="#g-'+esc(nextG.id)+'"><span class="gbody"><small>Your next game</small><b>'+esc(nextG.title)+'</b><span class="meta">'+esc(fmtDay(nextG.start)+', '+fmtTime(nextG.start)+' · '+place(nextG))+'</span></span><span class="ng-go" aria-hidden="true">›</span></a>';
   // Phones and tablets: the first One Short alert sits at the top. Desktop lists them all in the right rail.
   if(alertG){
     var isNew=S.alertShown!==alertG.id;S.alertShown=alertG.id;
@@ -1315,7 +1397,8 @@ function viewDiscover(){
       '<div class="actions"><button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(alertG.id)+'">I’m in</button><a class="btn btn-line" href="#g-'+esc(alertG.id)+'">Details</a></div></section>';
   }
   // Search sits here below 1280px; on desktop it moves into the header. Under 375px the filters fold into one button.
-  h+='<div class="search-row only-narrow"><div class="search">'+I.search+'<label class="sr" for="q">Search games</label><input id="q" type="search" placeholder="Search games, venues, suburbs" autocomplete="off" value="'+esc(S.q)+'"></div>'+
+  h+='<div class="search-row only-narrow'+(S.searchOpen||S.q?' on':'')+'"><div class="search">'+I.search+'<label class="sr" for="q">Search games</label><input id="q" type="search" placeholder="Search games, venues, suburbs" autocomplete="off" value="'+esc(S.q)+'"></div>'+
+    '<button type="button" class="btn btn-line search-done only-phone" data-act="search-close">Done</button>'+
     '<button type="button" class="btn btn-line filters-btn only-xs" data-act="filters" aria-haspopup="dialog" aria-label="Filters'+(nf?', '+nf+' on':'')+'">'+I.sliders+'<span aria-hidden="true">Filters</span>'+(nf?'<b aria-hidden="true">'+nf+'</b>':'')+'</button></div>';
   h+=exploreStrip();
   var calView=S.dview==='cal';
@@ -3430,8 +3513,61 @@ function paint(){
   if(aid){var el=document.getElementById(aid);if(el&&el!==document.activeElement){try{el.focus({preventScroll:true});if(ss!=null)el.setSelectionRange(ss,se);}catch(e){}}}
   var inv=document.getElementById('invite');if(inv&&S.selectInvite){inv.focus();inv.select();S.selectInvite=false;}
   var hq=document.getElementById('hq');if(hq&&hq!==document.activeElement&&hq.value!==S.q)hq.value=S.q;
-  renderSide();renderSheet();
+  renderSide();renderSheet();renderMenu();
   if(hc.el&&!document.body.contains(hc.el))hideHover();
+}
+/* Phones: the menu that opens from the dock */
+function tabIcon(t){var e=document.querySelector('.tab[data-tab="'+t+'"] svg');return e?e.outerHTML:'';}
+function renderMenu(){
+  var root=document.getElementById('menu-root'),btn=document.getElementById('menu-btn');if(!root)return;
+  var open=!!S.menuOpen&&window.innerWidth<768;
+  document.body.classList.toggle('menu-open',open);
+  if(btn)btn.setAttribute('aria-expanded',String(open));
+  var ln=S.uid?lessonsNew():0,unread=S.uid?S.unread+ln:0;
+  var mb=document.getElementById('menu-badge');if(mb){mb.hidden=!ln;mb.textContent=ln>9?'9+':String(ln);}
+  if(!open){if(root.innerHTML)root.innerHTML='';return;}
+  var r=S.route,grp=['venues','venue','venue-new'].indexOf(r)>=0?'venues':['coaches','coach','coach-edit'].indexOf(r)>=0?'coaches':['leagues','league','league-new'].indexOf(r)>=0?'leagues':
+    (r==='club'||r==='clubbiz'||r==='club-new'||r==='clubs'||r==='feed'||r==='clubchat')?'clubs':r==='game'?'discover':r;
+  function item(key,href,icon,label,badge){
+    return '<a class="menu-item'+(grp===key?' on':'')+'" href="'+href+'"'+(grp===key?' aria-current="page"':'')+'>'+icon+'<span>'+esc(label)+'</span>'+(badge?'<b class="menu-badge">'+(badge>99?'99+':badge)+'</b>':'')+'</a>';
+  }
+  var p=S.profile||{},head;
+  if(S.uid)head='<div class="menu-head"><a class="menu-me" href="#profile">'+avatar(S.uid,p.display_name,p.avatar_url,40)+'<span class="gbody"><b>'+esc(p.display_name||'Your profile')+'</b><span class="meta">Profile and settings</span></span></a>'+
+    '<a class="menu-plus" href="#host" aria-label="Host a game"><span aria-hidden="true">+</span></a></div>';
+  else head='<div class="menu-head"><span class="gbody"><b>Welcome to Bounce Up</b><span class="meta">Sign in to join and host games</span></span><button type="button" class="btn btn-brand btn-sm" data-act="login" data-v="discover">Sign in</button></div>';
+  var clubsHref=S.myClubs.length?'#feed':'#clubs';
+  var h='<div class="menu-back" data-act="menu-close"></div><div class="menu-pop" role="dialog" aria-label="Menu">'+head+
+    '<nav class="menu-list" aria-label="All pages">'+
+    item('discover','#discover',tabIcon('discover'),'Discover')+
+    item('mine','#mine',tabIcon('mine'),'My games')+
+    item('host','#host','<span class="menu-ico-plus" aria-hidden="true">+</span>','Host a game')+
+    item('clubs',clubsHref,tabIcon('clubs'),'Clubs')+
+    item('inbox','#inbox',tabIcon('inbox'),'Inbox',S.uid?S.unread:0)+
+    (S.uid?item('lessons','#lessons',XI.lesson,'Lessons',ln):'')+
+    '<span class="menu-sep" role="separator"></span>'+
+    item('venues','#venues',XI.venue,'Venues')+
+    item('coaches','#coaches',XI.coach,'Coaches')+
+    item('leagues','#leagues',XI.league,'Leagues')+
+    (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
+    '<span class="menu-sep" role="separator"></span>'+
+    '<a class="menu-item" href="mailto:benjibajout@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a>'+
+    '</nav></div>';
+  var was=root.innerHTML!=='';
+  root.innerHTML=h;
+  if(!was){var f=root.querySelector('.menu-item.on')||root.querySelector('.menu-item');if(f)try{f.focus({preventScroll:true});}catch(e){}}
+}
+function openSearch(){
+  S.menuOpen=false;
+  if(S.route!=='discover'){try{history.pushState(null,'','#discover');}catch(e){location.hash='discover';return;}route();}
+  S.searchOpen=true;render();$main.scrollTop=0;
+  var q=document.getElementById('q');if(q)try{q.focus();}catch(e){}
+}
+function clickDock(a){
+  if(a==='menu'){S.menuOpen=!S.menuOpen;renderMenu();if(!S.menuOpen){var b=document.getElementById('menu-btn');if(b)b.focus();}return true;}
+  if(a==='menu-close'){S.menuOpen=false;renderMenu();return true;}
+  if(a==='search-open'){openSearch();return true;}
+  if(a==='search-close'){S.searchOpen=false;S.q='';var hq=document.getElementById('hq');if(hq)hq.value='';render();return true;}
+  return false;
 }
 /* Minimal DOM morph: walks old and new trees in step and patches differences in place */
 function syncControl(a,b){
@@ -3960,7 +4096,7 @@ function route(){
   if(S.route==='login'&&S.uid&&S.login.step!=='newpass'){location.replace('#'+(popNext()||'discover'));return;}
   if(S.route==='club-new'&&!S.clubForm)S.clubForm={name:'',kind:'Club',suburb:(S.profile&&S.profile.suburb)||'',state:(S.profile&&S.profile.state)||'',postcode:(S.profile&&S.profile.postcode)||'',sports:((S.profile&&S.profile.sports)||[]).slice(),about:'',website:'',instagram:'',venue:'',address:''};
   S.confirmDel=false;S.confirmClubDel=false;S.clubEditing=false;S.inviteText='';S.formError='';S.clubFormError='';S.resetScroll=true;
-  S.sheet=null;hideHover();
+  S.sheet=null;hideHover();S.menuOpen=false;if(S.route!=='discover')S.searchOpen=false;
   render();
   if(sb){
     if(S.route==='game')loadGame().then(loadGamePayments).then(render);
@@ -3992,6 +4128,8 @@ window.addEventListener('hashchange',route);
   // A scroll the person starts themselves cancels any pending "go back to where you were"
   ['touchstart','wheel'].forEach(function(ev){$main.addEventListener(ev,function(){S.restoreTop=null;},{passive:true});});
 })();
+document.addEventListener('click',function(e){if(S.menuOpen&&e.target.closest&&e.target.closest('.menu-pop a[href]')){S.menuOpen=false;setTimeout(renderMenu,0);}});
+window.addEventListener('resize',function(){if(S.menuOpen&&window.innerWidth>=768){S.menuOpen=false;renderMenu();}});
 /* Search boxes: a tap anywhere on the box goes to the text field */
 document.addEventListener('click',function(e){
   var box=e.target.closest&&e.target.closest('.search,.top-search');
@@ -4346,7 +4484,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]');if(!b)return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id'),v=b.getAttribute('data-v');
   if(id&&!ID_RE.test(id))return;
-  if(clickAU(a,id,v)||clickBiz(a,id,v)||clickPay(a,id)||clickExtra(a,id,v))return;
+  if(clickDock(a)||clickAU(a,id,v)||clickBiz(a,id,v)||clickPay(a,id)||clickExtra(a,id,v))return;
   // The sheet backdrop closes only when tapped directly, not when tapping blank space inside the sheet.
   if(a==='sheet-close'){if((b.classList.contains('sheet-back')||b.classList.contains('lightbox'))&&e.target!==b)return;closeSheet();return;}
   if(S.sheet&&S.sheet.type==='member'&&(a==='club-role'||a==='club-remove')){S.sheet=null;renderSheet();}
@@ -4486,7 +4624,7 @@ function focusSearch(){
   if(S.route!=='discover'){location.hash='discover';setTimeout(go,80);}else go();
 }
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){hideHover();if(S.sheet){e.preventDefault();closeSheet();}return;}
+  if(e.key==='Escape'){hideHover();if(S.menuOpen){e.preventDefault();S.menuOpen=false;renderMenu();var mbt=document.getElementById('menu-btn');if(mbt)mbt.focus();return;}if(S.sheet){e.preventDefault();closeSheet();}return;}
   if(S.sheet&&S.sheet.type==='photo'&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){var pp=findPost(S.sheet.id);if(pp){S.sheet.i=(S.sheet.i+(e.key==='ArrowLeft'?-1:1)+pp.photos.length)%pp.photos.length;renderSheet();}return;}
   if(e.metaKey||e.ctrlKey||e.altKey||e.isComposing||S.sheet)return;
   var t=e.target,tag=t&&t.tagName;
