@@ -1067,6 +1067,92 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .featured .list-head h2{display:flex;align-items:center;gap:8px}
 .featured .list-head h2 svg{width:18px;height:18px;color:var(--accent)}
 .admin-card{border-style:dashed}
+
+/* Organiser checks */
+.checked-badge{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin:6px 6px 2px 0;padding:4px 11px 4px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand-text);border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);font-size:12.5px;font-weight:800;white-space:nowrap}
+.checked-badge svg{flex:none}
+.checked-badge.sm{margin:0;padding:3px 9px 3px 7px;font-size:11.5px}
+.checked-row{display:flex;flex-wrap:wrap;gap:0 6px}
+.hostline .checked-badge{margin-left:auto}
+.hostline .founding-badge + .checked-badge{margin-left:6px}
+.band .checked-badge{background:color-mix(in srgb,var(--brand) 30%,transparent);color:var(--hero-fg);border-color:color-mix(in srgb,var(--hero-fg) 35%,transparent)}
+.tick{display:inline-flex;vertical-align:-2px;color:var(--brand-text)}
+.ck-card h2,.ck-sec h2{display:flex;align-items:center;gap:8px}
+.ck-card h2 svg{width:18px;height:18px;color:var(--brand)}
+.ck-status{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:6px 10px;font-size:14px}
+.ck-status > span:first-child{font-weight:800}
+.ck-status .spill{justify-self:start}
+@media (max-width:420px){.ck-status{grid-template-columns:auto 1fr}.ck-status small{grid-column:1/-1}}
+.ck-sec{gap:12px}
+.ck-n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:13px;font-weight:800;flex:none}
+.ck-roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.ck-roles{grid-template-columns:minmax(0,1fr)}}
+.ck-abn-row{display:flex;flex-wrap:wrap;gap:8px}
+.ck-abn-row input{flex:1 1 180px;min-width:0}
+.ck-file{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 12px;border:1px dashed var(--line-strong);border-radius:14px}
+.ck-doc{display:inline-flex;align-items:center;gap:8px;font-size:14px;flex:1 1 200px;min-width:0}
+.ck-doc svg{color:var(--brand);flex:none}
+.ck-privacy{display:flex;gap:10px;align-items:flex-start;margin:0;padding:12px 14px;border-radius:14px;background:var(--brand-soft);color:var(--brand-text);font-size:13.5px;font-weight:600}
+.ck-privacy svg{flex:none;margin-top:2px}
+.ck-del{color:var(--danger)}
+.rev-card{gap:10px}
+.rev-head{display:flex;align-items:center;gap:12px}
+.rev-head a{color:inherit}
+.rev-roles{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;font-weight:700}
+.rev-roles span{display:inline-flex;align-items:center;gap:6px}
+.rev-row{display:grid;grid-template-columns:96px minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.rev-l{font-weight:800;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+.rev-b a{color:var(--brand-text);font-weight:600}
+@media (max-width:480px){.rev-row{grid-template-columns:minmax(0,1fr) auto}.rev-l{grid-column:1/-1}}
+.err-t{color:var(--danger);font-weight:700}
+
+/* Our mission */
+.about{display:flex;flex-direction:column;gap:18px}
+.about .eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.mission-hero{position:relative;overflow:hidden;border-radius:28px 28px 28px 10px;background:var(--hero-bg);color:var(--hero-fg);display:flex;flex-direction:column}
+.mh-art{display:block;width:100%;height:190px}
+.mh-sun{fill:var(--accent);animation:mhRise 1.4s cubic-bezier(.2,.8,.2,1) both}
+.mh-ring{fill:none;stroke:var(--accent);stroke-width:1.5;opacity:.28}
+.mh-hill1{fill:color-mix(in srgb,var(--brand) 70%,var(--hero-fg))}
+.mh-hill2{fill:color-mix(in srgb,var(--brand) 85%,var(--hero-bg))}
+.mh-arc{fill:none;stroke:var(--hero-fg);stroke-width:3;stroke-linecap:round;stroke-dasharray:1 11;opacity:.7}
+.mh-ball{fill:var(--hero-fg);animation:mhBounce 1.8s cubic-bezier(.3,0,.7,1) infinite}
+.mh-leaf{fill:color-mix(in srgb,var(--accent) 45%,var(--brand));transform-origin:58px 236px;animation:mhSway 6s ease-in-out infinite}
+.mh-vein{fill:none;stroke:var(--hero-bg);stroke-width:2;opacity:.55;transform-origin:58px 236px;animation:mhSway 6s ease-in-out infinite}
+.mh-body{padding:4px 22px 24px;display:flex;flex-direction:column;gap:10px}
+.mh-body .eyebrow{color:var(--accent)}
+.mh-body h1{font-size:clamp(30px,6.4vw,46px);line-height:1.04;letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.mh-body p{margin:0;font-size:16px;line-height:1.55;color:var(--hero-muted);max-width:60ch}
+@media (min-width:768px){.mission-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:stretch}.mh-art{order:2;height:100%;min-height:340px}.mh-body{padding:40px 8px 36px 36px;justify-content:center}}
+.values{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:1180px){.inner.pg-about{max-width:1080px}.values{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.value{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:22px 22px 22px 8px;padding:20px;display:flex;flex-direction:column;gap:8px;animation:valueIn .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 90ms + 120ms)}
+.value::before{content:"";position:absolute;right:-46px;top:-46px;width:140px;height:140px;border-radius:46% 54% 60% 40%/50% 42% 58% 50%;background:var(--v-soft);z-index:0}
+.value > *{position:relative}
+.value-unite{--v:var(--brand);--v-soft:var(--brand-soft)}
+.value-fun{--v:var(--accent);--v-soft:var(--accent-soft)}
+.value-body{--v:color-mix(in srgb,var(--brand) 60%,var(--accent));--v-soft:color-mix(in srgb,var(--brand-soft) 60%,var(--accent-soft))}
+.value-ico{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:var(--v-soft);color:var(--v)}
+.value-ico svg{width:34px;height:34px}
+.value .eyebrow{color:var(--v);margin-top:6px}
+.value h2{font-size:24px;line-height:1.12;font-variation-settings:"SOFT" 100}
+.value p{margin:0;color:var(--muted);line-height:1.6}
+.mission-cta{text-align:center;padding:10px 0 6px;display:flex;flex-direction:column;gap:12px}
+.mission-cta p{margin:0;font-family:var(--display);font-size:20px;font-weight:700}
+.mission-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px 18px 18px 6px;background:var(--hero-bg);color:var(--hero-fg);text-decoration:none}
+.mission-strip b{font-family:var(--display);font-size:16px;line-height:1.2}
+.mission-strip .meta{color:var(--accent)}
+.ms-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--hero-bg);flex:none}
+.ms-ico svg{width:22px;height:22px}
+.ms-go{margin-left:auto;display:inline-flex;color:var(--hero-fg)}
+.ms-go svg{width:20px;height:20px}
+.mission-link{display:inline-flex;align-items:center;gap:6px;margin-top:2px;font-size:13.5px;font-weight:700;color:var(--brand-text);text-decoration:none}
+.mission-link svg{width:16px;height:16px;color:var(--accent)}
+@keyframes mhRise{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:.9}}
+@keyframes mhBounce{0%,100%{transform:translateY(0)}45%{transform:translateY(-16px)}}
+@keyframes mhSway{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+@keyframes valueIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.mh-sun,.mh-leaf,.mh-vein,.mh-ball,.value{animation:none}}
 </style>
 </head>
 <body>
@@ -1159,6 +1245,34 @@ function setFounding(kind,id){
     refreshAll();
   });
 }
+/* Organiser checks: people who run paid sessions or coach show their ABN, insurance, venue papers,
+   coaching accreditation and Working with Children Check, and the admin approves them.
+   Everything here stays hidden until the database has the organiser checks update. */
+var CHECKS=false;
+function ckCols(){return CHECKS?', organiser_until, coach_until':'';}
+function probeChecks(){
+  if(!sb||CHECKS)return;
+  sb.from('profiles').select('organiser_until').limit(1).then(function(r){if(r&&!r.error)enableChecks();},function(){});
+}
+function enableChecks(){
+  if(CHECKS)return;CHECKS=true;
+  GAME_SELECT=GAME_SELECT.replace('host:profiles!games_host_id_fkey(founding)','host:profiles!games_host_id_fkey(founding, organiser_until, coach_until)');
+  COACH_SELECT=COACH_SELECT.replace('dupr_doubles)','dupr_doubles, coach_until)');
+  refreshAll();
+}
+function untilOk(d){return !!d&&String(d).slice(0,10)>=dayKey(0);}
+function untilOn(d,ymd){return !!d&&String(d).slice(0,10)>=String(ymd||dayKey(0));}
+function ymdLabel(v){var p=String(v||'').slice(0,10).split('-');return p.length===3?Number(p[2])+' '+MON[Number(p[1])-1]+' '+p[0]:'';}
+function myOrgOn(ymd){var p=S.profile||{};return CHECKS&&(untilOn(p.organiser_until,ymd)||untilOn(p.coach_until,ymd));}
+function myCoachOn(ymd){var p=S.profile||{};return CHECKS&&untilOn(p.coach_until,ymd);}
+var SHIELD='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="m8.8 12.2 2.2 2.2 4.4-4.6"/></svg>';
+function checkedBadge(small,coach,until){return '<span class="checked-badge'+(small?' sm':'')+'" title="'+esc((coach?'Coaching accreditation, insurance and Working with Children Check checked':'ABN, insurance and venue checked')+(until?' until '+ymdLabel(until):''))+'">'+SHIELD+(coach?'Checked coach':'Checked organiser')+'</span>';}
+function personChecks(p,small){
+  if(!CHECKS||!p)return '';
+  var co=untilOk(p.coach_until),og=untilOk(p.organiser_until);
+  if(co&&og)return '<span class="checked-badge'+(small?' sm':'')+'" title="Checked as an organiser and a coach">'+SHIELD+'Checked organiser and coach</span>';
+  return co?checkedBadge(small,true,p.coach_until):og?checkedBadge(small,false,p.organiser_until):'';
+}
 var DOW_LONG=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 function everyDay(d){return 'every '+DOW_LONG[d.getDay()];}
 function seriesErrorText(e){
@@ -1166,6 +1280,8 @@ function seriesErrorText(e){
   if(/CLUB_PAYOUTS_NOT_READY/.test(e))return 'the club’s payouts aren’t set up';
   if(/PAYOUTS_NOT_READY/.test(e))return 'your payouts aren’t set up';
   if(/CLINIC_NEEDS_COACH/.test(e))return 'your coach profile is switched off';
+  if(/CLINIC_NEEDS_CHECK/.test(e))return 'your coach check has run out';
+  if(/PAID_NEEDS_CHECK/.test(e))return 'your organiser check has run out';
   if(/NOT_CLUB_ADMIN/.test(e))return 'you’re no longer on the club committee';
   return 'something went wrong';
 }
@@ -1216,7 +1332,7 @@ function normGame(r){
     areaLat:typeof r.area_lat==='number'?r.area_lat:null,areaLng:typeof r.area_lng==='number'?r.area_lng:null,
     lat:typeof r.lat==='number'&&isFinite(r.lat)?r.lat:null,lng:typeof r.lng==='number'&&isFinite(r.lng)?r.lng:null,
     waiting:(r.waitlist&&r.waitlist[0]&&r.waitlist[0].count)||0,
-    venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',founding:!!((r.host&&r.host.founding)||(r.club&&r.club.founding)),seriesId:r.series_id||null,weekly:!!(r.series&&r.series.active),seriesError:r.series&&r.series.active&&r.series.last_error?String(r.series.last_error):'',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
+    venueId:r.venue_id||null,payOnline:!!r.pay_online,payClub:!!r.pay_club,kind:r.kind==='clinic'?'clinic':'social',founding:!!((r.host&&r.host.founding)||(r.club&&r.club.founding)),paidSession:!!r.paid_session,orgUntil:(r.host&&r.host.organiser_until)||null,coachUntil:(r.host&&r.host.coach_until)||null,seriesId:r.series_id||null,weekly:!!(r.series&&r.series.active),seriesError:r.series&&r.series.active&&r.series.last_error?String(r.series.last_error):'',duprMin:r.dupr_min==null?null:Number(r.dupr_min),duprMax:r.dupr_max==null?null:Number(r.dupr_max)};
 }
 /* Maps: an embedded Google map plus a Directions link that opens Google Maps (app or web) */
 function hasPin(o){return o&&o.lat!=null&&o.lng!=null;}
@@ -1322,6 +1438,9 @@ function friendlyError(e,fallback){
   if(m.indexOf('PAYMENT_REQUIRED')>=0)return 'This game takes payment when you join.';
   if(m.indexOf('HAS_PAYMENTS')>=0)return 'Players have already paid, so the price can’t change.';
   if(m.indexOf('CLINIC_NEEDS_COACH')>=0)return 'Only coaches can post a clinic. List yourself as a coach first.';
+  if(m.indexOf('CLINIC_NEEDS_CHECK')>=0)return 'Clinics need a coach check that lasts until the day of the clinic. Get checked from your profile.';
+  if(m.indexOf('PAID_NEEDS_CHECK')>=0)return 'Paid sessions need an organiser check that lasts until the day of the game. Get checked from your profile, or choose Covers costs.';
+  if(m.indexOf('COACH_NOT_CHECKED')>=0)return 'This coach hasn’t finished their coach check yet, so they can’t take lesson requests.';
   if(/duplicate key/i.test(m))return 'That’s already done.';
   if(/violates check constraint/i.test(m))return 'Something in the form isn’t valid. Check the fields and try again.';
   if(/fetch|network/i.test(m))return 'You seem to be offline. Check your connection and try again.';
@@ -1349,7 +1468,7 @@ var S={route:'discover',photoBusy:null,clubBiz:null,clubPayouts:{},clubPayments:
 function defaultForm(){
   var p=S.profile||{};
   return {sport:(p.sports&&p.sports[0])||'pickleball',level:'All levels',title:'',date:dayKey(1),time:'18:30',duration:'90',need:'7',hostPlays:true,
-    venue:'',address:'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',lat:null,lng:null,price:'0',notes:'',oneShort:false,weekly:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
+    venue:'',address:'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',lat:null,lng:null,price:'0',paid:false,notes:'',oneShort:false,weekly:false,clubId:'',venueId:'',clinic:false,duprMin:'',duprMax:'',payOnline:false};
 }
 /* A club game starts from the club's home court, and the organiser isn't counted as a player unless they switch it on */
 function applyClubToForm(cid){
@@ -1430,6 +1549,7 @@ function viewDiscover(){
   var nextG=S.uid?up.filter(function(g){return S.myIds[g.id];})[0]:null;
   h+='<section class="hello"><h1>Find your next game</h1><p class="meta">'+esc(S.profile&&S.profile.suburb?'Pickup games, socials and comps around '+S.profile.suburb:'Pickup games, socials and comps near you')+'</p></section>';
   if(S.loadError)h+='<p class="notice">'+esc(S.loadError)+'</p>';
+  if(!S.uid&&S.authReady)h+=missionStrip();
   if(nextG)h+='<a class="next-game only-phone" href="#g-'+esc(nextG.id)+'"><span class="gbody"><small>Your next game</small><b>'+esc(nextG.title)+'</b><span class="meta">'+esc(fmtDay(nextG.start)+', '+fmtTime(nextG.start)+' · '+place(nextG))+'</span></span><span class="ng-go" aria-hidden="true">›</span></a>';
   // Phones and tablets: the first One Short alert sits at the top. Desktop lists them all in the right rail.
   if(alertG){
@@ -1489,10 +1609,10 @@ function viewGame(){
   h+='<section class="band">'+I.court+'<div class="eyebrow">'+esc(SPORT_LABEL[g.sport]+(g.kind==='clinic'?' · Coaching clinic':''))+'</div><h1>'+esc(g.title)+'</h1>'+
     '<div class="facts"><div><span>When</span><b>'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+'–'+fmtTime(end)+(g.weekly?' · '+everyDay(g.start):''))+'</b></div>'+
     '<div><span>Where</span><b>'+(g.venueId?'<a href="#v-'+esc(g.venueId)+'" style="color:inherit">'+esc(place(g,', '))+'</a>':esc(place(g,', ')))+'</b></div><div><span>Level</span><b>'+esc([g.level,duprRange(g.duprMin,g.duprMax)].filter(Boolean).join(' · '))+'</b></div>'+
-    '<div><span>Cost</span><b>'+esc(g.price>0?dollars(g.price)+' per player':'Free')+'</b></div></div>'+
+    '<div><span>Cost</span><b>'+esc(g.price>0?dollars(g.price)+' per player'+(CHECKS&&g.kind!=='clinic'?(g.paidSession?' · paid session':' · covers costs'):''):'Free')+'</b></div></div>'+
     '<div class="hostline">'+(g.club&&g.club.name
       ?clubLogo({id:g.club.id,name:g.club.name,logo_url:g.club.logo_url},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
-      :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>'+(g.kind==='clinic'?'Coached by ':'Hosted by ')+(isHost?'you':'<a href="#'+(g.kind==='clinic'?'o-':'p-')+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+(g.founding?foundingBadge(true,!!(g.club&&g.club.founding&&!(g.host&&g.host.founding))):'')+'</div></section>';
+      :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>'+(g.kind==='clinic'?'Coached by ':'Hosted by ')+(isHost?'you':'<a href="#'+(g.kind==='clinic'?'o-':'p-')+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+(g.founding?foundingBadge(true,!!(g.club&&g.club.founding&&!(g.host&&g.host.founding))):'')+hostCheckBadge(g)+'</div></section>';
   if(canAct&&g.sport==='pickleball'&&duprFit(g.duprMin,g.duprMax)===false)h+='<p class="notice">This game is for '+esc(duprRange(g.duprMin,g.duprMax))+'. Your DUPR is '+esc(duprTxt(myDupr()))+'. Check with the host before joining.</p>';
   h+='<div class="meter-row"><div class="meter" role="img" aria-label="'+count+' of '+g.capacity+' spots filled"><i style="width:'+Math.round(100*Math.min(count,g.capacity)/g.capacity)+'%"></i></div>'+
     '<p class="meta">'+(past?'<b>'+count+' of '+g.capacity+'</b> played':left>0?'<b>Looking for '+left+' more '+(left===1?'player':'players')+'</b> · '+count+' of '+g.capacity+' going'
@@ -1568,7 +1688,7 @@ function viewHost(){
   what+='<div class="field"><label for="f-title">Game name</label><input id="f-title" maxlength="80" placeholder="Social doubles round robin" value="'+esc(f.title)+'"></div>';
   if(f.sport==='pickleball')what+='<div class="row2"><div class="field"><label for="f-duprMin">DUPR from (optional)</label><input id="f-duprMin" type="number" inputmode="decimal" min="2" max="8" step="0.25" placeholder="3.0" value="'+esc(f.duprMin)+'"></div>'+
     '<div class="field"><label for="f-duprMax">DUPR up to (optional)</label><input id="f-duprMax" type="number" inputmode="decimal" min="2" max="8" step="0.25" placeholder="3.75" value="'+esc(f.duprMax)+'"></div></div>';
-  if(S.myCoach)what+='<label class="check check-plain" for="f-clinic"><input id="f-clinic" type="checkbox"'+(f.clinic?' checked':'')+'><div><b>This is a coaching clinic</b><span>Shows on your coach page and under Coaches, marked as a clinic.</span></div></label>';
+  if(S.myCoach)what+='<label class="check check-plain" for="f-clinic"><input id="f-clinic" type="checkbox"'+(f.clinic?' checked':'')+'><div><b>This is a coaching clinic</b><span>Shows on your coach page and under Coaches, marked as a clinic.'+(CHECKS&&!myCoachOn(f.date)?' Clinics need a coach check: <a href="#checks">get checked</a>.':'')+'</span></div></label>';
   var when='<div class="row2"><div class="field"><label for="f-date">Date</label><input id="f-date" type="date" min="'+dayKey(0)+'" value="'+esc(f.date)+'"></div>'+
     '<div class="field"><label for="f-time">Start time</label><input id="f-time" type="time" step="900" value="'+esc(f.time)+'"></div></div>'+
     '<div class="row2"><div class="field"><label for="f-duration">Length</label><select id="f-duration">'+DURATIONS.map(function(o){return '<option value="'+o[0]+'"'+(f.duration===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'+
@@ -1583,7 +1703,7 @@ function viewHost(){
       ?'<span class="pill pill-sm">'+I.pin+'Pinned at your location</span><button type="button" class="btn btn-line btn-sm" data-act="pin-clear">Remove pin</button>'
       :'<button type="button" class="btn btn-line btn-sm" data-act="pin-here"'+(S.locating?' disabled':'')+'>'+I.locate+(S.locating?'Finding you…':'Use my location')+'</button><span class="meta">At the court? Drop a pin for exact directions.</span>')+'</div>'+
     '<div id="where-map-slot">'+whereMap(f)+'</div>';
-  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="decimal" min="0" max="500" step="0.01" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games.</span></div>'+payOnlineField(f)+
+  var cost='<div class="field"><label for="f-price">Cost per player (AUD)</label><input id="f-price" type="number" inputmode="decimal" min="0" max="500" step="0.01" value="'+esc(f.price)+'"><span class="hint">Use 0 for free games.</span></div>'+paidKindField(f)+payOnlineField(f)+
     '<div class="field"><label for="f-notes">Notes for players</label><textarea id="f-notes" maxlength="600" placeholder="What to bring, parking, who it suits">'+esc(f.notes)+'</textarea></div>'+
     '<label class="check" for="f-oneshort"><input id="f-oneshort" type="checkbox"'+(f.oneShort?' checked':'')+'><div><b>Send a One Short alert</b><span>Shows your game at the top of Discover until it fills.</span></div></label>';
   // Phones: four steps, one open at a time. Tablet and desktop: all four open as sections, plus a live preview on desktop.
@@ -1607,7 +1727,7 @@ function hostSummary(i){
   if(i===0)return [SPORT_LABEL[f.sport],f.level,f.title.trim()].filter(Boolean).join(' · ');
   if(i===1){var d=new Date(f.date+'T'+f.time),n=Math.round(Number(f.need));return [isNaN(d.getTime())?'':fmtDay(d)+' '+fmtTime(d),durLabel(f.duration),n>0?'need '+n+(f.hostPlays?' + you':''):'',f.weekly?'weekly':''].filter(Boolean).join(' · ');}
   if(i===2)return [f.venue.trim(),f.address.trim(),f.suburb.trim()].filter(Boolean).join(', ')||(hasPin(f)?'Pinned on the map':'Add the venue and suburb');
-  var p=toPrice(f.price);return (p>0?dollars(p)+' per player':'Free')+(f.oneShort?' · One Short alert':'');
+  var p=toPrice(f.price);return (p>0?dollars(p)+' per player'+(CHECKS?(f.paid?' · paid session':' · covers costs'):''):'Free')+(f.oneShort?' · One Short alert':'');
 }
 function previewHTML(){
   var f=S.form,d=new Date(f.date+'T'+f.time);
@@ -1650,6 +1770,8 @@ function hostErrors(){
   if(f.sport==='pickleball'&&((f.duprMin!==''&&duprNum(f.duprMin)==null)||(f.duprMax!==''&&duprNum(f.duprMax)==null)))return [0,'DUPR ratings go from 2.0 to 8.0.'];
   if(f.sport==='pickleball'&&duprNum(f.duprMin)!=null&&duprNum(f.duprMax)!=null&&duprNum(f.duprMin)>duprNum(f.duprMax))return [0,'The lower DUPR is above the upper one.'];
   if(!(price>=0&&price<=500))return [3,'Cost must be between $0 and $500.'];
+  if(CHECKS&&f.clinic&&S.myCoach&&!myCoachOn(f.date))return [0,'Clinics need a coach check that lasts until the day of the clinic. Get checked from your profile first.'];
+  if(CHECKS&&price>0&&f.paid&&!(f.clinic&&S.myCoach)&&!myOrgOn(f.date))return [3,'Paid sessions need an organiser check first. Choose “Covers costs”, or get checked from your profile.'];
   return null;
 }
 function hostNext(){
@@ -1685,7 +1807,7 @@ function viewMine(){
 }
 
 function legalLinks(){
-  return '<nav class="legal-links" aria-label="Bounce Up policies"><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
+  return '<nav class="legal-links" aria-label="Bounce Up policies"><a href="#about">Our mission</a><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
 }
 function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
@@ -1708,6 +1830,7 @@ function viewProfile(){
     '<button class="btn btn-brand" type="submit"'+(S.busy?' disabled':'')+'>'+(S.busy?'Saving…':'Save profile')+'</button></form>';
   h+=notifCard();
   h+=coachingCard();
+  h+=checksCard();
   h+=payoutCard();
   h+='<section class="stack-sm"><div class="list-head"><h2>Your clubs</h2><a class="meta" href="#p-'+esc(S.uid)+'">View my public profile</a></div>';
   if(S.myClubs.length){
@@ -1839,7 +1962,7 @@ function viewPlayer(){
   var p=S.player;
   if(!p)return back+'<div class="empty"><strong>Player not found</strong><p>This profile may have been removed.</p></div>';
   var me=p.id===S.uid,nm=p.display_name||'Bounce Up player';
-  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(p.id,nm,p.avatar_url,72)+'<div><h1>'+esc(nm)+'</h1>'+(p.founding?foundingBadge():'')+'<p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce Up player')+'</p></div></section>';
+  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(p.id,nm,p.avatar_url,72)+'<div><h1>'+esc(nm)+'</h1>'+(p.founding?foundingBadge():'')+personChecks(p)+'<p class="meta">'+esc([p.suburb,p.level&&p.level!=='All levels'?p.level:''].filter(Boolean).join(' · ')||'Bounce Up player')+'</p></div></section>';
   if(p.bio)h+='<p class="notes">'+esc(p.bio)+'</p>';
   if(p.sports&&p.sports.length)h+='<section class="stack-sm"><h2>Plays</h2>'+sportsChips(p.sports.filter(function(s){return SPORT_LABEL[s];}))+'</section>';
   h+=duprLine(p);
@@ -2245,9 +2368,40 @@ function notifCard(){
   return h+'</section>';
 }
 
+/* ---------- Our mission ---------- */
+var MI={
+  unite:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="24" r="11"/><circle cx="30" cy="24" r="11"/><path d="M24 15.2c2.6 2.2 4.2 5.3 4.2 8.8s-1.6 6.6-4.2 8.8M24 15.2c-2.6 2.2-4.2 5.3-4.2 8.8s1.6 6.6 4.2 8.8"/></svg>',
+  fun:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="8.5"/><path d="M24 5v5M24 38v5M5 24h5M38 24h5M10.6 10.6l3.5 3.5M33.9 33.9l3.5 3.5M37.4 10.6l-3.5 3.5M14.1 33.9l-3.5 3.5"/><path d="M20.5 25.5c1 1.4 2.2 2 3.5 2s2.5-.6 3.5-2"/></svg>',
+  body:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 42c-9-5.6-15-12.2-15-19.4C9 16.7 13 13 17.7 13c2.8 0 4.9 1.3 6.3 3.4 1.4-2.1 3.5-3.4 6.3-3.4C35 13 39 16.7 39 22.6 39 29.8 33 36.4 24 42z"/><path d="M24 38V22c0-5 3-9.5 8-11"/><path d="M24 28c-3-.4-5.6-2.4-6.6-5.4"/></svg>',
+  mission:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></svg>'
+};
+var VALUES=[
+  ['unite','Unite','Stronger Together.','Sport has the power to bridge every distance, welcome every background, and turn strangers into teammates. On the field, court, or track, we find our people, share our energy, and create bonds that last long after the final whistle. Because when we come together to play, we discover how much stronger—and happier—we are together.'],
+  ['fun','Have fun','Play With Joy.','Sport is about more than the score. It’s the rush of the game, the laughter between plays, the high fives, the unexpected moments, and the memories we make side by side. Celebrate every breakthrough, embrace every challenge, and let yourself enjoy the simple magic of playing with others.'],
+  ['body','Body + Mind','Move With Purpose. Grow With Every Step.','Every movement is a chance to become more confident, resilient, and alive. Sport energises your body, clears your mind, lifts your mood, and helps you discover what you’re capable of. Show up, challenge yourself, and feel the joy of growing stronger—one game, one goal, and one step at a time.']
+];
+var MISSION_LINE='Creating belonging through the power of sport.';
+function viewAbout(){
+  var h='<article class="about">';
+  h+='<section class="mission-hero"><svg class="mh-art" viewBox="0 0 400 260" aria-hidden="true" preserveAspectRatio="xMidYMax slice">'+
+    '<circle class="mh-ring" cx="290" cy="96" r="100"/><circle class="mh-ring" cx="290" cy="96" r="78"/><circle class="mh-sun" cx="290" cy="96" r="58"/>'+
+    '<path class="mh-hill1" d="M0 205C70 165 140 160 210 182S330 200 400 160V260H0z"/><path class="mh-hill2" d="M0 232C90 205 170 205 250 222S360 236 400 214V260H0z"/>'+
+    '<path class="mh-arc" d="M48 206Q114 64 180 198Q228 112 276 192"/><circle class="mh-ball" cx="276" cy="192" r="9"/>'+
+    '<path class="mh-leaf" d="M58 236c-8-34 12-62 46-72-2 34-20 62-46 72z"/><path class="mh-vein" d="M58 236c10-24 26-48 46-72"/></svg>'+
+    '<div class="mh-body"><span class="eyebrow">Our mission</span><h1>'+esc(MISSION_LINE)+'</h1>'+
+    '<p>We believe everyone deserves a place to play, connect, and grow. Whatever your background, experience, or skill level, there is a team ready to welcome you, a game waiting to be enjoyed, and a community where you can feel at home. Together, we’re making sport more open, joyful, and meaningful for everyone.</p></div></section>';
+  h+='<div class="values">'+VALUES.map(function(v,i){
+    return '<section class="value value-'+v[0]+'" style="--i:'+i+'"><span class="value-ico">'+MI[v[0]]+'</span><span class="eyebrow">'+esc(v[1])+'</span><h2>'+esc(v[2])+'</h2><p>'+esc(v[3])+'</p></section>';
+  }).join('')+'</div>';
+  h+='<section class="mission-cta"><p>There’s a game waiting for you.</p><div class="cta center"><a class="btn btn-accent" href="#discover">Find a game</a><a class="btn btn-line" href="#host">Host a game</a></div></section>';
+  return h+'</article>';
+}
+function missionStrip(){
+  return '<a class="mission-strip" href="#about"><span class="ms-ico">'+MI.mission+'</span><span class="gbody"><b>'+esc(MISSION_LINE)+'</b><span class="meta">Read our mission</span></span><span class="ms-go" aria-hidden="true">'+I.send+'</span></a>';
+}
 function viewLogin(){
   var L=S.login;
-  var h='<section class="login"><div class="login-hero">'+BU_MARK+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p></div>';
+  var h='<section class="login"><div class="login-hero">'+BU_MARK+'<h1>Find a game in minutes</h1><p class="meta">Join pickup games, fill a spot when a team is one short, or host your own.</p><a class="mission-link" href="#about">'+MI.mission+esc(MISSION_LINE)+'</a></div>';
   if(L.step==='choose'){
     h+='<div class="stack">';
     var showApple=CONFIG.SHOW_APPLE||!!S.providers.apple,showGoogle=CONFIG.SHOW_GOOGLE||!!S.providers.google;
@@ -2489,11 +2643,11 @@ function normCoach(r){
   return {id:String(r.user_id),name:p.display_name||'Coach',avatar:p.avatar_url||null,suburb:p.suburb||'',dupr:duprNum(p.dupr_doubles),
     headline:String(r.headline||''),sports:(r.sports||[]).filter(function(s){return SPORT_LABEL[s];}),levels:(r.levels||[]).filter(function(l){return COACH_LEVELS.indexOf(l)>=0;}),
     price:r.price_hour!=null?Number(r.price_hour):null,areas:String(r.areas||''),accreditation:String(r.accreditation||''),bio:String(r.bio||''),
-    website:httpsUrl(r.website),active:r.active!==false};
+    website:httpsUrl(r.website),active:r.active!==false,coachUntil:p.coach_until||null};
 }
 var COACH_SELECT='*, profile:profiles(id, display_name, avatar_url, suburb, dupr_doubles)';
 function coachCard(c){
-  return '<a class="xrow" href="#o-'+esc(c.id)+'">'+avatar(c.id,c.name,c.avatar,52)+'<div class="gbody"><div class="gtitle">'+esc(c.name)+'</div><div class="meta">'+esc(c.headline)+'</div>'+
+  return '<a class="xrow" href="#o-'+esc(c.id)+'">'+avatar(c.id,c.name,c.avatar,52)+'<div class="gbody"><div class="gtitle">'+esc(c.name)+(CHECKS&&untilOk(c.coachUntil)?' <span class="tick" title="Checked coach">'+SHIELD+'</span>':'')+'</div><div class="meta">'+esc(c.headline)+'</div>'+
     '<div class="meta">'+esc([c.areas||c.suburb,c.levels.join(', '),c.dupr!=null&&c.sports.indexOf('pickleball')>=0?'DUPR '+duprTxt(c.dupr):''].filter(Boolean).join(' · '))+'</div>'+
     (c.sports.length?sportsChips(c.sports):'')+'</div><span class="xcount">'+esc(c.price!=null?money(c.price)+(c.price>0?'/hr':''):'Ask')+'</span></a>';
 }
@@ -2506,7 +2660,8 @@ function viewCoaches(){
   var cl=clinicsUp().filter(function(g){return S.coachSport==='all'||g.sport===S.coachSport;});
   if(cl.length)h+='<section class="list"><div class="list-head"><h2>Upcoming clinics <span class="meta">'+cl.length+'</span></h2></div>'+cl.slice(0,6).map(function(g){return cardHTML(g);}).join('')+'</section>';
   if(S.coaches===null)return h+loader('Loading coaches…');
-  var list=S.coaches.filter(function(c){return c.active&&(S.coachSport==='all'||c.sports.indexOf(S.coachSport)>=0);});
+  var list=S.coaches.filter(function(c){return c.active&&(!CHECKS||untilOk(c.coachUntil))&&(S.coachSport==='all'||c.sports.indexOf(S.coachSport)>=0);});
+  if(CHECKS&&S.myCoach&&!myCoachOn())h+='<div><a class="notice" href="#checks">Players can’t see you here or ask you for lessons until you finish your coach check. Get checked →</a></div>';
   var home=homeSuburb();
   list.sort(function(a,b){var ha=home&&(a.suburb.toLowerCase()===home||a.areas.toLowerCase().indexOf(home)>=0)?0:1,hb=home&&(b.suburb.toLowerCase()===home||b.areas.toLowerCase().indexOf(home)>=0)?0:1;return ha-hb||a.name.localeCompare(b.name);});
   h+='<section class="list"><div class="list-head"><h2>Coaches <span class="meta">'+list.length+'</span></h2></div>';
@@ -2519,7 +2674,7 @@ function viewCoach(){
   var c=S.coach;
   if(!c)return back+'<div class="empty"><strong>Coach not found</strong><p>They may have stopped coaching on Bounce Up.</p><a class="btn btn-accent" href="#coaches">See all coaches</a></div>';
   var me=c.id===S.uid;
-  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(c.id,c.name,c.avatar,72)+'<div><h1>'+esc(c.name)+'</h1><p class="meta">'+esc(c.headline)+'</p></div></section>';
+  var h=back+'<div class="pp"><div class="pp-main"><section class="profile-head">'+avatar(c.id,c.name,c.avatar,72)+'<div><h1>'+esc(c.name)+'</h1>'+(CHECKS&&untilOk(c.coachUntil)?checkedBadge(false,true,c.coachUntil):'')+'<p class="meta">'+esc(c.headline)+'</p></div></section>';
   h+='<div class="kv">'+
     '<div><span>Teaches</span><b>'+esc(c.sports.map(function(s){return SPORT_LABEL[s];}).join(', '))+'</b></div>'+
     (c.levels.length?'<div><span>Levels</span><b>'+esc(c.levels.join(', '))+'</b></div>':'')+
@@ -2529,7 +2684,9 @@ function viewCoach(){
     (c.dupr!=null&&c.sports.indexOf('pickleball')>=0?'<div><span>DUPR doubles</span><b>'+esc(duprTxt(c.dupr))+' <small class="meta">self-entered</small></b></div>':'')+'</div>';
   if(c.bio)h+='<p class="notes">'+esc(c.bio)+'</p>';
   if(c.website)h+='<a class="btn btn-line btn-sm self-start" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a>';
-  if(me)h+='<div class="cta"><a class="btn btn-line" href="#coach-edit">Edit coach profile</a><a class="btn btn-brand" href="#lessons">Lesson requests</a></div>';
+  if(me)h+='<div class="cta"><a class="btn btn-line" href="#coach-edit">Edit coach profile</a><a class="btn btn-brand" href="#lessons">Lesson requests</a></div>'+
+    (CHECKS&&!untilOk(c.coachUntil)?'<a class="notice" href="#checks">Players can’t ask you for lessons until you finish your coach check. Get checked →</a>':'');
+  else if(CHECKS&&!untilOk(c.coachUntil))h+='<p class="notice">'+esc(c.name)+' hasn’t finished their coach check yet, so lessons can’t be booked through Bounce Up for now.</p>';
   else h+=lessonFormHTML(c);
   h+='</div><div class="pp-side">';
   var cl=S.coachGames.filter(isUpcoming).sort(byStart);
@@ -3000,6 +3157,7 @@ function coachingCard(){
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
+  if(clickChecks(a,id,v))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -3043,6 +3201,7 @@ function clickExtra(a,id,v){
 }
 function fieldExtra(e){
   var t=e.target,id=t.id,ch=e.type==='change';
+  if(fieldChecks(e))return true;
   if(id==='venue-q'){S.venueQ=t.value;render();}
   else if(id.indexOf('vn-')===0&&S.venueForm){S.venueForm[id.slice(3)]=t.value;}
   else if(id==='co-active'&&S.coachForm){S.coachForm.active=t.checked;}
@@ -3070,6 +3229,330 @@ function submitExtra(id){
   else if(id==='ladder-form')saveLadder();
   else return false;
   return true;
+}
+
+/* ================= Organiser checks: Get checked, the admin's review list, and the paid-session choice ================= */
+I.doc='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>';
+var CK_COVERS=[['10000000','A$10 million'],['20000000','A$20 million'],['30000000','A$30 million'],['50000000','A$50 million or more']];
+var CK_VENUES=[['booking','Court booking or hire agreement with a centre'],['permit','Council permit for a park or reserve'],['club','Letter from the club whose courts you use']];
+var CK_FILES={insurance_file:'certificate of currency',venue_file:'booking, permit or letter',coach_file:'accreditation certificate',wwcc_file:'photo of your card'};
+var WWCC_INFO='https://www.vic.gov.au/do-i-need-check',WWCC_CHECK='https://service.vic.gov.au/workchecks';
+
+function paidKindField(f){
+  if(!CHECKS||!(toPrice(f.price)>0)||(f.clinic&&S.myCoach))return '';
+  var ok=myOrgOn(f.date);
+  return '<div class="field"><span class="flabel" id="paid-l">What’s the price for?</span><div class="seg" role="group" aria-labelledby="paid-l">'+
+    '<button type="button" data-act="paid-kind" data-v="share" aria-pressed="'+(!f.paid)+'">Covers costs</button><button type="button" data-act="paid-kind" data-v="paid" aria-pressed="'+(!!f.paid)+'">Paid session</button></div>'+
+    '<span class="hint">'+(f.paid?'You make money from it. Players see that it’s a paid session.':'Court hire, balls or bibs, split between players. No profit. Anyone can post these.')+'</span>'+
+    (f.paid&&!ok?'<p class="notice">Paid sessions need an organiser check: your ABN, public liability insurance and venue booking or permit. <a href="#checks">Get checked</a></p>':'')+'</div>';
+}
+function hostCheckBadge(g){
+  if(!CHECKS)return '';
+  if(g.kind==='clinic')return untilOk(g.coachUntil)?checkedBadge(true,true,g.coachUntil):'';
+  if(untilOk(g.orgUntil))return checkedBadge(true,false,g.orgUntil);
+  if(untilOk(g.coachUntil))return checkedBadge(true,true,g.coachUntil);
+  return '';
+}
+
+/* ---------- data ---------- */
+function loadMyChecks(){
+  if(!S.uid||!CHECKS){S.myChecks=null;return Promise.resolve();}
+  return sb.from('organiser_checks').select('*').eq('user_id',S.uid).maybeSingle().then(function(r){
+    if(r.error)return;S.myChecks=r.data||null;
+    if(!S.ck||!S.ckDirty)S.ck=ckDefaults(S.myChecks);
+  });
+}
+function loadReview(){
+  if(!S.isAdmin||!CHECKS)return Promise.resolve();
+  return sb.from('organiser_checks').select('*, profile:profiles(id, display_name, avatar_url, suburb, organiser_until, coach_until)').order('submitted_at',{ascending:true}).limit(300).then(function(r){
+    if(!r.error)S.review=(r.data||[]).filter(function(x){return x.submitted_at;});
+  });
+}
+function reviewWaiting(){return (S.review||[]).filter(function(x){return x.organiser_status==='pending'||x.coach_status==='pending';}).length;}
+function ckDefaults(r){
+  r=r||{};var p=S.profile||{};
+  return {wants_organiser:!!r.wants_organiser,wants_coach:!!r.wants_coach,insurer:r.insurer||'',insurance_cover:r.insurance_cover!=null?String(Math.round(Number(r.insurance_cover))):'20000000',insurance_expires:r.insurance_expires||'',insurance_file:r.insurance_file||'',
+    venue_kind:r.venue_kind||'booking',venue_name:r.venue_name||'',venue_expires:r.venue_expires||'',venue_file:r.venue_file||'',
+    coach_sport:r.coach_sport||((p.sports&&p.sports[0])||'pickleball'),coach_body:r.coach_body||'',coach_level:r.coach_level||'',coach_expires:r.coach_expires||'',coach_file:r.coach_file||'',
+    wwcc_number:r.wwcc_number||'',wwcc_surname:r.wwcc_surname||'',wwcc_expires:r.wwcc_expires||'',wwcc_file:r.wwcc_file||''};
+}
+function ckPayload(){
+  var c=S.ck,o={};
+  ['wants_organiser','wants_coach'].forEach(function(k){o[k]=!!c[k];});
+  ['insurer','insurance_cover','insurance_expires','insurance_file','venue_kind','venue_name','venue_expires','venue_file','coach_sport','coach_body','coach_level','coach_expires','coach_file','wwcc_number','wwcc_surname','wwcc_expires','wwcc_file'].forEach(function(k){o[k]=String(c[k]||'').trim();});
+  return o;
+}
+
+/* ---------- where someone stands, per role ---------- */
+function ckRole(role){
+  var r=S.myChecks,p=S.profile||{},until=role==='coach'?p.coach_until:p.organiser_until,st=r?(role==='coach'?r.coach_status:r.organiser_status):'none';
+  if(untilOk(until))return {key:'checked',until:until,pending:st==='pending',text:'Checked until '+ymdLabel(until)+(st==='pending'?' · new papers waiting for review':st==='changes'?' · your new papers need a change':'')};
+  if(st==='pending')return {key:'pending',text:'Waiting for review'};
+  if(st==='changes')return {key:'changes',text:'Needs a change'};
+  if(st==='approved')return {key:'expired',text:'Expired. Send your current papers.'};
+  return {key:'none',text:'Not started'};
+}
+function ckSmall(x){return x.key==='checked'||x.key==='expired'?'<small class="meta">'+esc(x.text)+'</small>':'';}
+function ckPill(x){return statusPill(x.key==='checked'?'Checked':x.key==='pending'?'Waiting for review':x.key==='changes'?'Needs a change':x.key==='expired'?'Expired':'Not started',x.key==='checked'?'good':x.key==='none'?'muted':'');}
+function checksCard(){
+  if(!S.uid||!CHECKS)return '';
+  var r=S.myChecks,o=ckRole('organiser'),c=ckRole('coach');
+  var any=r&&(r.wants_organiser||r.wants_coach||o.key!=='none'||c.key!=='none');
+  if(!any)return '<section class="card ck-card"><h2>'+SHIELD+'Run paid sessions or coach?</h2><p class="meta">Show players you’re the real deal. Send your ABN, insurance and papers once, and get a Checked tick on your games and profile. Free games and games that only cover costs don’t need this.</p><a class="btn btn-line self-start" href="#checks">Get checked</a></section>';
+  var rows='';
+  if(r.wants_organiser||o.key!=='none')rows+='<div class="ck-status"><span>Paid sessions</span>'+ckPill(o)+ckSmall(o)+'</div>';
+  if(r.wants_coach||c.key!=='none')rows+='<div class="ck-status"><span>Coaching</span>'+ckPill(c)+ckSmall(c)+'</div>';
+  return '<section class="card ck-card"><h2>'+SHIELD+'Organiser check</h2>'+rows+(r.admin_note&&(o.key==='changes'||c.key==='changes'||(r.organiser_status==='changes'||r.coach_status==='changes'))?'<p class="notice">'+esc(r.admin_note)+'</p>':'')+
+    '<a class="btn btn-line self-start" href="#checks">'+(o.key==='changes'||c.key==='changes'?'Fix and send again':'See my papers')+'</a></section>';
+}
+
+/* ---------- Get checked ---------- */
+function ckField(id,label,input,hint){return '<div class="field"><label for="ck-'+id+'">'+label+'</label>'+input+(hint?'<span class="hint">'+hint+'</span>':'')+'</div>';}
+function ckText(k,ph,max,extra){return '<input id="ck-'+k+'" maxlength="'+(max||120)+'" placeholder="'+esc(ph||'')+'" value="'+esc(S.ck[k]||'')+'"'+(extra||'')+'>';}
+function ckDate(k){return '<input id="ck-'+k+'" type="date" min="'+dayKey(1)+'" value="'+esc(S.ck[k]||'')+'">';}
+function ckFile(k){
+  var v=S.ck[k],busy=S.ckUp===k,what=CK_FILES[k];
+  return '<div class="ck-file">'+(v?'<span class="ck-doc">'+I.doc+'<span><b>Uploaded</b> '+esc(what)+(/\.pdf$/i.test(v)?' (PDF)':' (photo)')+'</span></span><button type="button" class="btn btn-line btn-sm" data-act="ck-view" data-v="'+k+'">View</button>':'')+
+    '<label class="btn '+(v?'btn-line':'btn-brand')+' btn-sm" for="ckup-'+k+'">'+(busy?'Uploading…':v?'Replace':'Upload '+esc(what))+'</label><input id="ckup-'+k+'" class="sr" type="file" accept="application/pdf,image/*"'+(busy||S.ckUp?' disabled':'')+'></div>';
+}
+function viewChecks(){
+  var h='<a class="back" href="#profile">'+I.back+'Profile</a><section class="hello ck-hello"><h1>Get checked</h1><p class="meta">Run paid sessions or coach on Bounce Up. Free games, and games where the price only covers costs, don’t need this.</p></section>';
+  if(!S.uid)return h+signInPrompt('Sign in to get checked','Then send your papers once and you’re set for the year.','checks');
+  if(!CHECKS)return h+'<div class="empty"><strong>Organiser checks are switching on soon</strong><p>Check back in a few days.</p></div>';
+  if(S.myChecks===undefined||!S.ck)return h+loader('Loading your papers…');
+  var c=S.ck,r=S.myChecks||{},o=ckRole('organiser'),co=ckRole('coach');
+  if(r.submitted_at||o.key!=='none'||co.key!=='none'){
+    h+='<section class="card ck-card"><h2>Where you’re at</h2>';
+    if(r.wants_organiser||o.key!=='none')h+='<div class="ck-status"><span>Paid sessions</span>'+ckPill(o)+ckSmall(o)+'</div>';
+    if(r.wants_coach||co.key!=='none')h+='<div class="ck-status"><span>Coaching</span>'+ckPill(co)+ckSmall(co)+'</div>';
+    if(r.admin_note&&(r.organiser_status==='changes'||r.coach_status==='changes'))h+='<p class="notice"><b>From Bounce Up:</b> '+esc(r.admin_note)+'</p>';
+    h+='</section>';
+  }
+  // 1. What you want to do
+  h+='<section class="card ck-sec"><h2><span class="ck-n">1</span>What do you want to do?</h2><div class="ck-roles">'+
+    '<label class="check" for="ck-wants_organiser"><input id="ck-wants_organiser" type="checkbox"'+(c.wants_organiser?' checked':'')+'><div><b>Run paid sessions</b><span>You make money from the games you post.</span></div></label>'+
+    '<label class="check" for="ck-wants_coach"><input id="ck-wants_coach" type="checkbox"'+(c.wants_coach?' checked':'')+'><div><b>Coach</b><span>Private lessons and group clinics.</span></div></label></div></section>';
+  // 2. ABN
+  var abn=r.abn;
+  h+='<section class="card ck-sec"><h2><span class="ck-n">2</span>Your ABN</h2>';
+  if(abn&&!S.ckAbnEdit){
+    h+='<p class="biz-line">'+(r.abn_lookup&&r.abn_status==='Active'?statusPill('Active on the ABN register','good'):statusPill('We’ll check it by hand','muted'))+'<span class="nw">ABN '+esc(abnFmt(abn))+'</span>'+(r.abn_name?'<span>'+esc(bizName(r.abn_name))+'</span>':'')+'</p>'+
+      '<div class="cta"><button type="button" class="btn btn-line btn-sm" data-act="ck-abn-change">Change ABN</button><a class="btn btn-line btn-sm" href="'+esc(abnLink(abn))+'" target="_blank" rel="noopener">See it on ABN Lookup</a></div>';
+  } else {
+    h+='<div class="field"><label for="ck-abn-input">ABN (11 digits)</label><div class="ck-abn-row"><input id="ck-abn-input" type="text" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="51 824 753 556" value="'+esc(S.ckAbn||'')+'"'+(S.ckAbnError?' aria-invalid="true" aria-describedby="ck-abn-err"':'')+'>'+
+      '<button type="button" class="btn btn-brand" data-act="ck-abn-check"'+(S.ckAbnBusy?' disabled':'')+'>'+(S.ckAbnBusy?'Checking…':'Check ABN')+'</button>'+(abn?'<button type="button" class="btn btn-line" data-act="ck-abn-cancel">Cancel</button>':'')+'</div>'+
+      (S.ckAbnError?'<p class="err" id="ck-abn-err" role="alert">'+esc(S.ckAbnError)+'</p>':'<span class="hint">We check it with the Australian Business Register. No ABN yet? It’s free to <a href="https://www.abr.gov.au" target="_blank" rel="noopener">apply on abr.gov.au</a>.</span>')+'</div>';
+  }
+  h+='</section>';
+  // 3. Insurance
+  h+='<section class="card ck-sec"><h2><span class="ck-n">3</span>Public liability insurance</h2><p class="meta">Councils usually ask for A$20 million. Many sport associations include it with coach or club membership.</p>'+
+    '<div class="row2">'+ckField('insurer','Insurer',ckText('insurer','Insurer or association'))+
+    ckField('insurance_cover','Cover','<select id="ck-insurance_cover">'+CK_COVERS.map(function(x){return '<option value="'+x[0]+'"'+(c.insurance_cover===x[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select>')+'</div>'+
+    ckField('insurance_expires','Expiry date',ckDate('insurance_expires'))+ckFile('insurance_file')+'</section>';
+  var n=4;
+  // 4. Venue
+  if(c.wants_organiser){
+    h+='<section class="card ck-sec"><h2><span class="ck-n">'+(n++)+'</span>Where you run sessions</h2><p class="meta">Show you’re allowed to run paid sessions there.</p>'+
+      ckField('venue_kind','What you have','<select id="ck-venue_kind">'+CK_VENUES.map(function(x){return '<option value="'+x[0]+'"'+(c.venue_kind===x[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select>')+
+      '<div class="row2">'+ckField('venue_name','Venue',ckText('venue_name','Fawkner Park courts'))+ckField('venue_expires','Valid until (optional)',ckDate('venue_expires'))+'</div>'+ckFile('venue_file')+'</section>';
+  }
+  // 5-6. Coaching
+  if(c.wants_coach){
+    h+='<section class="card ck-sec"><h2><span class="ck-n">'+(n++)+'</span>Coaching accreditation</h2><p class="meta">From your sport’s association, for example Pickleball Australia or Tennis Australia.</p>'+
+      '<div class="row2">'+ckField('coach_sport','Sport','<select id="ck-coach_sport">'+SPORTS.map(function(x){return '<option value="'+x[0]+'"'+(c.coach_sport===x[0]?' selected':'')+'>'+esc(x[1])+'</option>';}).join('')+'</select>')+
+      ckField('coach_body','Accredited by',ckText('coach_body','Pickleball Australia'))+'</div>'+
+      '<div class="row2">'+ckField('coach_level','Level',ckText('coach_level','Foundation coach'))+ckField('coach_expires','Valid until (optional)',ckDate('coach_expires'))+'</div>'+ckFile('coach_file')+'</section>';
+    h+='<section class="card ck-sec"><h2><span class="ck-n">'+(n++)+'</span>Working with Children Check</h2><p class="meta">The law in Victoria requires one if you coach anyone under 18, paid or volunteer, and most sport associations ask for one too. <a href="'+WWCC_INFO+'" target="_blank" rel="noopener">Do I need one?</a></p>'+
+      '<div class="row2">'+ckField('wwcc_number','Card number',ckText('wwcc_number','01234567A',20,' autocomplete="off" autocapitalize="characters"'))+ckField('wwcc_surname','Surname on the card',ckText('wwcc_surname','Surname',80,' autocomplete="family-name"'))+'</div>'+
+      ckField('wwcc_expires','Expiry date',ckDate('wwcc_expires'))+ckFile('wwcc_file')+'<p class="meta">The photo is optional. We check your card number and surname with Service Victoria.</p></section>';
+  }
+  h+='<p class="ck-privacy">'+I.lock+'<span>Only you and the Bounce Up team can see these papers. Players only see the Checked tick on your games and profile. Checks last until your insurance or papers expire, for up to a year.</span></p>';
+  if(S.ckError)h+='<p class="err" role="alert">'+esc(S.ckError)+'</p>';
+  h+='<div class="cta"><button type="button" class="btn btn-accent" data-act="ck-send"'+(S.ckBusy||S.ckUp?' disabled':'')+'>'+(S.ckBusy?'Sending…':'Send for checking')+'</button></div>';
+  if(r.user_id)h+=S.ckConfirmDel?'<div class="confirm"><b>Delete all your papers?</b><p class="meta">Your files are deleted, and any Checked tick comes off. You can send them again any time.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="ck-del-yes"'+(S.ckBusy?' disabled':'')+'>Delete my papers</button><button type="button" class="btn btn-line" data-act="ck-del-no">Keep them</button></div></div>'
+    :'<button type="button" class="link-btn self-start ck-del" data-act="ck-del">Delete my papers</button>';
+  return h;
+}
+function ckErrors(){
+  var c=S.ck,r=S.myChecks||{},today=dayKey(0);
+  if(!c.wants_organiser&&!c.wants_coach)return 'Pick what you want to do: run paid sessions, coach, or both.';
+  if(!r.abn)return 'Add your ABN and tap Check ABN.';
+  if(!c.insurer.trim()||!c.insurance_expires||!c.insurance_file)return 'Add your public liability insurance: the insurer, expiry date and certificate.';
+  if(Number(c.insurance_cover)<10000000)return 'Your insurance needs at least A$10 million of cover.';
+  if(c.insurance_expires<=today)return 'Your insurance has expired. Add your current certificate.';
+  if(c.wants_organiser){
+    if(!c.venue_name.trim()||!c.venue_file)return 'Add where you run sessions and upload the booking, permit or letter.';
+    if(c.venue_expires&&c.venue_expires<=today)return 'Your venue booking or permit has expired. Add the current one.';
+  }
+  if(c.wants_coach){
+    if(!c.coach_body.trim()||!c.coach_level.trim()||!c.coach_file)return 'Add your coaching accreditation and upload the certificate.';
+    if(c.coach_expires&&c.coach_expires<=today)return 'Your coaching accreditation has expired. Add the current one.';
+    if(!/^[A-Za-z0-9-]{4,20}$/.test(c.wwcc_number.replace(/\s/g,''))||!c.wwcc_surname.trim()||!c.wwcc_expires)return 'Add your Working with Children Check card number, surname and expiry date.';
+    if(c.wwcc_expires<=today)return 'Your Working with Children Check has expired.';
+  }
+  return '';
+}
+function ckErrorText(e){
+  var m=String((e&&e.message)||'');
+  var map={PICK_ROLE:'Pick what you want to do: run paid sessions, coach, or both.',NEEDS_ABN:'Add your ABN and tap Check ABN.',NEEDS_INSURANCE:'Add your public liability insurance: the insurer, expiry date and certificate.',
+    INSURANCE_LOW:'Your insurance needs at least A$10 million of cover.',INSURANCE_EXPIRED:'Your insurance has expired. Add your current certificate.',NEEDS_VENUE:'Add where you run sessions and upload the booking, permit or letter.',
+    VENUE_EXPIRED:'Your venue booking or permit has expired. Add the current one.',NEEDS_ACCREDITATION:'Add your coaching accreditation and upload the certificate.',ACCREDITATION_EXPIRED:'Your coaching accreditation has expired. Add the current one.',
+    NEEDS_WWCC:'Add your Working with Children Check card number, surname and expiry date.',WWCC_EXPIRED:'Your Working with Children Check has expired.',BAD_WWCC:'Check your Working with Children Check card number.',
+    BAD_FILE:'One of your files didn’t upload properly. Upload it again.',BAD_DATE:'One of the dates isn’t valid. Check it and try again.'};
+  for(var k in map)if(m.indexOf(k)>=0)return map[k];
+  return friendlyError(e,'Couldn’t send your papers. Check your connection and try again.');
+}
+function saveCk(submit){
+  if(!S.ck||!S.uid)return Promise.resolve();
+  if(submit){var e=ckErrors();S.ckError=e;if(e){render();return Promise.resolve();}S.ckBusy=true;render();}
+  return sb.rpc('save_organiser_checks',{p:ckPayload(),p_submit:!!submit}).then(function(r){
+    if(submit)S.ckBusy=false;
+    if(r.error){if(submit){S.ckError=ckErrorText(r.error);render();}return;}
+    if(r.data)S.myChecks=r.data;S.ckDirty=false;
+    if(submit){S.ckError='';toast('Sent for checking. You’ll get a notification when it’s done.');S.resetScroll=true;render();loadProfile().then(render);}
+  });
+}
+function uploadCk(k,file){
+  if(!file||!S.uid||S.ckUp||!CK_FILES[k])return;
+  var pdf=file.type==='application/pdf'||/\.pdf$/i.test(file.name||'');
+  if(!pdf&&!/^image\//.test(file.type||'')){toast('Pick a PDF or a photo.');return;}
+  if(file.size>10*1048576){toast('That file is over 10 MB. Try a smaller PDF, or a photo of it.');return;}
+  S.ckUp=k;render();
+  var prep=pdf?Promise.resolve({blob:file,ext:'pdf',type:'application/pdf'}):shrinkImage(file).then(function(b){return {blob:b,ext:'jpg',type:'image/jpeg'};},function(){
+    var t=/^image\/(png|webp|heic|heif)$/.test(file.type)?file.type:'image/jpeg';return {blob:file,ext:t.split('/')[1].replace('jpeg','jpg'),type:t};});
+  prep.then(function(x){
+    var path=S.uid+'/'+k.replace('_file','')+'-'+Date.now()+'.'+x.ext;
+    return sb.storage.from('checks').upload(path,x.blob,{contentType:x.type,upsert:false}).then(function(r){if(r.error)throw r.error;return path;});
+  }).then(function(path){
+    S.ck[k]=path;S.ckUp=null;S.ckDirty=true;toast('Uploaded');render();saveCk(false);
+  },function(e){S.ckUp=null;toast(friendlyError(e,'Couldn’t upload that file. Try again, or try a photo instead.'));render();});
+}
+function checkAbnCk(){
+  if(S.ckAbnBusy)return;
+  var v=abnClean(S.ckAbn);
+  if(!abnOk(v)){S.ckAbnError='That isn’t a valid ABN. Check the 11 digits.';render();return;}
+  S.ckAbnBusy=true;S.ckAbnError='';render();
+  sb.functions.invoke('organiser-abn',{body:{action:'check',abn:v}}).then(function(r){
+    if(r.error)throw r.error;var d=r.data||{};if(d.ok===false)throw new Error(d.error||'FAILED');return d;
+  }).then(function(d){
+    S.ckAbnBusy=false;S.ckAbnEdit=false;S.ckAbn='';
+    S.myChecks=Object.assign({},S.myChecks||{user_id:S.uid},{abn:v,abn_name:d.abn_name||null,abn_status:d.abn_status||null,abn_lookup:!!d.looked_up});
+    toast(d.looked_up?'ABN checked with the ABN register':'ABN saved. We’ll check it by hand.');render();
+  }).catch(function(e){
+    S.ckAbnBusy=false;var m=String(e&&e.message||'');
+    S.ckAbnError={BAD_ABN:'That isn’t a valid ABN. Check the 11 digits.',ABN_NOT_FOUND:'The ABN register has no record of that ABN.',ABN_NOT_ACTIVE:'That ABN is cancelled on the ABN register.',ABR_DOWN:'Couldn’t reach the ABN register. Try again in a minute.'}[m]||'Couldn’t check the ABN right now. Try again later.';
+    render();
+  });
+}
+function openPaper(path){
+  if(!path)return;
+  var w=null;try{w=window.open('about:blank','_blank');if(w)w.opener=null;}catch(e){}
+  sb.storage.from('checks').createSignedUrl(path,300).then(function(r){
+    var u=r&&r.data&&r.data.signedUrl;
+    if(!u){if(w)w.close();toast('Couldn’t open that file. Try again.');return;}
+    if(w)w.location.href=u;else location.href=u;
+  },function(){if(w)w.close();toast('Couldn’t open that file. Try again.');});
+}
+function deletePapers(){
+  if(!S.uid||S.ckBusy)return;S.ckBusy=true;render();
+  var bucket=sb.storage.from('checks');
+  bucket.list(S.uid,{limit:100}).then(function(r){
+    var names=((r&&r.data)||[]).map(function(f){return S.uid+'/'+f.name;});
+    return names.length?bucket.remove(names):null;
+  }).catch(function(){}).then(function(){return sb.rpc('delete_organiser_checks');}).then(function(r){
+    S.ckBusy=false;S.ckConfirmDel=false;
+    if(r&&r.error){toast(friendlyError(r.error,'Couldn’t delete your papers. Try again.'));render();return;}
+    S.myChecks=null;S.ck=ckDefaults(null);S.ckDirty=false;toast('Your papers are deleted');loadProfile().then(render);
+  });
+}
+
+/* ---------- the admin's review list ---------- */
+function viewReview(){
+  var h='<a class="back" href="#profile">'+I.back+'Profile</a><section class="hello"><h1>Organiser checks</h1><p class="meta">Check each person’s papers, then approve them or ask for a change. They get a notification either way.</p></section>';
+  if(!S.isAdmin)return h+'<div class="empty"><strong>Only the Bounce Up team can see this page</strong></div>';
+  if(!CHECKS)return h+'<div class="empty"><strong>Organiser checks aren’t switched on yet</strong><p>They switch on when the database update is live.</p></div>';
+  if(S.review==null)return h+loader('Loading checks…');
+  var wait=S.review.filter(function(x){return x.organiser_status==='pending'||x.coach_status==='pending';}),
+    done=S.review.filter(function(x){return wait.indexOf(x)<0;});
+  h+='<section class="list"><div class="list-head"><h2>Waiting for you <span class="meta">'+wait.length+'</span></h2></div>'+(wait.length?wait.map(revCard).join(''):'<p class="meta">Nothing to check right now.</p>')+'</section>';
+  if(done.length)h+='<section class="list"><div class="list-head"><h2>Checked or sent back <span class="meta">'+done.length+'</span></h2></div>'+done.map(revCard).join('')+'</section>';
+  return h;
+}
+function revDoc(x,k){return x[k]?'<button type="button" class="btn btn-line btn-sm" data-act="rev-open" data-id="'+esc(x.user_id)+'" data-v="'+k+'">'+I.doc+'Open</button>':'<span class="meta">No file</span>';}
+function revRow(label,body,doc){return '<div class="rev-row"><span class="rev-l">'+label+'</span><div class="rev-b">'+body+'</div>'+(doc||'')+'</div>';}
+function revCard(x){
+  var p=x.profile||{},nm=p.display_name||'Player',today=dayKey(0);
+  function exp(d){return d?'<span class="'+(String(d)<=today?'err-t':'')+'">expires '+esc(ymdLabel(d))+'</span>':'';}
+  var h='<article class="card rev-card"><div class="rev-head"><a href="#p-'+esc(x.user_id)+'">'+avatar(x.user_id,nm,p.avatar_url,44)+'</a><div class="gbody"><b><a href="#p-'+esc(x.user_id)+'">'+esc(nm)+'</a></b><span class="meta">'+esc([p.suburb,x.submitted_at?'sent '+timeAgo(new Date(x.submitted_at)):''].filter(Boolean).join(' · '))+'</span></div></div>';
+  h+='<div class="rev-roles">'+(x.wants_organiser||x.organiser_status!=='none'?'<span>Paid sessions '+revPill(x.organiser_status,p.organiser_until)+'</span>':'')+(x.wants_coach||x.coach_status!=='none'?'<span>Coaching '+revPill(x.coach_status,p.coach_until)+'</span>':'')+'</div>';
+  h+=revRow('ABN',x.abn?'<b>'+esc(abnFmt(x.abn))+'</b> '+(x.abn_lookup&&x.abn_status==='Active'?statusPill('Active','good'):statusPill('Check by hand','muted'))+(x.abn_name?'<br><span class="meta">'+esc(x.abn_name)+'</span>':''):'<span class="meta">None</span>',
+    x.abn?'<a class="btn btn-line btn-sm" href="'+esc(abnLink(x.abn))+'" target="_blank" rel="noopener">ABN Lookup</a>':'');
+  h+=revRow('Insurance',esc([x.insurer,x.insurance_cover?'A$'+Math.round(Number(x.insurance_cover)/1e6)+' million':''].filter(Boolean).join(' · '))+' '+exp(x.insurance_expires),revDoc(x,'insurance_file'));
+  if(x.wants_organiser)h+=revRow('Venue',esc([(CK_VENUES.filter(function(v){return v[0]===x.venue_kind;})[0]||['',''])[1],x.venue_name].filter(Boolean).join(': '))+' '+exp(x.venue_expires),revDoc(x,'venue_file'));
+  if(x.wants_coach){
+    h+=revRow('Coaching',esc([SPORT_LABEL[x.coach_sport]||x.coach_sport,x.coach_body,x.coach_level].filter(Boolean).join(' · '))+' '+exp(x.coach_expires),revDoc(x,'coach_file'));
+    h+=revRow('WWCC',x.wwcc_number?'<b>'+esc(x.wwcc_number)+'</b> · '+esc(x.wwcc_surname||'')+' '+exp(x.wwcc_expires)+'<br><a href="'+WWCC_CHECK+'" target="_blank" rel="noopener">Check it on Service Victoria</a>':'<span class="meta">None</span>',x.wwcc_file?revDoc(x,'wwcc_file'):'');
+  }
+  var busy=S.revBusy===x.user_id,acts='';
+  [['organiser','paid sessions',x.wants_organiser,x.organiser_status,p.organiser_until],['coach','coaching',x.wants_coach,x.coach_status,p.coach_until]].forEach(function(r){
+    if(!r[2]&&!untilOk(r[4]))return;
+    if(r[3]==='pending'||(r[2]&&!untilOk(r[4])&&r[3]!=='changes'))acts+='<button type="button" class="btn btn-brand btn-sm" data-act="rev-approve" data-id="'+esc(x.user_id)+'" data-v="'+r[0]+'"'+(busy?' disabled':'')+'>Approve '+r[1]+'</button>';
+    if(r[3]==='pending')acts+='<button type="button" class="btn btn-line btn-sm" data-act="rev-changes" data-id="'+esc(x.user_id)+'" data-v="'+r[0]+'"'+(busy?' disabled':'')+'>Ask for a change ('+r[1]+')</button>';
+    if(untilOk(r[4]))acts+='<button type="button" class="btn btn-line btn-sm" data-act="rev-revoke" data-id="'+esc(x.user_id)+'" data-v="'+r[0]+'"'+(busy?' disabled':'')+'>Remove '+r[1]+' check</button>';
+  });
+  if(acts)h+='<div class="field"><label for="rvn-'+esc(x.user_id)+'">Note to '+esc(nm)+' (needed to ask for a change or remove a check)</label><textarea id="rvn-'+esc(x.user_id)+'" maxlength="600" placeholder="Your insurance certificate is blurry. Please upload a clearer copy." style="min-height:64px">'+esc((S.revNote||{})[x.user_id]||'')+'</textarea></div><div class="cta">'+acts+'</div>';
+  if(x.admin_note)h+='<p class="meta">Last note: '+esc(x.admin_note)+'</p>';
+  return h+'</article>';
+}
+function revPill(st,until){
+  if(untilOk(until))return statusPill('Checked until '+ymdLabel(until),'good');
+  return statusPill(st==='pending'?'Waiting':st==='changes'?'Sent back':st==='approved'?'Expired':'Not asked',st==='pending'?'':'muted');
+}
+function reviewAct(uid,role,action){
+  if(!S.isAdmin||S.revBusy)return;
+  var note=String((S.revNote||{})[uid]||'').trim();
+  if(action!=='approve'&&!note){toast('Write a short note so they know what to fix.');var t=document.getElementById('rvn-'+uid);if(t)t.focus();return;}
+  S.revBusy=uid;render();
+  sb.rpc('review_organiser_checks',{p_user:uid,p_role:role,p_action:action,p_note:action==='approve'?null:note}).then(function(r){
+    S.revBusy=null;
+    if(r.error){var m=String(r.error.message||'');toast(/INCOMPLETE/.test(m)?'Some papers are missing, so this can’t be approved yet.':/EXPIRED/.test(m)?'Their papers have already expired. Ask for current ones.':friendlyError(r.error,'Couldn’t save that. Try again.'));render();return;}
+    if(S.revNote)delete S.revNote[uid];
+    toast(action==='approve'?'Approved. They’ve been told.':action==='revoke'?'Check removed. They’ve been told.':'Sent back with your note.');
+    loadReview().then(render);
+  });
+}
+
+/* ---------- clicks and fields ---------- */
+function clickChecks(a,id,v){
+  if(a==='paid-kind'){S.form.paid=v==='paid';render();}
+  else if(a==='ck-abn-check')checkAbnCk();
+  else if(a==='ck-abn-change'){S.ckAbnEdit=true;S.ckAbn='';S.ckAbnError='';render();var i=document.getElementById('ck-abn-input');if(i)i.focus();}
+  else if(a==='ck-abn-cancel'){S.ckAbnEdit=false;S.ckAbnError='';render();}
+  else if(a==='ck-view'&&S.ck)openPaper(S.ck[v]);
+  else if(a==='ck-send')saveCk(true);
+  else if(a==='ck-del'){S.ckConfirmDel=true;render();}
+  else if(a==='ck-del-no'){S.ckConfirmDel=false;render();}
+  else if(a==='ck-del-yes')deletePapers();
+  else if(a==='rev-open'){var x=(S.review||[]).filter(function(r){return r.user_id===id;})[0];if(x&&CK_FILES[v])openPaper(x[v]);}
+  else if(a==='rev-approve')reviewAct(id,v,'approve');
+  else if(a==='rev-changes')reviewAct(id,v,'changes');
+  else if(a==='rev-revoke')reviewAct(id,v,'revoke');
+  else return false;
+  return true;
+}
+function fieldChecks(e){
+  var t=e.target,id=t.id||'',ch=e.type==='change';
+  if(id==='f-price'){S.form.price=t.value;updatePreview();var on=toPrice(t.value)>0;if(on!==!!S.form._priced){S.form._priced=on;render();}return true;}
+  if(id==='ck-abn-input'){S.ckAbn=t.value;return true;}
+  if(id.indexOf('ckup-')===0){if(ch){uploadCk(id.slice(5),t.files&&t.files[0]);t.value='';}return true;}
+  if(id.indexOf('rvn-')===0){S.revNote=S.revNote||{};S.revNote[id.slice(4)]=t.value;return true;}
+  if(id.indexOf('ck-')===0&&S.ck){
+    var k=id.slice(3);
+    if(k==='wants_organiser'||k==='wants_coach'){S.ck[k]=t.checked;S.ckDirty=true;render();return true;}
+    if(k in S.ck){S.ck[k]=t.value;S.ckDirty=true;if(ch&&t.tagName==='SELECT')render();}
+    return true;
+  }
+  return false;
 }
 
 /* ================= Payments: Apple Pay, Google Pay and cards through Stripe ================= */
@@ -3543,7 +4026,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='payouts'?viewPayouts():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -3598,8 +4081,11 @@ function renderMenu(){
     item('venues','#venues',XI.venue,'Venues')+
     item('coaches','#coaches',XI.coach,'Coaches')+
     item('leagues','#leagues',XI.league,'Leagues')+
+    (S.uid&&CHECKS?item('checks','#checks',SHIELD,'Get checked'):'')+
+    (S.isAdmin&&CHECKS?item('review','#review',SHIELD,'Review checks',reviewWaiting()):'')+
     (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
     '<span class="menu-sep" role="separator"></span>'+
+    item('about','#about',MI.mission,'Our mission')+
     '<a class="menu-item" href="mailto:benjibajout@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a>'+
     '</nav></div>';
   var was=root.innerHTML!=='';
@@ -3650,9 +4136,10 @@ function renderSide(){
   var el=document.getElementById('side-extra');if(!el)return;
   var mine=S.myClubs.filter(function(m){return m.club;}).slice(0,5);
   var nl=lessonsNew();
-  var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league]].map(function(x){
+  var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission]].map(function(x){
       var on=S.route===x[0]||S.route===x[1];return '<a class="side-club" href="#'+x[0]+'"'+(on?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+x[3]+'</span><span>'+x[2]+'</span></a>';}).join('')+
-    (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+'</div>'+
+    (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+
+    (S.isAdmin&&CHECKS?'<a class="side-club" href="#review"'+(S.route==='review'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SHIELD+'</span><span>Review checks'+(reviewWaiting()?' · '+reviewWaiting():'')+'</span></a>':'')+'</div>'+
     '<div class="side-clubs">'+(mine.length?'<div class="side-label">Your clubs</div>'+mine.map(function(m){var c=normClub(m.club);
       return '<a class="side-club" href="#c-'+esc(c.id)+'"'+(S.route==='club'&&S.clubId===c.id?' aria-current="page"':'')+'>'+clubLogo(c,28)+'<span>'+esc(c.name)+'</span></a>';}).join(''):'')+
     '<a class="side-club" href="#club-new"'+(S.route==='club-new'?' aria-current="page"':'')+'><span class="plus-sq" aria-hidden="true">+</span><span>Start a club</span></a></div>';
@@ -3734,7 +4221,7 @@ document.addEventListener('mouseover',function(e){
   hc.el=a;
   hc.timer=setTimeout(function(){
     var cached=hc.cache[id];
-    (cached?Promise.resolve(cached):sb.from('profiles').select('id, display_name, avatar_url, suburb, level, sports, bio, dupr_id, dupr_doubles, dupr_singles, founding').eq('id',id).maybeSingle().then(function(r){if(r&&r.data)hc.cache[id]=r.data;return r&&r.data;}))
+    (cached?Promise.resolve(cached):sb.from('profiles').select('id, display_name, avatar_url, suburb, level, sports, bio, dupr_id, dupr_doubles, dupr_singles, founding'+ckCols()).eq('id',id).maybeSingle().then(function(r){if(r&&r.data)hc.cache[id]=r.data;return r&&r.data;}))
       .then(function(p){if(p&&hc.el===a)showHover(a,p);}).catch(function(){});
   },400);
 });
@@ -3784,7 +4271,8 @@ function loadMine(){
 }
 function loadProfile(){
   if(!S.uid){S.profile=null;S.pf=null;return Promise.resolve();}
-  if(S.isAdmin==null&&typeof sb.rpc==='function')sb.rpc('am_app_admin').then(function(a){S.isAdmin=!a.error&&a.data===true;if(S.isAdmin)render();},function(){S.isAdmin=false;});
+  if(S.isAdmin==null&&typeof sb.rpc==='function')sb.rpc('am_app_admin').then(function(a){S.isAdmin=!a.error&&a.data===true;if(S.isAdmin){render();if(CHECKS)loadReview().then(render);}},function(){S.isAdmin=false;});
+  if(CHECKS)loadMyChecks();
   return sb.from('profiles').select('*').eq('id',S.uid).maybeSingle().then(function(r){
     S.profile=r.data||null;
     if(!S.pfDirty){var p=S.profile||{};S.pf={display_name:p.display_name||'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',alertKm:KM_OPTIONS.indexOf(p.alert_km)>=0?p.alert_km:10,bio:p.bio||'',level:p.level||'All levels',sports:(p.sports||[]).slice(),duprId:p.dupr_id||'',duprDoubles:p.dupr_doubles!=null?String(Number(p.dupr_doubles)):'',duprSingles:p.dupr_singles!=null?String(Number(p.dupr_singles)):''};}
@@ -3795,7 +4283,7 @@ function loadGame(){
   if(S.route!=='game'||!S.gameId)return Promise.resolve();
   var id=S.gameId;
   return Promise.all([
-    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url, founding), club:clubs(id, name, logo_url, founding), series:game_series!games_series_id_fkey(active, last_error)').eq('id',id).maybeSingle(),
+    sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url, founding'+ckCols()+'), club:clubs(id, name, logo_url, founding), series:game_series!games_series_id_fkey(active, last_error)').eq('id',id).maybeSingle(),
     sb.from('game_players').select('user_id, joined_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('joined_at'),
     sb.from('waitlist').select('user_id, created_at, profile:profiles(id, display_name, avatar_url)').eq('game_id',id).order('created_at')
   ]).then(function(res){
@@ -3841,7 +4329,7 @@ function loadPlayer(){
   if(S.route!=='player'||!S.playerId)return Promise.resolve();
   var id=S.playerId;
   return Promise.all([
-    sb.from('profiles').select('id, display_name, avatar_url, suburb, level, sports, bio, dupr_id, dupr_doubles, dupr_singles, founding').eq('id',id).maybeSingle(),
+    sb.from('profiles').select('id, display_name, avatar_url, suburb, level, sports, bio, dupr_id, dupr_doubles, dupr_singles, founding'+ckCols()).eq('id',id).maybeSingle(),
     sb.from('club_members').select('role, club:clubs(*, club_members(count))').eq('user_id',id)
   ]).then(function(res){
     if(S.playerId!==id)return;
@@ -4138,7 +4626,7 @@ function route(){
     if(!S.league||S.league.id!==rest){S.league=null;S.leagueEntries=[];S.leagueMatches=[];S.leagueState='loading';}
     S.route='league';S.leagueId=rest;
   } else {
-    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts'].indexOf(h)>=0?h:'discover';
+    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about'].indexOf(h)>=0?h:'discover';
   }
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
@@ -4166,6 +4654,8 @@ function route(){
     if(S.route==='coaches'&&S.coaches===null)loadCoaches().then(render);
     if((S.route==='leagues'||S.route==='club')&&S.leagues===null)loadLeagues().then(render);
     if(S.route==='lessons'||S.route==='inbox')loadLessons().then(render);
+    if(S.route==='checks'&&CHECKS)loadMyChecks().then(render);
+    if(S.route==='review'&&CHECKS&&S.isAdmin)loadReview().then(render);
   }
 }
 function currentHash(){return S.route==='venue'?'v-'+S.venueId:S.route==='coach'?'o-'+S.coachId:S.route==='league'?'l-'+S.leagueId:S.route==='game'?'g-'+S.gameId:S.route==='club'?'c-'+S.clubId:S.route==='clubbiz'?'b-'+S.clubId:S.route==='player'?'p-'+S.playerId:S.route==='clubchat'?'m-'+S.chatClubId:S.route;}
@@ -4298,11 +4788,11 @@ function createGame(){
   S.formError=e?e[1]:'';
   if(e){S.hostStep=e[0];render();return;}
   S.busy=true;render();
-  sb.from('games').insert({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
+  sb.from('games').insert(Object.assign({host_id:S.uid,sport:f.sport,title:f.title.trim(),starts_at:start.toISOString(),duration_min:Number(f.duration)||90,
     venue:f.venue.trim(),suburb:f.suburb.trim(),state:f.state||null,postcode:f.postcode||null,address:f.address.trim()||null,lat:hasPin(f)?f.lat:null,lng:hasPin(f)?f.lng:null,host_plays:!!f.hostPlays,
     level:f.level,price:price,capacity:cap,one_short:!!f.oneShort,notes:f.notes.trim(),
     club_id:f.clubId&&isClubAdmin(f.clubId)?f.clubId:null,venue_id:f.venueId||null,kind:f.clinic&&S.myCoach?'clinic':'social',pay_online:!!f.payOnline&&price>0&&canPayOnline(f),pay_club:!!f.payOnline&&price>0&&payClubFor(f),
-    dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null}).select('id').single().then(function(r){
+    dupr_min:f.sport==='pickleball'?duprNum(f.duprMin):null,dupr_max:f.sport==='pickleball'?duprNum(f.duprMax):null},CHECKS?{paid_session:price>0&&(!!f.paid||!!(f.clinic&&S.myCoach))}:{})).select('id').single().then(function(r){
     S.busy=false;
     if(r.error){S.formError=friendlyError(r.error,'Couldn’t post the game. Check your connection and try again.');render();return;}
     var gid=r.data.id,weekly=!!f.weekly;
@@ -4695,7 +5185,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.isAdmin=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
@@ -4724,6 +5214,7 @@ sb.auth.onAuthStateChange(function(evt,session){
   },0);
 });
 sb.auth.getSession().then(function(r){setSession(r.data&&r.data.session);S.authReady=true;cleanUrl();refreshAll();handleReturn();});
+probeChecks();
 function onLive(kind){return function(){scheduleRefresh(kind);};}
 sb.channel('bounce-live')
   .on('postgres_changes',{event:'*',schema:'public',table:'games'},onLive('games'))
