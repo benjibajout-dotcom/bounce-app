@@ -1287,6 +1287,50 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .reg-faces{display:flex;flex:none}
 .reg-faces > *{margin-left:-8px;border:2px solid var(--surface);border-radius:50%}
 .reg-faces > *:first-child{margin-left:0}
+/* Partners: who to check this week, Join the club, Your month */
+.watch .watch-h{font-size:16px;display:flex;align-items:baseline;gap:8px;margin-top:6px}
+.watch-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.watch-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:16px 16px 16px 6px;background:var(--surface)}
+.watch-row .gbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.watch-row a{color:var(--ink);text-decoration:none}
+.watch-row .gbody .meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.watch-why{font-size:13.5px;line-height:1.35;color:var(--ink)}
+.watch-row .btn{flex:none}
+.join-offer .jo-acts,.lesson-offer .jo-acts{display:flex;flex-direction:column;align-items:center;flex:none}
+.join-offer .link-btn,.lesson-offer .link-btn{min-height:36px;font-size:13.5px;color:var(--muted)}
+.lesson-offer .again-ico svg{width:20px;height:20px}
+.month-link{margin:0}
+.admin-report{margin:-4px 0 0}
+.admin-report a{font-weight:700;color:var(--brand-text)}
+.month-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.month-bar .btn{min-width:44px;border-radius:999px;font-size:18px;line-height:1}
+.month-bar b{font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.month-sheet{display:flex;flex-direction:column;gap:18px;padding:20px;border:1px solid var(--line);border-radius:24px 24px 24px 8px;background:var(--surface)}
+.month-kicker{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand-text)}
+.month-who{display:flex;align-items:center;gap:14px;margin-top:10px}
+.month-who .gbody{min-width:0}
+.month-who h1{font-size:clamp(24px,6.4vw,32px);line-height:1.08;overflow-wrap:anywhere}
+.month-who .meta{margin:2px 0 0}
+.month-lead{margin:10px 0 0;color:var(--muted)}
+.month-ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-text);flex:none}
+.month-ico svg{width:26px;height:26px}
+.month-stats .stat{background:var(--bg)}
+.month-notes{margin:0;padding:12px 14px 12px 32px;border-radius:16px;background:var(--brand-soft);display:flex;flex-direction:column;gap:6px}
+.month-notes li{line-height:1.4}
+.month-table th[scope="row"]{white-space:normal;min-width:140px}
+.month-foot{margin:0;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.month-sheet .empty{padding:20px 8px}
+@media print{
+  :root{--bg:#FFFFFF;--surface:#FFFFFF;--line:#DDD3B2;--line-strong:#CDBF97;--ink:#13261E;--muted:#4E5D50;--brand:#1F5C4A;--brand-text:#1F5C4A;--brand-soft:#EEF3E2;--accent-soft:#FBE5C9;--accent-text:#8A3A08;color-scheme:light}
+  html,body{height:auto!important;overflow:visible!important;background:#FFFFFF!important}
+  #app{height:auto!important;display:block!important;background:#FFFFFF!important}
+  main{overflow:visible!important;background:none!important}
+  .top,.tabs,.fab-search,#toast,#sheet-root,#menu-root,.no-print,a.notice{display:none!important}
+  .inner{padding:0!important;max-width:none!important}
+  .month-sheet{border:0;padding:0}
+  .stat,.month-notes,.month-table tr{break-inside:avoid}
+  .month-notes,.month-ico,.clublogo,.avatar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
@@ -1689,7 +1733,7 @@ function viewDiscover(){
   if(S.loadError)h+='<p class="notice">'+esc(S.loadError)+'</p>';
   if(!S.uid&&S.authReady)h+=missionStrip();
   if(nextG)h+='<a class="next-game only-phone" href="#g-'+esc(nextG.id)+'"><span class="gbody"><small>Your next game</small><b>'+esc(nextG.title)+'</b><span class="meta">'+esc(fmtDay(nextG.start)+', '+fmtTime(nextG.start)+' · '+place(nextG))+'</span></span><span class="ng-go" aria-hidden="true">›</span></a>';
-  if(S.uid)h+=playAgainHTML(1);
+  if(S.uid)h+=playAgainHTML(1)+joinOfferHTML();
   // Phones and tablets: the first One Short alert sits at the top. Desktop lists them all in the right rail.
   if(alertG){
     var isNew=S.alertShown!==alertG.id;S.alertShown=alertG.id;
@@ -1938,7 +1982,7 @@ function viewMine(){
     return '<section class="list"><div class="list-head"><h2>'+title+'</h2><span class="meta">'+list.length+'</span></div>'+(list.length?list.map(function(g){return cardHTML(g);}).join(''):'<p class="meta">'+emptyText+'</p>')+'</section>';
   }
   var upcomingMine=myUpcoming();
-  h+=streakHTML('mine')+playAgainHTML(3);
+  h+=streakHTML('mine')+playAgainHTML(3)+joinOfferHTML()+lessonOfferHTML();
   h+='<div class="list-head mine-tools">'+viewToggle('mview',S.mview)+(upcomingMine.length?'<button type="button" class="btn btn-line btn-sm" data-act="ics-all">'+I.cal+'Add all to calendar</button>':'')+'</div>';
   if(S.mview==='cal'){
     var all={},pool=[];S.mine.concat(S.myWait||[]).forEach(function(g){if(!all[g.id]){all[g.id]=1;pool.push(g);}});
@@ -1946,7 +1990,7 @@ function viewMine(){
   }
   h+=sec('Playing',playing,'You haven’t joined any upcoming games.');
   if(waiting.length)h+=sec('Waitlisted',waiting,'');
-  h+=sec('Hosting',hosting,'You’re not hosting anything right now.');
+  h+=sec('Hosting',hosting,'You’re not hosting anything right now.')+monthLinkHTML();
   if(played.length)h+=sec('Played',played,'');
   return h;
 }
@@ -2059,13 +2103,13 @@ function viewClub(){
   else cta='<button type="button" class="btn btn-accent btn-wide" data-act="club-join" data-id="'+esc(c.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join club':'Sign in to join')+'</button>';
   h+=bizBadge(S.clubBiz);
   h+='<div class="cta">'+cta+'<button type="button" class="btn btn-line" data-act="club-invite">'+I.share+'Invite</button></div>';
-  if(S.isAdmin)h+=adminFoundingCard('club',c.id,c.founding);
+  if(S.isAdmin)h+=adminFoundingCard('club',c.id,c.founding)+(admin?'':adminReportLink('c',c.id));
   if(S.inviteText)h+='<div class="field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
   if(admin){
     h+='<section class="card" aria-label="Committee tools"><h2>Committee tools</h2><div class="cta">'+
       '<button type="button" class="btn btn-accent" data-act="club-host" data-id="'+esc(c.id)+'">Post a club game</button>'+
       '<button type="button" class="btn btn-brand" data-act="post-new" data-id="'+esc(c.id)+'">Post an update</button>'+
-      '<button type="button" class="btn btn-line" data-act="club-edit">Edit club</button><a class="btn btn-line" href="#b-'+esc(c.id)+'">ABN and payouts</a></div>'+
+      '<button type="button" class="btn btn-line" data-act="club-edit">Edit club</button><a class="btn btn-line" href="#b-'+esc(c.id)+'">ABN and payouts</a><a class="btn btn-line" href="#month-c-'+esc(c.id)+'">Club report</a></div>'+
       '<p class="meta">Promote members to the committee from the member list. Committee members can edit the club and post its games.</p>';
     h+=S.confirmClubDel?'<div class="confirm"><b>Close this club for everyone?</b><p class="meta">The club page and member list go. Its games stay as personal games.</p><div class="actions"><button type="button" class="btn btn-danger" data-act="club-del-yes" data-id="'+esc(c.id)+'">Close club</button><button type="button" class="btn btn-line" data-act="club-del-no">Keep club</button></div></div>'
       :'<button type="button" class="btn btn-danger self-start" data-act="club-del">Close club</button>';
@@ -2117,7 +2161,7 @@ function viewPlayer(){
   if(S.coaches&&S.coaches.some(function(c){return c.id===p.id&&c.active;}))h+='<a class="btn btn-brand self-start" href="#o-'+esc(p.id)+'">'+esc(nm.split(' ')[0])+' coaches: see lessons and clinics</a>';
   if(me)h+='<a class="btn btn-line self-start" href="#profile">Edit my profile</a>';
   h+=safetyRow(p);
-  if(S.isAdmin)h+=adminFoundingCard('player',p.id,p.founding);
+  if(S.isAdmin)h+=adminFoundingCard('player',p.id,p.founding)+adminReportLink('p',p.id);
   h+='</div><div class="pp-side"><section class="stack-sm"><h2>Clubs</h2>'+(S.playerClubs.length?'<div class="list">'+S.playerClubs.map(function(m){return clubRow(normClub(m.club),m.role);}).join('')+'</div>':'<p class="meta">Not in any clubs yet.</p>')+'</section></div></div>';
   return h;
 }
@@ -2715,6 +2759,7 @@ function viewVenue(){
   h+='<div class="cta">'+(v.booking?'<a class="btn btn-brand" href="'+esc(v.booking)+'" target="_blank" rel="noopener">Book a court</a>':'')+
     '<button type="button" class="btn btn-accent" data-act="venue-host" data-id="'+esc(v.id)+'">Host a game here</button>'+
     '<a class="btn btn-line" href="'+esc(dirUrl({venue:v.name,address:v.address,suburb:v.suburb,lat:v.lat,lng:v.lng}))+'" target="_blank" rel="noopener">'+I.pin+'Directions</a></div>';
+  if(S.isAdmin)h+=adminReportLink('v',v.id);
   if(v.notes)h+='<section class="stack-sm"><h2>Good to know</h2><p class="notes">'+esc(v.notes)+'</p></section>';
   var up=S.venueGames.filter(isUpcoming).sort(byStart);
   h+='<section class="list"><div class="list-head"><h2>Games here <span class="meta">'+up.length+'</span></h2></div>'+
@@ -3774,7 +3819,7 @@ function loadStats(){
   if(!S.isAdmin)return Promise.resolve();
   var from=weekStart(new Date(Date.now()-7*7*86400000));
   return Promise.all([
-    sb.from('games').select('id, host_id, series_id, starts_at, duration_min, capacity, created_at, game_players(user_id)').gte('starts_at',from.toISOString()).order('starts_at').limit(3000),
+    sb.from('games').select('id, title, host_id, club_id, series_id, starts_at, duration_min, capacity, created_at, game_players(user_id)').gte('starts_at',from.toISOString()).order('starts_at').limit(3000),
     sb.from('profiles').select('id, created_at').gte('created_at',from.toISOString()).limit(5000),
     sb.from('profiles').select('id',{count:'exact',head:true}),
     sb.from('profiles').select('id',{count:'exact',head:true}).eq('founding',true)
@@ -3824,6 +3869,7 @@ function viewStats(){
     statTile('Still playing after 4 weeks',rc?rc.ret+'%':'–',rc?rc.kept+' of '+rc.firsts+' who started the week of '+rc.start.getDate()+' '+MON[rc.start.getMonth()]:'Shows once players have 4 weeks of games','')+
     statTile('Paid spots and money in','–','Starts in January, once payments go live','')+
     '</div>';
+  h+=partnerWatchHTML(st);
   h+='<section class="stack-sm"><div class="list-head"><h2>Last 8 weeks</h2><button type="button" class="linkish" data-act="stats-refresh">Refresh</button></div><div class="table-wrap"><table class="stats-table"><thead><tr><th scope="col">Week of</th><th scope="col">Games</th><th scope="col">How full</th><th scope="col">Organisers</th><th scope="col">New players</th><th scope="col">First game</th><th scope="col">Back in week 4</th></tr></thead><tbody>'+
     weeks.slice().reverse().map(function(w,i){return '<tr'+(i===0?' class="now"':'')+'><th scope="row">'+esc(w.start.getDate()+' '+MON[w.start.getMonth()])+(i===0?' (this week)':'')+'</th><td>'+w.games+'</td><td>'+(w.full==null?'–':w.full+'%')+'</td><td>'+w.organisers+'</td><td>'+w.joined+'</td><td>'+w.firsts+'</td><td>'+(w.ret==null?'–':w.ret+'% ('+w.kept+')')+'</td></tr>';}).join('')+
     '</tbody></table></div><p class="meta">How full = spots taken ÷ spots offered, for games already played. First game = players whose first game in these 8 weeks was that week; Back in week 4 = how many of them played again 4 weeks later. Updated '+esc(fmtTime(st.at))+'.</p></section>';
@@ -3831,6 +3877,272 @@ function viewStats(){
 }
 function clickStats(a){
   if(a==='stats-refresh'){S.stats=null;S.statsLoading=false;render();return true;}
+  return false;
+}
+
+/* ---------- Partners: who to check this week, Join the club, Your month ---------- */
+var DAY_MS=86400000;
+function playersOf(g){var gp=Array.isArray(g.game_players)?g.game_players:[];return gp.length&&gp[0]&&gp[0].user_id!==undefined?gp.map(function(p){return p&&p.user_id;}).filter(Boolean):[];}
+function countOf(g){var gp=Array.isArray(g.game_players)?g.game_players:[];return gp.length&&gp[0]&&gp[0].user_id!==undefined?gp.length:((gp[0]&&gp[0].count)||0);}
+function fillOf(g){var cap=Math.max(1,Number(g.capacity)||1);return Math.min(countOf(g),cap)/cap;}
+function daysAgo(t){var d=Math.floor((Date.now()-t)/DAY_MS);return d<=0?'today':d===1?'yesterday':d+' days ago';}
+
+/* Admin numbers page: organisers to check this week */
+function partnerWatch(st){
+  var now=Date.now(),by={};
+  st.games.forEach(function(g){
+    var t=new Date(g.starts_at).getTime(),h=g.host_id;if(!h||isNaN(t))return;
+    var x=by[h]||(by[h]={id:String(h),first:t,last:null,next:null,clubId:null,series:{}});
+    if(t<x.first)x.first=t;
+    if(g.club_id)x.clubId=String(g.club_id);
+    if(t<=now){
+      if(x.last==null||t>x.last)x.last=t;
+      if(g.series_id){var s=x.series[g.series_id]||(x.series[g.series_id]={title:String(g.title||'Weekly game'),runs:[]});s.runs.push({t:t,full:fillOf(g)});}
+    } else if(x.next==null||t<x.next)x.next=t;
+  });
+  var quiet=[],low=[],fresh=[];
+  Object.keys(by).forEach(function(k){
+    var x=by[k];
+    if(x.next==null&&x.last!=null&&now-x.last>=14*DAY_MS)quiet.push(x);
+    Object.keys(x.series).forEach(function(sid){
+      var s=x.series[sid];s.runs.sort(function(a,b){return b.t-a.t;});
+      if(s.runs.length>=2&&s.runs[0].full<0.5&&s.runs[1].full<0.5)low.push({x:x,title:s.title,now:s.runs[0].full,before:s.runs[1].full});
+    });
+    if(now-x.first<30*DAY_MS)fresh.push(x);
+  });
+  quiet.sort(function(a,b){return b.last-a.last;});
+  fresh.sort(function(a,b){return a.first-b.first;});
+  return {quiet:quiet.slice(0,12),low:low.slice(0,12),fresh:fresh.slice(0,20)};
+}
+function ensurePartnerNames(w){
+  var ids={},cids={};
+  function add(x){ids[x.id]=1;if(x.clubId)cids[x.clubId]=1;}
+  w.quiet.forEach(add);w.fresh.forEach(add);w.low.forEach(function(o){add(o.x);});
+  var pk=Object.keys(ids).sort(),ck=Object.keys(cids).sort(),key=pk.join(',')+'|'+ck.join(',');
+  if(S.pnKey===key||S.pnLoading)return;
+  if(!pk.length){S.pnKey=key;S.pn={people:{},clubs:{}};return;}
+  S.pnLoading=true;
+  Promise.all([sb.from('profiles').select('id, display_name, avatar_url').in('id',pk),ck.length?sb.from('clubs').select('id, name').in('id',ck):Promise.resolve({data:[]})]).then(function(r){
+    S.pnLoading=false;S.pnKey=key;var pn={people:{},clubs:{}};
+    if(!r[0].error)(r[0].data||[]).forEach(function(p){pn.people[String(p.id)]=p;});
+    if(!r[1].error)(r[1].data||[]).forEach(function(c){pn.clubs[String(c.id)]=c.name;});
+    S.pn=pn;render();
+  },function(){S.pnLoading=false;S.pnKey=key;});
+}
+function watchRow(x,why){
+  var p=(S.pn&&S.pn.people[x.id])||{},nm=p.display_name||'An organiser',club=x.clubId&&S.pn&&S.pn.clubs[x.clubId];
+  return '<li class="watch-row">'+avatar(x.id,nm,p.avatar_url,36)+'<div class="gbody"><a href="#p-'+esc(x.id)+'"><b>'+esc(nm)+'</b></a>'+(club?'<span class="meta">'+esc(club)+'</span>':'')+'<span class="watch-why">'+esc(why)+'</span></div>'+
+    '<a class="btn btn-line btn-sm" href="#month-p-'+esc(x.id)+'" aria-label="'+esc(nm)+'’s month">Their month</a></li>';
+}
+function partnerWatchHTML(st){
+  var w=partnerWatch(st);ensurePartnerNames(w);
+  var h='<section class="stack-sm watch" aria-label="Partners to check this week"><div class="list-head"><h2>Partners to check this week</h2></div>';
+  if(!w.quiet.length&&!w.low.length&&!w.fresh.length)return h+'<p class="meta">Nobody to chase this week: every organiser has a game coming up.</p></section>';
+  if(w.quiet.length)h+='<h3 class="watch-h">No game for 2 weeks or more <span class="meta">'+w.quiet.length+'</span></h3><p class="meta">Message at day 7, call at day 14, and offer to set the next game up together.</p>'+
+    '<ul class="watch-list">'+w.quiet.map(function(x){return watchRow(x,'Last game '+daysAgo(x.last)+'. Nothing coming up.');}).join('')+'</ul>';
+  if(w.low.length)h+='<h3 class="watch-h">Weekly game under half full, two weeks running <span class="meta">'+w.low.length+'</span></h3><p class="meta">Try another time, switch on One Short, or open it to newcomers.</p>'+
+    '<ul class="watch-list">'+w.low.map(function(o){return watchRow(o.x,o.title+': '+Math.round(o.before*100)+'% then '+Math.round(o.now*100)+'% full');}).join('')+'</ul>';
+  if(w.fresh.length)h+='<h3 class="watch-h">In their first 30 days <span class="meta">'+w.fresh.length+'</span></h3><p class="meta">Check their game filled, and send their first month report in week 4.</p>'+
+    '<ul class="watch-list">'+w.fresh.map(function(x){
+      var why=x.first>Date.now()?'First game '+fmtDay(new Date(x.first)):'Day '+Math.min(30,Math.floor((Date.now()-x.first)/DAY_MS)+1)+' of 30'+(x.next?'. Next game '+fmtDay(new Date(x.next)):'. Nothing coming up');
+      return watchRow(x,why);}).join('')+'</ul>';
+  return h+'</section>';
+}
+
+/* Players: "Join the club" after a second game with the same club */
+function joinDismissed(){
+  var out={},mem=S.joinNo||{};Object.keys(mem).forEach(function(k){out[k]=1;});
+  try{var o=JSON.parse(localStorage.getItem('bu-join-no')||'{}'),now=Date.now();Object.keys(o).forEach(function(k){if(now-o[k]<30*DAY_MS)out[k]=1;});}catch(e){}
+  return out;
+}
+function dismissJoin(cid){
+  S.joinNo=S.joinNo||{};S.joinNo[cid]=1;
+  try{var o=JSON.parse(localStorage.getItem('bu-join-no')||'{}');o[cid]=Date.now();localStorage.setItem('bu-join-no',JSON.stringify(o));}catch(e){}
+}
+function joinOffer(){
+  if(!S.uid||!S.mine||!S.myClubs)return null;
+  var cut=Date.now()-60*DAY_MS,by={},no=joinDismissed();
+  myPlayed().forEach(function(g){
+    if(!g.clubId||g.hostId===S.uid||g.start.getTime()<cut)return;
+    var cid=String(g.clubId);if(myClubRole(cid)||no[cid])return;
+    var x=by[cid]||(by[cid]={id:cid,club:g.club||{},n:0,last:0});
+    x.n++;if(g.start.getTime()>x.last)x.last=g.start.getTime();
+  });
+  var best=null;
+  Object.keys(by).forEach(function(k){var x=by[k];if(x.n>=2&&(!best||x.n>best.n||(x.n===best.n&&x.last>best.last)))best=x;});
+  return best;
+}
+function joinOfferHTML(){
+  var o=joinOffer();if(!o)return '';
+  var nm=o.club.name||'This club';
+  return '<div class="again join-offer">'+clubLogo({id:o.id,name:nm,logo_url:o.club.logo_url},40)+'<div class="gbody"><small>Join the club</small><a href="#c-'+esc(o.id)+'"><b>'+esc(nm)+'</b></a>'+
+    '<span class="meta">You’ve played '+o.n+' games with them. Join for the club chat and news.</span></div>'+
+    '<div class="jo-acts"><button type="button" class="btn btn-accent btn-sm" data-act="club-join" data-id="'+esc(o.id)+'"'+(S.busy?' disabled':'')+'>Join</button>'+
+    '<button type="button" class="link-btn" data-act="join-offer-no" data-id="'+esc(o.id)+'">Not now</button></div></div>';
+}
+/* Players: "Ask for a lesson" after a second clinic with the same coach */
+function lessonOffer(){
+  if(!S.uid||!S.mine)return null;
+  var cut=Date.now()-60*DAY_MS,by={},no=joinDismissed(),asked={};
+  (S.lessons||[]).forEach(function(l){if(l&&l.player_id===S.uid)asked[String(l.coach_id)]=1;});
+  myPlayed().forEach(function(g){
+    if(g.kind!=='clinic'||!g.hostId||g.hostId===S.uid||g.start.getTime()<cut||isBlocked(g.hostId))return;
+    var id=String(g.hostId),k='coach-'+id;if(no[k]||asked[id])return;
+    var x=by[k]||(by[k]={id:id,k:k,n:0,last:0,title:g.title});
+    x.n++;if(g.start.getTime()>x.last){x.last=g.start.getTime();x.title=g.title;}
+  });
+  var best=null;
+  Object.keys(by).forEach(function(k){var x=by[k];if(x.n>=2&&(!best||x.n>best.n||(x.n===best.n&&x.last>best.last)))best=x;});
+  return best;
+}
+function lessonOfferHTML(){
+  var o=lessonOffer();if(!o)return '';
+  return '<div class="again lesson-offer"><span class="again-ico" aria-hidden="true">'+XI.coach+'</span><div class="gbody"><small>Next step</small><a href="#o-'+esc(o.id)+'"><b>Ask the coach for a lesson</b></a>'+
+    '<span class="meta">You’ve been to '+o.n+' sessions of '+esc(o.title)+'. A private lesson works on your own game.</span></div>'+
+    '<div class="jo-acts"><a class="btn btn-accent btn-sm" href="#o-'+esc(o.id)+'">Ask</a>'+
+    '<button type="button" class="link-btn" data-act="lesson-offer-no" data-id="'+esc(o.k)+'">Not now</button></div></div>';
+}
+function clubNameOf(id){
+  id=String(id);var i,l;
+  if(S.club&&String(S.club.id)===id&&S.club.name)return S.club.name;
+  l=S.clubs||[];for(i=0;i<l.length;i++)if(String(l[i].id)===id&&l[i].name)return l[i].name;
+  l=(S.mine||[]).concat(S.games||[]);for(i=0;i<l.length;i++)if(l[i].club&&String(l[i].club.id)===id&&l[i].club.name)return l[i].club.name;
+  return 'the club';
+}
+
+/* "Your month": a shareable, printable report for organisers and coaches, club committees and (admin) venues */
+function monthStartOf(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(1);return x;}
+function addMonths(d,k){var x=new Date(d);x.setMonth(x.getMonth()+k);return x;}
+function defaultMonth(){var n=new Date(),m=monthStartOf(n);if(n.getDate()<=7)m.setMonth(m.getMonth()-1);return m;}
+function monthScope(){
+  var m=/^month-([cvp])-([A-Za-z0-9-]{1,60})$/.exec(S.monthHash||'');
+  if(!m)return {kind:'p',id:S.uid,self:true};
+  return {kind:m[1],id:m[2],self:m[1]==='p'&&m[2]===S.uid};
+}
+function monthAllowed(sc){
+  if(!S.uid||!sc.id)return false;
+  if(sc.self||S.isAdmin)return true;
+  return sc.kind==='c'&&isClubAdmin(sc.id);
+}
+function loadMonth(sc,ms,key){
+  var end=addMonths(ms,1),back=addMonths(ms,-6);
+  var q=sb.from('games').select('id, title, sport, kind, starts_at, capacity, series_id, game_players(user_id)');
+  q=sc.kind==='c'?q.eq('club_id',sc.id):sc.kind==='v'?q.eq('venue_id',sc.id):q.eq('host_id',sc.id);
+  var who=sc.kind==='c'?sb.from('clubs').select('id, name, logo_url').eq('id',sc.id).maybeSingle()
+    :sc.kind==='v'?sb.from('venues').select('id, name, suburb').eq('id',sc.id).maybeSingle()
+    :sb.from('profiles').select('id, display_name, avatar_url').eq('id',sc.id).maybeSingle();
+  S.month={key:key,state:'loading'};
+  return Promise.all([q.gte('starts_at',back.toISOString()).lt('starts_at',end.toISOString()).order('starts_at').limit(2000),who]).then(function(r){
+    if(!S.month||S.month.key!==key)return;
+    if(r[0].error){S.month={key:key,state:'error'};return;}
+    var w=(r[1]&&r[1].data)||{};
+    S.month={key:key,state:'ready',rows:r[0].data||[],name:String(w.name||w.display_name||''),logo:w.logo_url||'',avatar:w.avatar_url||''};
+  },function(){if(S.month&&S.month.key===key)S.month={key:key,state:'error'};});
+}
+function partOfDay(d){var h=d.getHours();return h<12?'morning':h<17?'afternoon':'evening';}
+function monthNumbers(rows,ms){
+  var a=ms.getTime(),b=addMonths(ms,1).getTime(),now=Date.now(),prior={},players={},groups={},slots={};
+  var o={played:0,upcoming:0,filled:0,offered:0,players:0,newFaces:0,again:0};
+  rows.forEach(function(g){
+    var t=new Date(g.starts_at).getTime(),ids=playersOf(g);if(isNaN(t))return;
+    if(t<a){ids.forEach(function(u){prior[u]=1;});return;}
+    if(t>=b)return;
+    if(t>now){o.upcoming++;return;}
+    var cap=Math.max(1,Number(g.capacity)||1),n=Math.min(ids.length,cap),d=new Date(t);
+    o.played++;o.filled+=n;o.offered+=cap;
+    ids.forEach(function(u){players[u]=(players[u]||0)+1;});
+    var gk=g.series_id?'s'+g.series_id:'t'+String(g.title||'').trim().toLowerCase();
+    var gr=groups[gk]||(groups[gk]={title:String(g.title||'Game'),clinic:g.kind==='clinic',games:0,filled:0,offered:0});
+    gr.games++;gr.filled+=n;gr.offered+=cap;
+    var sk=d.getDay()+'-'+partOfDay(d),sl=slots[sk]||(slots[sk]={day:d.getDay(),part:partOfDay(d),games:0,filled:0,offered:0});
+    sl.games++;sl.filled+=n;sl.offered+=cap;
+  });
+  Object.keys(players).forEach(function(u){o.players++;if(!prior[u])o.newFaces++;if(players[u]>1)o.again++;});
+  o.full=o.offered?Math.round(100*o.filled/o.offered):null;
+  o.groups=Object.keys(groups).map(function(k){return groups[k];}).sort(function(x,y){return y.games-x.games||y.filled-x.filled;});
+  o.slots=Object.keys(slots).map(function(k){return slots[k];}).sort(function(x,y){return y.filled-x.filled||y.games-x.games;});
+  return o;
+}
+function pct(f,o){return o?Math.round(100*f/o)+'%':'–';}
+function monthBar(ms){
+  var canNext=addMonths(ms,1).getTime()<=monthStartOf(new Date()).getTime();
+  return '<div class="month-bar no-print" role="group" aria-label="Choose a month"><button type="button" class="btn btn-line btn-sm" data-act="month-prev" aria-label="Previous month">‹</button>'+
+    '<b>'+esc(MONTHS_LONG[ms.getMonth()]+' '+ms.getFullYear())+'</b>'+
+    '<button type="button" class="btn btn-line btn-sm" data-act="month-next" aria-label="Next month"'+(canNext?'':' disabled')+'>›</button></div>';
+}
+function viewMonth(){
+  var sc=monthScope();
+  var back='<a class="back no-print" href="'+(sc.kind==='c'?'#c-'+esc(sc.id):sc.kind==='v'?'#v-'+esc(sc.id):sc.self?'#mine':'#p-'+esc(sc.id))+'">'+I.back+(sc.kind==='c'?'Club':sc.kind==='v'?'Venue':sc.self?'My games':'Player')+'</a>';
+  if(!S.uid)return back+signInPrompt('Sign in to see your month','See how your games went: players, new faces and how full they were.',S.monthHash||'month');
+  if(!sc.self&&S.isAdmin==null&&!(sc.kind==='c'&&isClubAdmin(sc.id)))return back+skeletons(2);
+  if(!monthAllowed(sc))return back+'<div class="empty"><strong>'+(sc.kind==='c'?'Only the club’s committee can see this':'Only the Bounce Up team can see this')+'</strong></div>';
+  var ms=S.monthAt||(S.monthAt=defaultMonth()),key=sc.kind+':'+sc.id+':'+ms.getFullYear()+'-'+ms.getMonth();
+  if(!S.month||S.month.key!==key){loadMonth(sc,ms,key).then(render);return back+monthBar(ms)+skeletons(2);}
+  if(S.month.state==='loading')return back+monthBar(ms)+skeletons(2);
+  if(S.month.state==='error')return back+monthBar(ms)+'<div class="empty"><strong>Couldn’t load this month</strong><p>Check your connection and try again.</p><button type="button" class="btn btn-line" data-act="month-retry">Try again</button></div>';
+  var M=S.month,cur=monthNumbers(M.rows,ms),pm=addMonths(ms,-1),prev=monthNumbers(M.rows,pm),pl=MONTHS_LONG[pm.getMonth()];
+  var thisMonth=ms.getTime()===monthStartOf(new Date()).getTime(),label=MONTHS_LONG[ms.getMonth()]+' '+ms.getFullYear();
+  var name=M.name||(sc.kind==='c'?'Your club':sc.kind==='v'?'This venue':sc.self?'Your games':'This organiser');
+  var kicker=sc.kind==='c'?'Club report':sc.kind==='v'?'Venue report':'Organiser report';
+  var lead=sc.kind==='v'?'Games played at these courts through Bounce Up, and the players they brought.':sc.kind==='c'?'How the club’s games went on Bounce Up.':sc.self?'How your games went on Bounce Up. Clinics count too.':'How these games went on Bounce Up. Clinics count too.';
+  S.monthView={name:name,label:label+(thisMonth?' so far':''),cur:cur,kind:sc.kind};
+  var face=sc.kind==='c'?clubLogo({id:sc.id,name:name,logo_url:M.logo},52):sc.kind==='p'?avatar(sc.id,name,M.avatar,52):'<span class="month-ico" aria-hidden="true">'+I.court+'</span>';
+  var h=back+monthBar(ms)+'<article class="month-sheet"><header class="month-top"><span class="month-kicker">Bounce Up · '+esc(kicker)+'</span>'+
+    '<div class="month-who">'+face+'<div class="gbody"><h1>'+esc(name)+'</h1><p class="meta">'+esc(label+(thisMonth?' so far':''))+'</p></div></div><p class="month-lead">'+esc(lead)+'</p></header>';
+  if(!cur.played&&!cur.upcoming){
+    h+='<div class="empty"><strong>No games '+(thisMonth?'yet this month':'in '+esc(label))+'</strong><p>'+(sc.kind==='v'?'Games posted at this venue show up here.':'Post a weekly game and this report fills itself in.')+'</p>'+(sc.self?'<a class="btn btn-accent no-print" href="#host">Host a game</a>':'')+'</div>';
+    return h+'</article>';
+  }
+  function delta(a,b,unit){if(!prev.played)return '';var d=a-b;return d===0?'Same as '+pl:(d>0?'+':'−')+Math.abs(d)+(unit||'')+' vs '+pl;}
+  h+='<div class="stats month-stats">'+
+    statTile('Games played',String(cur.played),cur.upcoming?cur.upcoming+' more coming up this month':'',delta(cur.played,prev.played))+
+    statTile('Spots filled',String(cur.filled),'of '+cur.offered+' offered','')+
+    statTile('How full',cur.full==null?'–':cur.full+'%',sc.kind==='v'?'Spots taken in games here':'Target 70%',cur.full!=null&&prev.full!=null?delta(cur.full,prev.full,' points'):'')+
+    statTile('Players',String(cur.players),'Different people who played',delta(cur.players,prev.players))+
+    statTile('New faces',String(cur.newFaces),sc.kind==='v'?'First game here in 6 months':'First game with '+(sc.self?'you':'them')+' in 6 months','')+
+    statTile('Came back',String(cur.again),'Played more than once this month','')+
+    '</div>';
+  var notes=[];
+  if(cur.full!=null)notes.push(sc.kind==='v'?'Games here were '+cur.full+'% full.':cur.full>=70?'Games were '+cur.full+'% full, above the 70% target.':'Games were '+cur.full+'% full. The target is 70%: try One Short alerts, another time, or opening a session to newcomers.');
+  if(cur.newFaces)notes.push(cur.newFaces+(cur.newFaces===1?' new face':' new faces')+' tried '+(sc.kind==='v'?'these courts':sc.self?'your games':'these games')+(cur.again?', and '+cur.again+(cur.again===1?' player':' players')+' came back more than once':'')+'.');
+  if(cur.slots[0])notes.push('Busiest time: '+DOW_LONG[cur.slots[0].day]+' '+cur.slots[0].part+'.');
+  if(notes.length)h+='<ul class="month-notes">'+notes.map(function(n){return '<li>'+esc(n)+'</li>';}).join('')+'</ul>';
+  if(cur.groups.length)h+='<section class="stack-sm"><h2>'+(sc.kind==='v'?'Games at these courts':'The games')+'</h2><div class="table-wrap"><table class="stats-table month-table"><thead><tr><th scope="col">Game</th><th scope="col">Played</th><th scope="col">Spots</th><th scope="col">How full</th></tr></thead><tbody>'+
+    cur.groups.slice(0,8).map(function(g){return '<tr><th scope="row">'+esc(g.title)+(g.clinic?' <span class="meta">(clinic)</span>':'')+'</th><td>'+g.games+'</td><td>'+g.filled+' of '+g.offered+'</td><td>'+pct(g.filled,g.offered)+'</td></tr>';}).join('')+
+    '</tbody></table></div></section>';
+  if(cur.slots.length>1)h+='<section class="stack-sm"><h2>When people played</h2><div class="table-wrap"><table class="stats-table month-table"><thead><tr><th scope="col">Day and time</th><th scope="col">Games</th><th scope="col">Spots</th><th scope="col">How full</th></tr></thead><tbody>'+
+    cur.slots.slice(0,6).map(function(s){return '<tr><th scope="row">'+esc(DOW_LONG[s.day]+' '+s.part)+'</th><td>'+s.games+'</td><td>'+s.filled+' of '+s.offered+'</td><td>'+pct(s.filled,s.offered)+'</td></tr>';}).join('')+
+    '</tbody></table></div></section>';
+  h+='<p class="month-foot">Numbers only, no names, so it’s safe to share. Each player is counted once, by their account. Made with Bounce Up · bounceup.app</p></article>';
+  h+='<div class="cta no-print"><button type="button" class="btn btn-brand" data-act="month-share">'+I.share+'Share</button><button type="button" class="btn btn-line" data-act="month-print">Print or save as PDF</button></div>';
+  return h;
+}
+function shareMonth(){
+  var v=S.monthView;if(!v)return;
+  var c=v.cur,lines=['Bounce Up · '+v.name+' · '+v.label,
+    c.played+(c.played===1?' game':' games')+' played'+(c.full!=null?', '+c.filled+' of '+c.offered+' spots filled ('+c.full+'% full)':''),
+    c.players+(c.players===1?' player':' players')+', '+c.newFaces+(c.newFaces===1?' new face':' new faces')+', '+c.again+' came back more than once'];
+  if(c.slots[0])lines.push('Busiest time: '+DOW_LONG[c.slots[0].day]+' '+c.slots[0].part);
+  var text=lines.join('\n'),url='https://bounceup.app';
+  function copy(){try{navigator.clipboard.writeText(text+'\n'+url).then(function(){toast('Report copied. Paste it into an email or chat.');},function(){toast('Couldn’t copy. Try Print instead.');});}catch(e){toast('Couldn’t copy. Try Print instead.');}}
+  if(navigator.share)navigator.share({title:v.name+' · '+v.label,text:text,url:url}).catch(function(e){if(!e||e.name!=='AbortError')copy();});
+  else copy();
+}
+function monthLinkHTML(){
+  if(!S.uid||!(S.mine||[]).some(function(g){return g.hostId===S.uid;}))return '';
+  return '<a class="next-game month-link" href="#month"><span class="gbody"><small>Your month</small><b>How your games went</b><span class="meta">Players, new faces and how full your games were</span></span><span class="ng-go" aria-hidden="true">›</span></a>';
+}
+function adminReportLink(kind,id){
+  return '<p class="meta admin-report"><a href="#month-'+kind+'-'+esc(id)+'">'+(kind==='c'?'Club report':kind==='v'?'Venue report':'Organiser report')+'</a> · admin only</p>';
+}
+function clickPartners(a,id){
+  if(a==='join-offer-no'){dismissJoin(String(id));toast('Okay. We won’t suggest that club for a while.');render();return true;}
+  if(a==='lesson-offer-no'){dismissJoin(String(id));toast('Okay. We won’t suggest it for a while.');render();return true;}
+  if(a==='month-prev'){S.monthAt=addMonths(S.monthAt||defaultMonth(),-1);render();return true;}
+  if(a==='month-next'){var n=addMonths(S.monthAt||defaultMonth(),1);if(n.getTime()<=monthStartOf(new Date()).getTime()){S.monthAt=n;render();}return true;}
+  if(a==='month-retry'){S.month=null;render();return true;}
+  if(a==='month-share'){shareMonth();return true;}
+  if(a==='month-print'){try{window.print();}catch(e){}return true;}
   return false;
 }
 
@@ -3939,7 +4251,7 @@ function retentionByWeek(st,weeks){
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -4798,7 +5110,7 @@ function kmPicker(cur){
     '</div><span class="hint">Near me and One Short alerts cover games within this distance of your suburb.</span></div>';
 }
 function paint(){
-  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route;
+  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route==='month'?(S.monthHash==='month'?'mine':''):S.route;
   document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
   // Club members land on their feed; everyone else lands on the club directory.
   var ct=document.querySelector('.tab[data-tab="clubs"]');if(ct)ct.setAttribute('href',S.myClubs.length?'#feed':'#clubs');
@@ -4809,7 +5121,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='month'?viewMonth():S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -5422,6 +5734,9 @@ function route(){
   } else if(pre==='l-'&&ID_RE.test(rest)){
     if(!S.league||S.league.id!==rest){S.league=null;S.leagueEntries=[];S.leagueMatches=[];S.leagueState='loading';}
     S.route='league';S.leagueId=rest;
+  } else if(h==='month'||/^month-[cvp]-[A-Za-z0-9-]{1,60}$/.test(h)){
+    if(S.monthHash!==h)S.monthAt=null;
+    S.route='month';S.monthHash=h;S.month=null;
   } else {
     S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports','stats'].indexOf(h)>=0?h:'discover';
   }
@@ -5674,7 +5989,7 @@ function joinClub(id){
   sb.from('club_members').insert({club_id:id,user_id:S.uid}).then(function(r){
     S.busy=false;
     if(r.error){toast(friendlyError(r.error,'Couldn’t join the club. Try again.'));render();return;}
-    celebrate();toast('Welcome to '+((S.club&&S.club.name)||'the club'));refreshAll();
+    celebrate();toast('Welcome to '+clubNameOf(id));refreshAll();
   });
 }
 function leaveClub(id){
@@ -5985,7 +6300,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.mates=null;S.matesKey=null;S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.month=null;S.monthView=null;S.pn=null;S.pnKey=null;S.joinNo=null;S.mates=null;S.matesKey=null;S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
