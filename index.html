@@ -1245,6 +1245,28 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .wel-skip .link-btn{color:var(--muted)}
 .wel-ok{display:flex;align-items:center;gap:8px;margin:0;font-weight:700;color:var(--brand-text)}
 .wel-ok svg{width:20px;height:20px}
+
+/* Admin numbers */
+.checkpoint{display:flex;flex-direction:column;gap:10px}
+.checkpoint .meter{height:10px;border-radius:5px;background:var(--brand-soft)}
+.checkpoint .meter i{border-radius:5px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:900px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat-l{font-size:13px;font-weight:700;color:var(--muted)}
+.stat-v{font-family:var(--body,inherit);font-size:30px;line-height:1.1;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.stat-d{font-size:12.5px;font-weight:700;color:var(--ink)}
+.stat-n{font-size:12.5px;color:var(--muted);line-height:1.4}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.stats-table{width:100%;border-collapse:collapse;font-size:14.5px}
+.stats-table th,.stats-table td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.stats-table thead th{font-size:12px;font-weight:700;color:var(--muted);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.stats-table th[scope="row"],.stats-table thead th:first-child{text-align:left}
+.stats-table td{font-variant-numeric:tabular-nums}
+.stats-table tbody tr:last-child th,.stats-table tbody tr:last-child td{border-bottom:0}
+.stats-table tr.now th,.stats-table tr.now td{font-weight:700;background:var(--brand-soft)}
+.day.soon small{color:var(--accent-text)}
+.day.soon[aria-pressed="true"] small{color:inherit}
 </style>
 </head>
 <body>
@@ -1491,7 +1513,8 @@ function filterGames(up,ignoreDay){
   var list=up.filter(function(g){
     if(isBlocked(g.hostId))return false;
     if(S.sport!=='all'&&g.sport!==S.sport)return false;
-    if(!ignoreDay&&S.day!=='all'&&keyOf(g.start)!==S.day)return false;
+    if(!ignoreDay&&S.day==='soon'){var ms=g.start.getTime()-Date.now();if(ms>3*3600000||ms<-15*60000)return false;}
+    else if(!ignoreDay&&S.day!=='all'&&keyOf(g.start)!==S.day)return false;
     if(S.level!=='all'&&g.level!==S.level&&g.level!=='All levels')return false;
     if(S.free&&g.price>0)return false;
     if(S.near&&(home||homeLoc())&&!isNear(g))return false;
@@ -1505,7 +1528,8 @@ function sportChips(act,cur){
     SPORTS.map(function(s){return '<button type="button" class="chip" data-act="'+act+'" data-v="'+s[0]+'" aria-pressed="'+(cur===s[0])+'">'+esc(s[1])+'</button>';}).join('');
 }
 function dayButtons(){
-  var h='<button type="button" class="day all" data-act="day" data-v="all" aria-pressed="'+(S.day==='all')+'">Any day</button>';
+  var h='<button type="button" class="day all" data-act="day" data-v="all" aria-pressed="'+(S.day==='all')+'">Any day</button>'+
+    '<button type="button" class="day soon" data-act="day" data-v="soon" aria-pressed="'+(S.day==='soon')+'" aria-label="Starting in the next 3 hours"><small>SOON</small><b>3h</b></button>';
   for(var k=0;k<7;k++){var d=new Date();d.setDate(d.getDate()+k);var key=keyOf(d);
     h+='<button type="button" class="day" data-act="day" data-v="'+key+'" aria-pressed="'+(S.day===key)+'"><small>'+(k===0?'TODAY':DOW[d.getDay()].toUpperCase())+'</small><b>'+d.getDate()+'</b></button>';}
   return h;
@@ -1622,6 +1646,7 @@ function discoverRail(alerts,clubs){
   var home=homeSuburb();
   h+='<section class="card rail-card"><h2>Quick filters</h2><div class="wrap-chips">'+
     '<button type="button" class="chip" data-act="qf" data-v="near" aria-pressed="'+(S.near&&!!home)+'"'+(home?'':' disabled')+'>Near me'+(homeLoc()?' · '+nearKm()+' km':'')+'</button>'+
+    '<button type="button" class="chip" data-act="qf" data-v="soon" aria-pressed="'+(S.day==='soon')+'">Starting soon</button>'+
     '<button type="button" class="chip" data-act="qf" data-v="free" aria-pressed="'+S.free+'">Free</button>'+
     '<button type="button" class="chip" data-act="qf" data-v="beginner" aria-pressed="'+(S.level==='Beginner')+'">Beginner friendly</button></div>'+
     (home?'':'<p class="meta"><a href="#profile">Add your home suburb</a> to use Near me.</p>')+'</section>';
@@ -1662,12 +1687,14 @@ function viewDiscover(){
   h+=exploreStrip();
   var calView=S.dview==='cal';
   h+='<div class="filters not-xs"><div class="scroller" role="group" aria-label="Sport">'+sportChips('sport',S.sport)+'</div>'+(calView?'':'<div class="scroller" role="group" aria-label="Day">'+dayButtons()+'</div>')+'</div>';
-  var label=S.day==='all'||calView?'Coming up':fmtDay(new Date(S.day+'T00:00'));
+  var label=S.day==='all'||calView?'Coming up':S.day==='soon'?'Starting in the next 3 hours':fmtDay(new Date(S.day+'T00:00'));
   h+='<div class="list-head"><h2>'+esc(calView?'Calendar':label)+(calView||!S.loaded?'':' <span class="meta">'+list.length+(list.length===1?' game':' games')+'</span>')+'</h2>'+viewToggle('dview',S.dview)+'</div>';
   if(!S.loaded&&!S.loadError)h+=loader('Finding games near you…');
   else if(calView){h+=calendarHTML('discover',filterGames(up,true));}
   else if(!list.length){
-    h+='<div class="empty"><strong>'+(up.length?'No games match':'No games posted yet')+'</strong><p>'+(up.length?'Try another sport or day, or post your own game and let people find you.':'Be the first. Post a game you already play and share the invite with your group.')+'</p>'+
+    if(S.day==='soon'&&up.length)h+='<div class="empty"><strong>Nothing starting in the next 3 hours</strong><p>Try Any day, or turn on notifications in your profile so we ping you when a game nearby is one short.</p>'+
+      '<button type="button" class="btn btn-line" data-act="day" data-v="all">Show any day</button></div>';
+    else h+='<div class="empty"><strong>'+(up.length?'No games match':'No games posted yet')+'</strong><p>'+(up.length?'Try another sport or day, or post your own game and let people find you.':'Be the first. Post a game you already play and share the invite with your group.')+'</p>'+
       (up.length&&nf?'<button type="button" class="btn btn-line" data-act="filters-clear">Clear filters</button>':'')+'<a class="btn btn-accent" href="#host">Host a game</a></div>';
     if(nearClubs.length)h+=clubsStrip(nearClubs,'only-narrow');
   } else {
@@ -3716,9 +3743,76 @@ function fieldWelcome(e){
   return false;
 }
 
+/* ---------- Admin numbers: the Monday check ---------- */
+var STATS_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
+var CHECKPOINT_GOAL=20;
+function weekStart(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+function loadStats(){
+  if(!S.isAdmin)return Promise.resolve();
+  var from=weekStart(new Date(Date.now()-7*7*86400000));
+  return Promise.all([
+    sb.from('games').select('id, host_id, series_id, starts_at, duration_min, capacity, created_at, game_players(count)').gte('starts_at',from.toISOString()).order('starts_at').limit(3000),
+    sb.from('profiles').select('id, created_at').gte('created_at',from.toISOString()).limit(5000),
+    sb.from('profiles').select('id',{count:'exact',head:true}),
+    sb.from('profiles').select('id',{count:'exact',head:true}).eq('founding',true)
+  ]).then(function(r){
+    if(r[0].error){S.stats={error:true};return;}
+    S.stats={at:new Date(),from:from,games:r[0].data||[],joined:r[1].error?[]:(r[1].data||[]),players:r[2].count||0,founding:r[3].count||0};
+  },function(){S.stats={error:true};});
+}
+function statsWeeks(st){
+  var now=Date.now(),weeks=[];
+  for(var i=0;i<8;i++){var s=new Date(st.from);s.setDate(s.getDate()+7*i);var e=new Date(s);e.setDate(e.getDate()+7);weeks.push({start:s,end:e,games:0,played:0,filled:0,offered:0,hosts:{},joined:0});}
+  function wk(t){for(var i=0;i<weeks.length;i++)if(t>=weeks[i].start.getTime()&&t<weeks[i].end.getTime())return weeks[i];return null;}
+  st.games.forEach(function(g){
+    var t=new Date(g.starts_at).getTime(),w=wk(t);if(!w)return;
+    var cap=Math.max(1,Number(g.capacity)||1),n=(g.game_players&&g.game_players[0]&&g.game_players[0].count)||0;
+    w.games++;w.hosts[g.host_id]=1;
+    if(t<=now){w.played++;w.filled+=Math.min(n,cap);w.offered+=cap;}
+  });
+  st.joined.forEach(function(p){var w=wk(new Date(p.created_at).getTime());if(w)w.joined++;});
+  weeks.forEach(function(w){w.organisers=Object.keys(w.hosts).length;w.full=w.offered?Math.round(100*w.filled/w.offered):null;});
+  return weeks;
+}
+function weeklyHosts(st){
+  var now=Date.now(),h={};
+  st.games.forEach(function(g){if(g.series_id&&new Date(g.starts_at).getTime()+(Number(g.duration_min)||60)*60000>now)h[g.host_id]=1;});
+  return Object.keys(h).length;
+}
+function statTile(label,value,note,delta){
+  return '<div class="stat"><span class="stat-l">'+esc(label)+'</span><b class="stat-v">'+esc(value)+'</b>'+(delta?'<span class="stat-d">'+esc(delta)+'</span>':'')+(note?'<span class="stat-n">'+esc(note)+'</span>':'')+'</div>';
+}
+function signed(n,unit){return n===0?'Same as last week':(n>0?'+':'−')+Math.abs(n)+(unit||'')+' vs last week';}
+function viewStats(){
+  var h='<section class="hello"><h1>Your numbers</h1><p class="meta">The Monday check. Weeks run Monday to Sunday.</p></section>';
+  if(!S.isAdmin)return h+'<div class="empty"><strong>Only the Bounce Up team can see this</strong></div>';
+  if(S.stats==null){if(!S.statsLoading){S.statsLoading=true;loadStats().then(function(){S.statsLoading=false;render();});}return h+skeletons(2);}
+  if(S.stats.error)return h+'<div class="empty"><strong>Couldn’t load the numbers</strong><p>Check your connection and try again.</p><button type="button" class="btn btn-line" data-act="stats-refresh">Try again</button></div>';
+  var st=S.stats,weeks=statsWeeks(st),cur=weeks[7],prev=weeks[6],wh=weeklyHosts(st);
+  var fullW=cur.played?cur:prev,fullNote=cur.played?'Games played so far this week':'Last week (none played yet this week)';
+  h+='<section class="card checkpoint"><div class="list-head"><h2>15 November checkpoint</h2><span class="meta">'+wh+' of '+CHECKPOINT_GOAL+'</span></div>'+
+    '<div class="meter" role="img" aria-label="'+wh+' of '+CHECKPOINT_GOAL+' organisers with a weekly game"><i style="width:'+Math.min(100,Math.round(100*wh/CHECKPOINT_GOAL))+'%"></i></div>'+
+    '<p class="meta">Organisers with a weekly game coming up. '+st.founding+(st.founding===1?' Founding Organiser or club badge given.':' Founding Organiser or club badges given.')+'</p></section>';
+  h+='<div class="stats">'+
+    statTile('Games this week',String(cur.games),'Played and still to come',signed(cur.games-prev.games))+
+    statTile('How full',fullW.full==null?'–':fullW.full+'%',fullNote+'. Target 70%','')+
+    statTile('Active organisers',String(cur.organisers),'Hosting a game this week',signed(cur.organisers-prev.organisers))+
+    statTile('New players',String(cur.joined),st.players+' players in total',signed(cur.joined-prev.joined))+
+    statTile('Paid spots and money in','–','Starts in January, once payments go live','')+
+    '</div>';
+  h+='<section class="stack-sm"><div class="list-head"><h2>Last 8 weeks</h2><button type="button" class="linkish" data-act="stats-refresh">Refresh</button></div><div class="table-wrap"><table class="stats-table"><thead><tr><th scope="col">Week of</th><th scope="col">Games</th><th scope="col">How full</th><th scope="col">Organisers</th><th scope="col">New players</th></tr></thead><tbody>'+
+    weeks.slice().reverse().map(function(w,i){return '<tr'+(i===0?' class="now"':'')+'><th scope="row">'+esc(w.start.getDate()+' '+MON[w.start.getMonth()])+(i===0?' (this week)':'')+'</th><td>'+w.games+'</td><td>'+(w.full==null?'–':w.full+'%')+'</td><td>'+w.organisers+'</td><td>'+w.joined+'</td></tr>';}).join('')+
+    '</tbody></table></div><p class="meta">How full = spots taken ÷ spots offered, for games already played. Updated '+esc(fmtTime(st.at))+'.</p></section>';
+  return h;
+}
+function clickStats(a){
+  if(a==='stats-refresh'){S.stats=null;S.statsLoading=false;render();return true;}
+  return false;
+}
+
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -4588,7 +4682,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -4648,6 +4742,7 @@ function renderMenu(){
     item('leagues','#leagues',XI.league,'Leagues')+
     (S.uid&&CHECKS?item('checks','#checks',SHIELD,'Get checked'):'')+
     (S.isAdmin&&CHECKS?item('review','#review',SHIELD,'Review checks',reviewWaiting()):'')+
+    (S.isAdmin?item('stats','#stats',STATS_ICON,'Your numbers'):'')+
     (S.isAdmin&&REPORTS?item('reports','#reports',RI.flag,'Reports',reportsOpen()):'')+
     (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
     '<span class="menu-sep" role="separator"></span>'+
@@ -4706,6 +4801,7 @@ function renderSide(){
   var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission],['rules','rules','Community rules',RI.rules]].map(function(x){
       var on=S.route===x[0]||S.route===x[1];return '<a class="side-club" href="#'+x[0]+'"'+(on?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+x[3]+'</span><span>'+x[2]+'</span></a>';}).join('')+
     (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+
+    (S.isAdmin?'<a class="side-club" href="#stats"'+(S.route==='stats'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+STATS_ICON+'</span><span>Your numbers</span></a>':'')+
     (S.isAdmin&&REPORTS?'<a class="side-club" href="#reports"'+(S.route==='reports'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+RI.flag+'</span><span>Reports'+(reportsOpen()?' · '+reportsOpen():'')+'</span></a>':'')+
     (S.isAdmin&&CHECKS?'<a class="side-club" href="#review"'+(S.route==='review'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SHIELD+'</span><span>Review checks'+(reviewWaiting()?' · '+reviewWaiting():'')+'</span></a>':'')+'</div>'+
     '<div class="side-clubs">'+(mine.length?'<div class="side-label">Your clubs</div>'+mine.map(function(m){var c=normClub(m.club);
@@ -5200,7 +5296,7 @@ function route(){
     if(!S.league||S.league.id!==rest){S.league=null;S.leagueEntries=[];S.leagueMatches=[];S.leagueState='loading';}
     S.route='league';S.leagueId=rest;
   } else {
-    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports'].indexOf(h)>=0?h:'discover';
+    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports','stats'].indexOf(h)>=0?h:'discover';
   }
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
@@ -5609,7 +5705,7 @@ document.addEventListener('click',function(e){
   if(a==='sport'){S.sport=v;render();}
   else if(a==='day'){S.day=v;render();}
   else if(a==='level'){S.level=(v==='all'||LEVELS.indexOf(v)>=0)?v:'all';render();}
-  else if(a==='qf'){if(v==='near')S.near=!S.near;else if(v==='free')S.free=!S.free;else if(v==='beginner')S.level=S.level==='Beginner'?'all':'Beginner';render();}
+  else if(a==='qf'){if(v==='soon')S.day=S.day==='soon'?'all':'soon';else if(v==='near')S.near=!S.near;else if(v==='free')S.free=!S.free;else if(v==='beginner')S.level=S.level==='Beginner'?'all':'Beginner';render();}
   else if(a==='filters')openSheet({type:'filters'});
   else if(a==='filters-clear'){S.sport='all';S.day='all';S.level='all';S.free=false;S.near=false;render();}
   else if(a==='member-menu')openSheet({type:'member',id:id});
@@ -5762,7 +5858,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
