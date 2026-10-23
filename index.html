@@ -1153,6 +1153,67 @@ p.meta .link-btn{min-height:0;font-weight:600}
 @keyframes mhSway{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
 @keyframes valueIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.mh-sun,.mh-leaf,.mh-vein,.mh-ball,.value{animation:none}}
+/* Safety: 18+ check, report and block, delete account, community rules */
+.dob{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.dob legend{padding:0;margin-bottom:6px;font-size:13px;font-weight:700}
+.dob .hint{font-size:12.5px;color:var(--muted);line-height:1.45}
+.dob-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.5fr);gap:10px}
+.dob-box{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dob-box label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.dob-box input{width:100%;min-width:0;min-height:48px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:inherit;font-size:18px;font-weight:700;text-align:center;letter-spacing:.06em;font-variant-numeric:tabular-nums;padding:0 8px}
+.dob-box input::placeholder{font-weight:500;color:var(--muted);opacity:.7}
+.age-gate{min-height:60vh;display:grid;place-items:center;padding:12px 0}
+.age-card{position:relative;overflow:hidden;width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line);border-radius:28px 28px 28px 10px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.age-card::before{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:46% 54% 60% 40%/50% 42% 58% 50%;background:var(--accent-soft);z-index:0}
+.age-card > *{position:relative}
+.age-card h1{font-size:30px;line-height:1.05;letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.age-card p{margin:0;color:var(--muted);line-height:1.55}
+.age-ico{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-text)}
+.age-ico svg{width:34px;height:34px}
+.age-links{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.age-stop{max-width:440px;display:flex;flex-direction:column;gap:10px}
+.age-stop p{margin:0}
+.safety-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;color:var(--muted)}
+.safety-row .link-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:700}
+.safety-row .link-btn svg{width:16px;height:16px}
+.safety-row .link-btn:hover{color:var(--danger)}
+.block-note{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.reasons{display:flex;flex-direction:column;gap:6px}
+.reason{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:10px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;text-align:left;cursor:pointer}
+.reason i{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-strong);flex:none;transition:border-width .15s,border-color .15s}
+.reason[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.reason[aria-checked="true"] i{border-color:var(--brand);border-width:6px}
+.check-row{display:flex;align-items:center;gap:10px;font-weight:600;min-height:44px}
+.check-row input{width:20px;height:20px;accent-color:var(--brand)}
+.safety-note{margin:0;padding:10px 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent-text);font-size:14px;line-height:1.45}
+.safety-note a{color:inherit;font-weight:700}
+.plain-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.5}
+.delete-card{border-style:dashed}
+.delete-card h2{font-size:18px}
+.report-card p{margin:0}
+.rules-hero{position:relative;overflow:hidden;border-radius:28px 28px 28px 10px;background:var(--hero-bg);color:var(--hero-fg);padding:26px 22px 24px;display:flex;flex-direction:column;gap:10px}
+.rules-hero::after{content:"";position:absolute;right:-110px;top:-110px;width:260px;height:260px;border-radius:50%;border:2px dashed color-mix(in srgb,var(--accent) 55%,transparent);opacity:.45}
+.rules-hero > *{position:relative}
+.rules-hero .eyebrow{color:var(--accent)}
+.rules-hero h1{font-size:clamp(30px,6.4vw,44px);line-height:1.04;letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.rules-hero p{margin:0;color:var(--hero-muted);line-height:1.55;max-width:58ch}
+.rules-badge{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--hero-bg)}
+.rules-badge svg{width:30px;height:30px}
+.rule-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:900px){.rule-list{grid-template-columns:repeat(2,minmax(0,1fr))}.inner.pg-rules{max-width:1000px}}
+.rule{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:22px 22px 22px 8px;padding:16px;animation:valueIn .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 70ms + 80ms)}
+.rule-ico{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-text);flex:none}
+.rule:nth-child(even) .rule-ico{background:var(--accent-soft);color:var(--accent-text)}
+.rule-ico svg{width:28px;height:28px}
+.rule h2{font-size:19px;line-height:1.2;display:flex;align-items:baseline;gap:8px;font-variation-settings:"SOFT" 100}
+.rule-n{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;color:var(--muted)}
+.rule p{margin:6px 0 0;color:var(--muted);line-height:1.55}
+.help-card{display:flex;flex-direction:column;gap:12px}
+.help-lines{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:14px;background:var(--brand-soft)}
+.help-lines p{margin:0;line-height:1.5}
+.help-lines a{font-weight:700;color:var(--brand-text)}
+.rules-foot{margin:0}
+@media (prefers-reduced-motion:reduce){.rule{animation:none}}
 </style>
 </head>
 <body>
@@ -1397,6 +1458,7 @@ function filterCount(){return (S.sport!=='all'?1:0)+(S.day!=='all'?1:0)+(S.level
 function filterGames(up,ignoreDay){
   var q=S.q.trim().toLowerCase(),home=homeSuburb();
   var list=up.filter(function(g){
+    if(isBlocked(g.hostId))return false;
     if(S.sport!=='all'&&g.sport!==S.sport)return false;
     if(!ignoreDay&&S.day!=='all'&&keyOf(g.start)!==S.day)return false;
     if(S.level!=='all'&&g.level!==S.level&&g.level!=='All levels')return false;
@@ -1538,7 +1600,7 @@ function discoverRail(alerts,clubs){
 function skeletons(n){var h='<div class="list">';for(var i=0;i<n;i++)h+='<div class="skeleton"></div>';return h+'</div>';}
 
 function viewDiscover(){
-  var up=S.games.filter(isUpcoming).sort(byStart);
+  var up=S.games.filter(function(g){return isUpcoming(g)&&!isBlocked(g.hostId);}).sort(byStart);
   var alerts=up.filter(function(g){return g.oneShort&&spotsLeft(g)>0&&!S.myIds[g.id];});
   var alertG=alerts[0]||null;
   var list=filterGames(up);
@@ -1613,6 +1675,7 @@ function viewGame(){
     '<div class="hostline">'+(g.club&&g.club.name
       ?clubLogo({id:g.club.id,name:g.club.name,logo_url:g.club.logo_url},26)+'<span>Hosted by <a href="#c-'+esc(g.club.id)+'" style="color:inherit;font-weight:800">'+esc(g.club.name)+'</a> · posted by '+esc(isHost?'you':hostName)+'</span>'
       :avatar(g.hostId,hostName,g.host&&g.host.avatar_url,26)+'<span>'+(g.kind==='clinic'?'Coached by ':'Hosted by ')+(isHost?'you':'<a href="#'+(g.kind==='clinic'?'o-':'p-')+esc(g.hostId)+'" style="color:inherit;font-weight:800">'+esc(hostName)+'</a>')+'</span>')+(g.founding?foundingBadge(true,!!(g.club&&g.club.founding&&!(g.host&&g.host.founding))):'')+hostCheckBadge(g)+'</div></section>';
+  if(isBlocked(g.hostId))h+='<p class="notice">You blocked the host of this game.</p>';
   if(canAct&&g.sport==='pickleball'&&duprFit(g.duprMin,g.duprMax)===false)h+='<p class="notice">This game is for '+esc(duprRange(g.duprMin,g.duprMax))+'. Your DUPR is '+esc(duprTxt(myDupr()))+'. Check with the host before joining.</p>';
   h+='<div class="meter-row"><div class="meter" role="img" aria-label="'+count+' of '+g.capacity+' spots filled"><i style="width:'+Math.round(100*Math.min(count,g.capacity)/g.capacity)+'%"></i></div>'+
     '<p class="meta">'+(past?'<b>'+count+' of '+g.capacity+'</b> played':left>0?'<b>Looking for '+left+' more '+(left===1?'player':'players')+'</b> · '+count+' of '+g.capacity+' going'
@@ -1658,6 +1721,7 @@ function viewGame(){
   }
   h+=mapBlock(g,'Location');
   if(g.notes)h+='<section class="stack-sm"><h2>From the host</h2><p class="notes">'+esc(g.notes)+'</p></section>';
+  if(!isHost)h+=reportLine('game',g.id,'Report this game');
   side+='<section class="chat" aria-label="Game chat"><div class="chat-head"><h2>Game chat</h2>'+((mine||isHost)?'<span class="meta">'+S.messages.length+(S.messages.length===1?' message':' messages')+'</span>':'')+'</div>';
   if(mine||isHost){
     side+='<div class="msgs" id="msgs">'+msgsHTML(S.messages,'No messages yet. Say g’day, sort out lifts, or check who’s bringing balls.');
@@ -1807,7 +1871,7 @@ function viewMine(){
 }
 
 function legalLinks(){
-  return '<nav class="legal-links" aria-label="Bounce Up policies"><a href="#about">Our mission</a><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
+  return '<nav class="legal-links" aria-label="Bounce Up policies"><a href="#about">Our mission</a><a href="#rules">Community rules</a><a href="terms.html" target="_blank" rel="noopener">Terms</a><a href="privacy.html" target="_blank" rel="noopener">Privacy</a><a href="refunds.html" target="_blank" rel="noopener">Refunds</a><a href="mailto:benjibajout@gmail.com">Contact</a></nav><p class="meta data-credit">Suburb data © <a href="https://www.geonames.org" target="_blank" rel="noopener">GeoNames</a>, CC BY 4.0</p>';
 }
 function viewProfile(){
   if(!S.uid)return '<section class="hello"><h1>Your profile</h1></section>'+signInPrompt('Sign in to set up your player profile','Pick your sports and suburb so the right games show up first.','profile');
@@ -1838,7 +1902,9 @@ function viewProfile(){
       return '<a class="clubrow" href="#c-'+esc(c.id)+'">'+clubLogo(c,40)+'<div class="gbody"><div class="gtitle">'+esc(c.name)+'</div><div class="meta">'+esc([c.kind,c.suburb].filter(Boolean).join(' · '))+'</div></div>'+(m.role==='admin'?'<span class="tag tag-accent">COMMITTEE</span>':'')+'</a>';}).join('')+'</div>';
   } else h+='<p class="meta">You haven’t joined a club yet.</p>';
   h+='<div class="cta"><a class="btn btn-line" href="#clubs">Find a club</a><a class="btn btn-line" href="#club-new">Start a club</a></div></section>';
+  h+=blockedCard();
   h+='<button type="button" class="btn btn-line" data-act="signout">Sign out</button>';
+  h+=deleteCard();
   h+=legalLinks();
   return h;
 }
@@ -1954,6 +2020,7 @@ function viewClub(){
   }
   h+='<div class="club-people"><section class="card"><h2>Committee</h2><div>'+committee.map(row).join('')+'</div></section>';
   h+='<section class="card"><div class="list-head"><h2>Members</h2><span class="meta">'+members.length+'</span></div><div>'+(members.length?members.map(row).join(''):'<p class="meta">No members yet. Share the invite with your group.</p>')+'</div></section></div></div>';
+  if(!admin)h+=reportLine('club',c.id,'Report this club');
   return h;
 }
 function viewPlayer(){
@@ -1968,6 +2035,7 @@ function viewPlayer(){
   h+=duprLine(p);
   if(S.coaches&&S.coaches.some(function(c){return c.id===p.id&&c.active;}))h+='<a class="btn btn-brand self-start" href="#o-'+esc(p.id)+'">'+esc(nm.split(' ')[0])+' coaches: see lessons and clinics</a>';
   if(me)h+='<a class="btn btn-line self-start" href="#profile">Edit my profile</a>';
+  h+=safetyRow(p);
   if(S.isAdmin)h+=adminFoundingCard('player',p.id,p.founding);
   h+='</div><div class="pp-side"><section class="stack-sm"><h2>Clubs</h2>'+(S.playerClubs.length?'<div class="list">'+S.playerClubs.map(function(m){return clubRow(normClub(m.club),m.role);}).join('')+'</div>':'<p class="meta">Not in any clubs yet.</p>')+'</section></div></div>';
   return h;
@@ -2008,6 +2076,7 @@ function postGameHTML(g){
 }
 function commentsHTML(p){
   var list=S.comments[p.id],h='<div class="comments" id="cm-'+esc(p.id)+'">';
+  if(list)list=list.filter(function(c){return !isBlocked(c.user_id);});
   if(!list)h+='<p class="meta">Loading comments…</p>';
   else if(!list.length)h+='<p class="meta">No comments yet.'+(S.uid?' Start the conversation.':'')+'</p>';
   else h+=list.map(function(c){
@@ -2021,11 +2090,12 @@ function commentsHTML(p){
   return h+'</div>';
 }
 function postHTML(p){
+  if(isBlocked(p.authorId))return '';
   var authorName=p.authorId===S.uid?'You':((p.author&&p.author.display_name)||'Committee');
   var long=p.body.length>300||p.body.split('\n').length>6,open=!!S.expanded[p.id];
   var h='<article class="post" id="post-'+esc(p.id)+'"><header class="post-head"><a href="#c-'+esc(p.clubId)+'" tabindex="-1" aria-hidden="true">'+clubLogo({id:p.clubId,name:p.club.name,logo_url:p.club.logo_url},40)+'</a>'+
     '<div class="gbody"><a class="post-club" href="#c-'+esc(p.clubId)+'">'+esc(p.club.name)+'</a><span class="meta">'+esc(authorName)+' · '+esc(timeAgo(p.createdAt))+'</span></div>'+
-    (canModerate(p)?'<button type="button" class="btn btn-line more" data-act="post-menu" data-id="'+esc(p.id)+'" aria-haspopup="dialog" aria-label="Post options">⋯</button>':'')+'</header>';
+    ((canModerate(p)||(S.uid&&p.authorId!==S.uid))?'<button type="button" class="btn btn-line more" data-act="post-menu" data-id="'+esc(p.id)+'" aria-haspopup="dialog" aria-label="Post options">⋯</button>':'')+'</header>';
   if(p.body)h+='<div class="post-text'+(long&&!open?' clamp':'')+'">'+esc(p.body)+'</div>'+(long?'<button type="button" class="linkish" data-act="post-more" data-id="'+esc(p.id)+'">'+(open?'See less':'See more')+'</button>':'');
   if(p.photos.length)h+='<div class="photos n'+p.photos.length+'">'+p.photos.map(function(u,i){
     return '<button type="button" class="photo" data-act="photo" data-id="'+esc(p.id)+'" data-v="'+i+'" aria-label="Open photo '+(i+1)+' of '+p.photos.length+'"><img src="'+esc(u)+'" alt="" loading="lazy" decoding="async"></button>';}).join('')+'</div>';
@@ -2165,6 +2235,7 @@ function myUpcoming(){
 
 /* ---------- Inbox: club group chats and game chats ---------- */
 function msgsHTML(list,emptyText){
+  list=list.filter(function(m){return !isBlocked(m.user_id);});
   if(!list.length)return '<p class="chat-empty">'+esc(emptyText)+'</p>';
   var h='',lastDay='',lastUser=null;
   list.forEach(function(m){
@@ -2204,7 +2275,8 @@ function loadInbox(){
       rows.forEach(function(m){if(m.user_id!==S.uid&&new Date(m.created_at).getTime()>read)unread++;});
       return {last:last,unread:unread};
     }
-    var cm=res[0].error?[]:(res[0].data||[]),gm=res[1].error?[]:(res[1].data||[]),items=[];
+    var vis=function(m){return !isBlocked(m.user_id);};
+    var cm=res[0].error?[]:(res[0].data||[]).filter(vis),gm=res[1].error?[]:(res[1].data||[]).filter(vis),items=[];
     clubs.forEach(function(c){
       var sm=summarise('club:'+c.id,cm.filter(function(m){return String(m.club_id)===c.id;}));
       items.push({kind:'club',key:'club:'+c.id,id:c.id,title:c.name,club:c,last:sm.last,unread:sm.unread,at:sm.last?new Date(sm.last.created_at):new Date(0)});
@@ -2419,8 +2491,9 @@ function viewLogin(){
         '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Sending…':CONFIG.EMAIL_CODE?'Email me a sign-in code':'Email me a sign-in link')+'</button><p class="meta">No password needed. We email you a link that signs you in.</p></form>';
     }
   } else if(L.step==='signup'){
-    h+='<form class="stack" id="signup-form" novalidate><h2>Create your account</h2>'+emailField(L)+pwField(L,'Choose a password','new-password')+
-      '<span class="hint">At least 8 characters.</span>'+
+    if(ageBlocked())h+=under18Card(false);
+    else h+='<form class="stack" id="signup-form" novalidate><h2>Create your account</h2>'+emailField(L)+pwField(L,'Choose a password','new-password')+
+      '<span class="hint">At least 8 characters.</span>'+dobFields('dob',L.dob)+
       '<button class="btn btn-brand" type="submit"'+(L.busy?' disabled':'')+'>'+(L.busy?'Creating…':'Create account')+'</button>'+
       '<button type="button" class="btn btn-line" data-act="login-back">I already have an account</button></form>';
   } else if(L.step==='confirm'||L.step==='reset'){
@@ -2457,7 +2530,7 @@ function viewLogin(){
     }
   }
   if(L.error)h+='<p class="err" role="alert">'+esc(L.error)+'</p>';
-  return h+'<p class="foot">By continuing you agree to Bounce Up’s <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>, and to play fair and be a good sport. You must be 18 or older.</p></section>';
+  return h+'<p class="foot">By continuing you agree to Bounce Up’s <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>, and to follow our <a href="#rules">community rules</a>. You must be 18 or older.</p></section>';
 }
 
 function viewSetup(){
@@ -3155,9 +3228,385 @@ function coachingCard(){
   return '<section class="card"><h2>Coach a sport?</h2><p class="meta">List yourself so players nearby can ask for lessons and join your clinics.</p><a class="btn btn-line self-start" href="#coach-edit">List me as a coach</a></section>';
 }
 
+/* ---------- Safety: 18+ check, block, report, delete my account, community rules ---------- */
+var CONTACT_EMAIL='benjibajout@gmail.com';
+var REPORTS=false; // turns on by itself once the reports table is live (Gael's database update)
+var ADULT=18,AGE_BLOCK_KEY='bu-age-block',AGE_BLOCK_DAYS=30,MAX_BLOCKED=50;
+function userMeta(){var u=S.session&&S.session.user;return (u&&u.user_metadata)||{};}
+function needsAge(){return !!S.uid&&!!S.session&&!userMeta().adult_confirmed_at;}
+function ageFrom(d,m,y){
+  d=parseInt(d,10);m=parseInt(m,10);y=parseInt(y,10);
+  var now=new Date();
+  if(!(y>=1900&&y<=now.getFullYear()&&m>=1&&m<=12&&d>=1&&d<=31))return null;
+  var b=new Date(y,m-1,d);
+  if(b.getFullYear()!==y||b.getMonth()!==m-1||b.getDate()!==d||b>now)return null;
+  var a=now.getFullYear()-y;
+  if(now.getMonth()<m-1||(now.getMonth()===m-1&&now.getDate()<d))a--;
+  return a;
+}
+function ageBlocked(){try{var t=Number(localStorage.getItem(AGE_BLOCK_KEY)||0);return !!t&&Date.now()-t<AGE_BLOCK_DAYS*864e5;}catch(e){return false;}}
+function setAgeBlock(){try{localStorage.setItem(AGE_BLOCK_KEY,String(Date.now()));}catch(e){}}
+function dobFields(pre,v){
+  v=v||{};
+  function box(k,label,ph,ac,max){return '<div class="dob-box"><label for="'+pre+'-'+k+'">'+label+'</label><input id="'+pre+'-'+k+'" inputmode="numeric" pattern="[0-9]*" autocomplete="'+ac+'" maxlength="'+max+'" placeholder="'+ph+'" value="'+esc(v[k]||'')+'"></div>';}
+  return '<fieldset class="dob"><legend>Date of birth</legend><div class="dob-row">'+box('d','Day','DD','bday-day',2)+box('m','Month','MM','bday-month',2)+box('y','Year','YYYY','bday-year',4)+'</div>'+
+    '<span class="hint">Bounce Up is for people 18 and over. We only keep a note that you are, not your birthday.</span></fieldset>';
+}
+function under18Card(signedIn){
+  return '<div class="card age-stop"><h2>Bounce Up is for people 18 and over</h2><p>Sorry, you need to be 18 or older to use Bounce Up. Come back when you turn 18.</p>'+
+    '<p class="meta">Entered the wrong date? Email <a href="mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent('Bounce Up age check')+'">'+CONTACT_EMAIL+'</a>.</p>'+
+    (signedIn?'<button type="button" class="btn btn-line" data-act="age-signout">Sign out</button>':'<button type="button" class="btn btn-line" data-act="login-back">Back</button>')+'</div>';
+}
+/* Everyone signed in confirms once, including Google, Apple and email-link accounts */
+function viewAgeGate(){
+  var A=S.age||(S.age={d:'',m:'',y:'',error:'',busy:false});
+  var h='<section class="age-gate">';
+  if(userMeta().under_18)return h+under18Card(true)+'</section>';
+  h+='<div class="age-card"><span class="age-ico" aria-hidden="true">'+RI.adult+'</span><h1>One quick check</h1><p>Bounce Up is for adults. Enter your date of birth to keep going. You only do this once.</p>'+
+    '<form class="stack" id="age-form" novalidate>'+dobFields('age',A)+(A.error?'<p class="err" role="alert">'+esc(A.error)+'</p>':'')+
+    '<button class="btn btn-brand" type="submit"'+(A.busy?' disabled':'')+'>'+(A.busy?'Saving…':'Continue')+'</button></form>'+
+    '<p class="meta age-links"><a href="#rules">Community rules</a> · <a href="terms.html" target="_blank" rel="noopener">Terms</a> · <button type="button" class="link-btn" data-act="age-signout">Sign out</button></p></div>';
+  return h+'</section>';
+}
+/* Saves to the person's own account record; merges locally so the screen updates straight away */
+function saveMeta(patch){
+  return sb.auth.updateUser({data:patch}).then(function(r){
+    if(r.error)return r;
+    var u=S.session&&S.session.user;
+    if(u){var back=(r.data&&r.data.user&&r.data.user.user_metadata)||{};u.user_metadata=Object.assign({},u.user_metadata||{},back,patch);}
+    return r;
+  });
+}
+function submitAge(){
+  var A=S.age;if(!A||A.busy)return;
+  var a=ageFrom(A.d,A.m,A.y);
+  if(a==null){A.error='Check your date of birth. For example 07 / 03 / 1990.';render();return;}
+  A.busy=true;A.error='';render();
+  if(a<ADULT){
+    setAgeBlock();
+    // Tell the team, so the account gets closed (once the reports table is live)
+    if(REPORTS)sb.from('reports').insert({reporter_id:S.uid,kind:'person',target_id:S.uid,target_user:S.uid,target_label:((S.profile&&S.profile.display_name)||'New player').slice(0,120),reason:'underage',details:'Said they are under 18 at the age check. Close this account.'}).then(function(){},function(){});
+    saveMeta({under_18:true}).then(function(){A.busy=false;render();});
+    return;
+  }
+  saveMeta({adult_confirmed_at:new Date().toISOString()}).then(function(r){
+    A.busy=false;
+    if(r.error){A.error='That didn’t save. Check your connection and try again.';render();return;}
+    S.age=null;toast('Thanks. You’re all set.');render();
+  });
+}
+function ageSignOut(){
+  var under=!!userMeta().under_18;S.age=null;
+  var go=function(){location.hash=under?'login':'discover';};
+  forgetDevice().catch(function(){}).then(function(){return sb.auth.signOut();}).then(go,go);
+}
+
+/* ---------- Block: hides that person's games, posts, comments and messages from you ---------- */
+function blockedIds(){var b=userMeta().blocked;return Array.isArray(b)?b.filter(function(x){return typeof x==='string'&&ID_RE.test(x);}):[];}
+function isBlocked(id){return !!id&&!!S.uid&&String(id)!==S.uid&&blockedIds().indexOf(String(id))>=0;}
+function setBlocked(id,on,name,quiet){
+  if(!S.uid||!id||id===S.uid)return Promise.resolve(false);
+  var list=blockedIds().filter(function(x){return x!==id;});
+  if(on)list.unshift(id);
+  if(list.length>MAX_BLOCKED){toast('You can block up to '+MAX_BLOCKED+' people. Unblock someone first.');return Promise.resolve(false);}
+  S.blockBusy=true;render();
+  return saveMeta({blocked:list}).then(function(r){
+    S.blockBusy=false;
+    if(r.error){toast('Couldn’t save that. Try again.');render();return false;}
+    if(!quiet)toast(on?(name||'They')+' is blocked':(name||'They')+' is unblocked');
+    if(S.blockedPeople)S.blockedPeople=S.blockedPeople.filter(function(p){return blockedIds().indexOf(p.id)>=0;});
+    render();return true;
+  });
+}
+function loadBlockedPeople(){
+  var ids=blockedIds();
+  if(!S.uid||!ids.length){S.blockedPeople=[];return Promise.resolve();}
+  return sb.from('profiles').select('id, display_name, avatar_url').in('id',ids).then(function(r){
+    var byId={};((r&&!r.error&&r.data)||[]).forEach(function(p){byId[p.id]=p;});
+    S.blockedPeople=ids.map(function(id){return byId[id]||{id:id,display_name:null,avatar_url:null};});
+  });
+}
+function blockedCard(){
+  var ids=blockedIds();if(!ids.length)return '';
+  var list=S.blockedPeople;
+  if(!list||list.length!==ids.length){if(!S.blockedLoading){S.blockedLoading=true;loadBlockedPeople().then(function(){S.blockedLoading=false;render();},function(){S.blockedLoading=false;});}}
+  var h='<section class="card"><div class="list-head"><h2>People you blocked</h2><span class="meta">'+ids.length+'</span></div><p class="meta">You don’t see their games, posts, comments or chat messages. They aren’t told.</p><div>';
+  h+=(list||[]).map(function(p){var nm=p.display_name||'Bounce Up player';
+    return '<div class="member-row"><a href="#p-'+esc(p.id)+'">'+avatar(p.id,p.display_name,p.avatar_url,36)+'<span>'+esc(nm)+'</span></a><button type="button" class="btn btn-line btn-sm" data-act="unblock" data-id="'+esc(p.id)+'"'+(S.blockBusy?' disabled':'')+'>Unblock</button></div>';}).join('');
+  return h+'</div></section>';
+}
+function personName(id){
+  if(S.player&&S.player.id===id)return S.player.display_name||'This player';
+  var pools=(S.players||[]).concat(S.waiting||[],S.clubMembers||[],S.messages||[],(S.clubChat&&S.clubChat.messages)||[]);
+  for(var i=0;i<pools.length;i++){var p=pools[i];if(p.user_id===id&&p.profile&&p.profile.display_name)return p.profile.display_name;}
+  var b=(S.blockedPeople||[]).filter(function(p){return p.id===id;})[0];
+  return (b&&b.display_name)||'This player';
+}
+function safetyRow(p){
+  if(!S.uid||!p||p.id===S.uid)return '';
+  var nm=p.display_name||'this player';
+  if(isBlocked(p.id))return '<div class="notice block-note"><span>You blocked '+esc(nm)+'. You won’t see their games, posts or messages.</span><button type="button" class="btn btn-line btn-sm" data-act="unblock" data-id="'+esc(p.id)+'"'+(S.blockBusy?' disabled':'')+'>Unblock</button></div>'+
+    '<p class="safety-row"><button type="button" class="link-btn" data-act="report" data-v="person" data-id="'+esc(p.id)+'">Report '+esc(nm)+'</button></p>';
+  return '<p class="safety-row"><button type="button" class="link-btn" data-act="report" data-v="person" data-id="'+esc(p.id)+'">'+RI.flag+'Report</button><span aria-hidden="true">·</span><button type="button" class="link-btn" data-act="block" data-id="'+esc(p.id)+'">'+RI.block+'Block</button></p>';
+}
+function reportLine(kind,id,text){
+  if(!S.uid)return '';
+  return '<p class="safety-row"><button type="button" class="link-btn" data-act="report" data-v="'+kind+'" data-id="'+esc(id)+'">'+RI.flag+esc(text)+'</button></p>';
+}
+
+/* ---------- Report ---------- */
+var REPORT_REASONS=[['harassment','Harassment or bullying'],['hate','Hate or discrimination'],['sexual','Sexual or inappropriate'],['scam','Scam, fake or spam'],['unsafe','Unsafe at a game'],['underage','Under 18'],['other','Something else']];
+var REPORT_KIND={person:'person',game:'game',club:'club',post:'post'};
+function reasonLabel(k){var r=REPORT_REASONS.filter(function(x){return x[0]===k;})[0];return r?r[1]:k;}
+function reportTarget(kind,id){
+  var base=location.origin+location.pathname;
+  if(kind==='person')return {label:personName(id),user:id,link:base+'#p-'+id,title:'Report '+personName(id)};
+  if(kind==='game'){var g=lookupGame(id)||(S.game&&S.game.id===id?S.game:null);return {label:g?g.title:'Game',user:g?g.hostId:null,link:base+'#g-'+id,title:'Report this game'};}
+  if(kind==='club'){var c=S.club&&S.club.id===id?S.club:null;return {label:c?c.name:'Club',user:null,link:base+'#c-'+id,title:'Report this club'};}
+  if(kind==='post'){var p=findPost(id);return {label:p?'Post in '+p.club.name:'Club post',user:p?p.authorId:null,link:base+(p?'#c-'+p.clubId:''),clubId:p?p.clubId:null,title:'Report this post'};}
+  return null;
+}
+function openReport(kind,id){
+  if(!REPORT_KIND[kind]||needLogin(currentHash()))return;
+  var t=reportTarget(kind,id);if(!t)return;
+  openSheet({type:'report',kind:kind,id:id,label:t.label,user:t.user,link:t.link,clubId:t.clubId||null,title:t.title,reason:'',details:'',block:false,step:'form',busy:false,error:''});
+}
+function reportText(R){
+  var me=(S.profile&&S.profile.display_name)||'A Bounce Up player';
+  return 'Reason: '+reasonLabel(R.reason)+'\nAbout: '+R.kind+' "'+R.label+'"\nLink: '+R.link+(R.user?'\nTheir account: '+R.user:'')+
+    '\n\nWhat happened:\n'+(R.details.trim()||'(nothing added)')+'\n\nReported by: '+me+' ('+S.uid+')';
+}
+function reportMailto(R){
+  return 'mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent('Bounce Up report: '+reasonLabel(R.reason)+' – '+R.label)+'&body='+encodeURIComponent(reportText(R));
+}
+function openMail(href){try{window.location.href=href;}catch(e){}}
+function sendReport(){
+  var R=S.sheet;if(!R||R.type!=='report'||R.busy)return;
+  if(!R.reason){R.error='Pick what’s wrong first.';render();return;}
+  var after=function(){if(R.block&&R.kind==='person'&&R.user&&!isBlocked(R.user))setBlocked(R.user,true,R.label,true);};
+  if(!REPORTS){R.step='email';R.error='';after();render();openMail(reportMailto(R));return;}
+  R.busy=true;R.error='';render();
+  var target=R.kind==='post'&&R.clubId?R.clubId+'/'+R.id:String(R.id);
+  sb.from('reports').insert({reporter_id:S.uid,kind:R.kind,target_id:target,target_user:R.user||null,target_label:String(R.label||'').slice(0,120),reason:R.reason,details:R.details.trim().slice(0,1000)||null}).then(function(r){
+    R.busy=false;
+    if(r.error){R.error=/REPORT_LIMIT/.test(r.error.message||'')?'You’ve sent a lot of reports today. Email '+CONTACT_EMAIL+' instead.':'That didn’t send. Check your connection and try again.';render();return;}
+    R.step='sent';after();render();
+  });
+}
+function copyReport(){
+  var R=S.sheet;if(!R||R.type!=='report')return;
+  var txt='To: '+CONTACT_EMAIL+'\n\n'+reportText(R);
+  try{navigator.clipboard.writeText(txt).then(function(){toast('Report copied. Paste it into an email to '+CONTACT_EMAIL+'.');},function(){toast('Couldn’t copy. Email '+CONTACT_EMAIL+'.');});}catch(e){toast('Couldn’t copy. Email '+CONTACT_EMAIL+'.');}
+}
+function reportSheet(R){
+  var h='<div class="sheet-head"><div><h2 id="sheet-title">'+esc(R.step==='form'?R.title:R.step==='email'?'Almost done':'Thanks for telling us')+'</h2>'+(R.step==='form'&&R.kind==='person'?'':'<p class="meta">'+esc(R.label)+'</p>')+'</div></div>';
+  if(R.step==='sent')return h+'<p>We’ll look at it and act if it breaks our <a href="#rules" data-act="sheet-close">community rules</a>. The person isn’t told who reported them.</p>'+
+    (R.block?'<p class="meta">'+esc(R.label)+' is blocked too.</p>':'')+'<p class="safety-note">Someone in danger? Call <b>000</b>.</p><div class="sheet-foot"><button type="button" class="btn btn-brand" data-act="sheet-close">Done</button></div>';
+  if(R.step==='email')return h+'<p>Your email app should open with the report written. Tap <b>Send</b>.</p>'+
+    '<div class="sheet-menu"><a class="btn btn-brand" href="'+esc(reportMailto(R))+'">'+RI.mail+'Open email</a><button type="button" class="btn btn-line" data-act="rp-copy">Copy report</button></div>'+
+    '<p class="meta">No email app? Copy the report and send it to <b>'+CONTACT_EMAIL+'</b>. The person isn’t told who reported them.</p>'+(R.block?'<p class="meta">'+esc(R.label)+' is blocked.</p>':'')+
+    '<div class="sheet-foot"><button type="button" class="btn btn-line" data-act="sheet-close">Done</button></div>';
+  h+='<p class="meta">Reports are private. The person isn’t told who reported them.</p>';
+  h+='<div class="field"><span class="lbl" id="rp-why">What’s wrong?</span><div class="reasons" role="radiogroup" aria-labelledby="rp-why">'+REPORT_REASONS.map(function(r){
+    return '<button type="button" class="reason" role="radio" data-act="rp-reason" data-v="'+r[0]+'" aria-checked="'+(R.reason===r[0])+'"><i aria-hidden="true"></i>'+esc(r[1])+'</button>';}).join('')+'</div></div>';
+  h+='<div class="field"><label for="rp-details">What happened? (optional)</label><textarea id="rp-details" maxlength="1000" placeholder="When it happened, what was said, who was there">'+esc(R.details)+'</textarea></div>';
+  if(R.kind==='person'&&R.user&&!isBlocked(R.user))h+='<label class="check-row"><input type="checkbox" id="rp-block"'+(R.block?' checked':'')+'><span>Also block '+esc(R.label)+'</span></label>';
+  h+='<p class="safety-note">Someone in danger? Call <b>000</b>. Read our <a href="#rules" data-act="sheet-close">community rules</a>.</p>';
+  if(R.error)h+='<p class="err" role="alert">'+esc(R.error)+'</p>';
+  return h+'<div class="sheet-foot"><button type="button" class="btn btn-brand" data-act="rp-send"'+(R.busy?' disabled':'')+'>'+(R.busy?'Sending…':'Send report')+'</button><button type="button" class="btn btn-line" data-act="sheet-close">Cancel</button></div>';
+}
+function blockSheet(B){
+  var nm=B.name||'this player';
+  return '<div class="sheet-head"><div><h2 id="sheet-title">Block '+esc(nm)+'?</h2></div></div>'+
+    '<ul class="plain-list"><li>You won’t see their games in Discover, or their posts, comments and chat messages.</li><li>They aren’t told, and they can still see games you’re both in.</li><li>You can unblock them any time from their profile or yours.</li></ul>'+
+    '<div class="sheet-foot"><button type="button" class="btn btn-danger" data-act="block-yes" data-id="'+esc(B.id)+'"'+(S.blockBusy?' disabled':'')+'>Block</button><button type="button" class="btn btn-line" data-act="sheet-close">Cancel</button></div>';
+}
+function safetySheet(sh){
+  if(sh.type==='report')return reportSheet(sh);
+  if(sh.type==='block')return blockSheet(sh);
+  return '';
+}
+
+/* ---------- The admin's report list (once the reports table is live) ---------- */
+function probeReports(){
+  if(REPORTS||S.reportsProbe||!S.uid)return;
+  S.reportsProbe=true;
+  sb.from('reports').select('id').limit(1).then(function(r){
+    var c=r&&r.error&&r.error.code;
+    if(r&&(!r.error||c==='42501')){REPORTS=true;if(S.isAdmin)loadReports().then(render);else render();}
+  },function(){});
+}
+function loadReports(){
+  if(!REPORTS||!S.isAdmin)return Promise.resolve();
+  return sb.from('reports').select('*, reporter:profiles!reports_reporter_id_fkey(id, display_name)').order('created_at',{ascending:false}).limit(150).then(function(r){
+    if(!r.error)S.reports=r.data||[];
+  });
+}
+function reportsOpen(){return (S.reports||[]).filter(function(r){return r.status==='open';}).length;}
+function reportHref(r){
+  var t=String(r.target_id||'');
+  if(r.kind==='person'&&ID_RE.test(t))return '#p-'+t;
+  if(r.kind==='game'&&ID_RE.test(t))return '#g-'+t;
+  if(r.kind==='club'&&ID_RE.test(t))return '#c-'+t;
+  if(r.kind==='post'){var c=t.split('/')[0];if(ID_RE.test(c))return '#c-'+c;}
+  return '';
+}
+function viewReports(){
+  var h='<section class="hello"><h1>Reports</h1><p class="meta">What players have reported. Check it against the community rules, act, then mark it done.</p></section>';
+  if(!S.isAdmin)return h+'<div class="empty"><strong>Only the Bounce Up team can see this</strong></div>';
+  if(!REPORTS)return h+'<div class="empty"><strong>Reports come by email for now</strong><p>They switch to this screen once the reports table is set up.</p></div>';
+  if(S.reports==null){loadReports().then(render);return h+skeletons(2);}
+  var tab=S.reportsTab||'open',list=S.reports.filter(function(r){return tab==='open'?r.status==='open':r.status!=='open';});
+  h+='<div class="seg" role="group" aria-label="Show"><button type="button" data-act="rpt-tab" data-v="open" aria-pressed="'+(tab==='open')+'">Open · '+reportsOpen()+'</button><button type="button" data-act="rpt-tab" data-v="done" aria-pressed="'+(tab!=='open')+'">Done</button></div>';
+  if(!list.length)return h+'<p class="meta">'+(tab==='open'?'Nothing to look at. Nice.':'Nothing here yet.')+'</p>';
+  return h+'<div class="stack">'+list.map(function(r){
+    var href=reportHref(r),who=(r.reporter&&r.reporter.display_name)||'A player';
+    return '<section class="card report-card"><div class="list-head"><span class="tag tag-accent">'+esc(reasonLabel(r.reason).toUpperCase())+'</span><span class="meta">'+esc(timeAgo(new Date(r.created_at)))+'</span></div>'+
+      '<p><b>'+esc(r.kind.charAt(0).toUpperCase()+r.kind.slice(1))+':</b> '+(href?'<a href="'+href+'">'+esc(r.target_label||'Open')+'</a>':esc(r.target_label||''))+'</p>'+
+      (r.details?'<p class="notes">'+esc(r.details)+'</p>':'')+'<p class="meta">Reported by '+esc(who)+(r.status!=='open'?' · '+(r.status==='actioned'?'Dealt with':'No action')+(r.admin_note?': '+esc(r.admin_note):''):'')+'</p>'+
+      '<div class="cta">'+(r.status==='open'?'<button type="button" class="btn btn-brand btn-sm" data-act="rpt-set" data-id="'+r.id+'" data-v="actioned">Dealt with</button><button type="button" class="btn btn-line btn-sm" data-act="rpt-set" data-id="'+r.id+'" data-v="dismissed">No action needed</button>'
+        :'<button type="button" class="btn btn-line btn-sm" data-act="rpt-set" data-id="'+r.id+'" data-v="open">Reopen</button>')+'</div></section>';
+  }).join('')+'</div>';
+}
+function setReport(id,status){
+  sb.rpc('review_report',{report_id:Number(id),new_status:status,note:null}).then(function(r){
+    if(r.error){toast('Couldn’t update that. Try again.');return;}
+    (S.reports||[]).forEach(function(x){if(String(x.id)===String(id))x.status=status;});
+    toast(status==='open'?'Reopened':'Marked as done');render();
+  });
+}
+
+/* ---------- Delete my account ---------- */
+function deleteCard(){
+  var D=S.del,h='<section class="card delete-card" aria-labelledby="del-h"><h2 id="del-h">Delete my account</h2>'+
+    '<p class="meta">Removes your profile, photo, messages, comments, club memberships and game spots. Payment records are kept for 5 years without your name, because tax law requires it.</p>';
+  if(!D)return h+'<button type="button" class="btn btn-line self-start" data-act="del-acct">Delete my account</button></section>';
+  if(D.step==='blocked'){
+    var why={hosting:['You’re hosting ',' and people have joined. Delete the game, or ask them to leave first.','#g-'],paid:['You paid for ','. Leave the game first so you get your refund.','#g-'],club:['You’re the only committee member of ','. Make someone else committee first, or close the club.','#c-'],league:['You run the league ','. Finish it first.','#l-']};
+    return h+'<div class="confirm"><b>First, sort these out:</b><ul class="plain-list">'+(D.blockers||[]).map(function(b){var w=why[b.kind]||['',' needs sorting out first.',''];var link=w[2]&&ID_RE.test(String(b.id))?'<a href="'+w[2]+esc(b.id)+'">'+esc(b.name||'this')+'</a>':esc(b.name||'this');return '<li>'+w[0]+link+w[1]+'</li>';}).join('')+'</ul>'+
+      '<div class="actions"><button type="button" class="btn btn-line" data-act="del-acct-no">OK</button></div></div></section>';
+  }
+  if(D.step==='email'){
+    return h+'<div class="confirm"><b>Send us the request</b><p class="meta">Your email app should open with the request written. Tap Send and we’ll delete your account within 30 days.</p>'+
+      '<div class="actions"><a class="btn btn-brand" href="'+esc(deleteMailto())+'">'+RI.mail+'Open email</a><button type="button" class="btn btn-line" data-act="del-acct-no">Close</button></div>'+
+      '<p class="meta">No email app? Email <b>'+CONTACT_EMAIL+'</b> from the address you sign in with, and ask us to delete your account.</p></div></section>';
+  }
+  var ok=String(D.word||'').trim().toUpperCase()==='DELETE';
+  return h+'<div class="confirm"><b>Delete your account for good?</b><p class="meta">This can’t be undone.</p>'+
+    '<div class="field"><label for="del-word">Type DELETE to confirm</label><input id="del-word" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" value="'+esc(D.word||'')+'"></div>'+
+    (D.error?'<p class="err" role="alert">'+esc(D.error)+'</p>':'')+
+    '<div class="actions"><button type="button" class="btn btn-danger" data-act="del-acct-yes"'+(!ok||D.busy?' disabled':'')+'>'+(D.busy?'Deleting…':'Delete my account')+'</button><button type="button" class="btn btn-line" data-act="del-acct-no">Keep my account</button></div></div></section>';
+}
+function deleteMailto(){
+  var em=(S.session&&S.session.user&&S.session.user.email)||'';
+  return 'mailto:'+CONTACT_EMAIL+'?subject='+encodeURIComponent('Delete my Bounce Up account')+'&body='+encodeURIComponent('Please delete my Bounce Up account.\n\nSign-in email: '+em+'\nAccount id: '+S.uid+'\n\nI understand payment records are kept for 5 years without my name.');
+}
+function missingFn(e){var c=e&&e.code,m=String((e&&e.message)||'');return c==='PGRST202'||c==='42883'||(e&&e.status===404)||/could not find the function|function .* does not exist/i.test(m);}
+function removeMyFiles(){
+  var jobs=['avatars','checks'].map(function(b){
+    try{var bucket=sb.storage.from(b);
+      return bucket.list(S.uid,{limit:100}).then(function(r){var names=((r&&r.data)||[]).map(function(f){return S.uid+'/'+f.name;});return names.length?bucket.remove(names):null;}).catch(function(){});
+    }catch(e){return Promise.resolve();}
+  });
+  return Promise.all(jobs);
+}
+function deleteAccount(){
+  var D=S.del;if(!D||D.busy)return;
+  if(String(D.word||'').trim().toUpperCase()!=='DELETE'){D.error='Type DELETE to confirm.';render();return;}
+  D.busy=true;D.error='';render();
+  function blocked(res){D.busy=false;D.step='blocked';D.blockers=res.blockers||[];render();}
+  sb.rpc('delete_my_account',{dry_run:true}).then(function(r){
+    if(r.error){
+      if(missingFn(r.error)){D.busy=false;D.step='email';render();openMail(deleteMailto());return;}
+      throw r.error;
+    }
+    if(r.data&&r.data.ok===false)return blocked(r.data);
+    return removeMyFiles().then(function(){return sb.rpc('delete_my_account',{dry_run:false});}).then(function(r2){
+      if(r2.error)throw r2.error;
+      if(r2.data&&r2.data.ok===false)return blocked(r2.data);
+      S.del=null;
+      var done=function(){setSession(null);location.hash='discover';render();toast('Your account is deleted. Thanks for playing.');};
+      return forgetDevice().catch(function(){}).then(function(){return sb.auth.signOut();}).then(done,done);
+    });
+  }).catch(function(){D.busy=false;D.error='That didn’t work. Check your connection and try again.';render();});
+}
+
+/* ---------- Community rules ---------- */
+var RI={
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>',
+  block:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>',
+  rules:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.2-7.5 9.5-4.3-1.3-7.5-4.9-7.5-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.4-4.6"/></svg>',
+  adult:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="10" width="34" height="30" rx="7"/><path d="M7 19h34M16 6v8M32 6v8"/><path d="M16.5 29.5l5 5 10-10"/></svg>',
+  sport:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 22c0-5 4-9 10-9s10 4 10 9"/><path d="M10 26h28"/><path d="M15 26l3 13h12l3-13"/><path d="M24 13V7"/></svg>',
+  clean:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12h30a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H22l-8 7v-7H9a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z"/><path d="M17 22.5l4.5 4.5 9-9"/></svg>',
+  show:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="25" r="15"/><path d="M24 16v9l6 4"/><path d="M18 5h12"/></svg>',
+  safe:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 5l15 6v10c0 9.4-6.4 16.6-15 19.5C15.4 37.6 9 30.4 9 21V11z"/><path d="M24 16v14M17 23h14"/></svg>',
+  real:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="18" r="8"/><path d="M9 41c1.8-8 7.6-12 15-12s13.2 4 15 12"/></svg>'
+};
+var RULES=[
+  ['sport','Be a good sport','Respect every player, host, coach and venue worker. No harassment, bullying, threats or hate. Nobody is put down for their race, religion, gender, sexuality, disability, age or skill.'],
+  ['clean','Keep it about the game','No sexual messages or photos, and no unwanted advances. No spam, selling or scams. Pay for games in Bounce Up, or the way the host says on the game page.'],
+  ['show','Show up, or say so','Can’t make it? Leave the game so someone else gets your spot. Hosts: post an honest price, level and place, and cancel early if you have to.'],
+  ['safe','Play safe','Sport has a risk of injury. Warm up, play within your limits and follow the venue’s rules. Meeting new people? Play at public venues and tell someone where you’re going.'],
+  ['adult','Adults only','Bounce Up is for people 18 and over. We close accounts that belong to anyone younger.'],
+  ['real','Be yourself','Use your own name and photo. One account per person. Don’t pretend to be someone else, or a club you don’t run.']
+];
+function viewRules(){
+  var h='<article class="about rules">';
+  h+='<section class="rules-hero"><span class="rules-badge" aria-hidden="true">'+RI.rules+'</span><span class="eyebrow">Community rules</span><h1>Good games need good people.</h1>'+
+    '<p>Bounce Up works because people show up and treat each other well. These rules apply in the app and at every game.</p></section>';
+  h+='<ol class="rule-list">'+RULES.map(function(r,i){
+    return '<li class="rule" style="--i:'+i+'"><span class="rule-ico">'+RI[r[0]]+'</span><div><h2><span class="rule-n">'+(i+1)+'</span>'+esc(r[1])+'</h2><p>'+esc(r[2])+'</p></div></li>';}).join('')+'</ol>';
+  h+='<section class="card help-card"><h2>If something goes wrong</h2><ul class="plain-list">'+
+    '<li><b>Report it.</b> Tap Report on a person’s profile, a game, a club or a post. Reports are private.</li>'+
+    '<li><b>Block them.</b> Blocking hides that person’s games, posts and messages from you.</li>'+
+    '<li><b>What we do.</b> We look at every report. We may warn people, remove posts or games, and close accounts that break these rules.</li></ul>'+
+    '<div class="help-lines"><p><b>In danger or hurt?</b> Call <a href="tel:000">000</a>.</p>'+
+    '<p><b>Serious online abuse?</b> You can also report it to the <a href="https://www.esafety.gov.au/report" target="_blank" rel="noopener">eSafety Commissioner</a>.</p>'+
+    '<p><b>Need to talk to someone?</b> Lifeline, 24 hours: <a href="tel:131114">13 11 14</a>.</p></div></section>';
+  h+='<p class="meta rules-foot">These rules sit alongside our <a href="terms.html" target="_blank" rel="noopener">terms of use</a> and <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>. Questions? Email <a href="mailto:'+CONTACT_EMAIL+'">'+CONTACT_EMAIL+'</a>.</p>';
+  return h+'</article>';
+}
+
+/* ---------- Clicks, fields and forms ---------- */
+function clickSafety(a,id,v){
+  if(a==='age-signout'){ageSignOut();return true;}
+  if(a==='report'){if(S.sheet)S.sheet=null;openReport(v,id);return true;}
+  if(a==='rp-reason'&&S.sheet&&S.sheet.type==='report'){if(REPORT_REASONS.some(function(r){return r[0]===v;})){S.sheet.reason=v;S.sheet.error='';render();}return true;}
+  if(a==='rp-send'){sendReport();return true;}
+  if(a==='rp-copy'){copyReport();return true;}
+  if(a==='block'){if(needLogin(currentHash()))return true;openSheet({type:'block',id:id,name:personName(id)});return true;}
+  if(a==='block-yes'){var nm=S.sheet&&S.sheet.name;setBlocked(id,true,nm).then(function(ok){if(ok&&S.sheet&&S.sheet.type==='block')closeSheet();});return true;}
+  if(a==='unblock'){setBlocked(id,false,personName(id));return true;}
+  if(a==='rpt-tab'){S.reportsTab=v==='done'?'done':'open';render();return true;}
+  if(a==='rpt-set'){if(['open','actioned','dismissed'].indexOf(v)>=0)setReport(id,v);return true;}
+  if(a==='del-acct'){S.del={step:'confirm',word:'',busy:false,error:''};render();var w=document.getElementById('del-word');if(w)try{w.focus();}catch(e){}return true;}
+  if(a==='del-acct-no'){S.del=null;render();return true;}
+  if(a==='del-acct-yes'){deleteAccount();return true;}
+  return false;
+}
+function fieldSafety(e){
+  var t=e.target,id=t.id,m=/^(dob|age)-([dmy])$/.exec(id);
+  if(m){
+    var st=m[1]==='dob'?(S.login.dob=S.login.dob||{d:'',m:'',y:''}):(S.age=S.age||{d:'',m:'',y:'',error:'',busy:false});
+    var val=t.value.replace(/\D/g,'').slice(0,m[2]==='y'?4:2);if(val!==t.value)t.value=val;st[m[2]]=val;
+    if(e.type==='input'&&val.length===2&&m[2]!=='y'){var nx=document.getElementById(m[1]+'-'+(m[2]==='d'?'m':'y'));if(nx&&!nx.value)try{nx.focus();}catch(x){}}
+    return true;
+  }
+  if(id==='rp-details'&&S.sheet&&S.sheet.type==='report'){S.sheet.details=t.value;return true;}
+  if(id==='rp-block'&&S.sheet&&S.sheet.type==='report'){S.sheet.block=t.checked;return true;}
+  if(id==='del-word'&&S.del){S.del.word=t.value;S.del.error='';render();return true;}
+  return false;
+}
+function submitSafety(id){
+  if(id==='age-form'){submitAge();return true;}
+  return false;
+}
+
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -3201,7 +3650,7 @@ function clickExtra(a,id,v){
 }
 function fieldExtra(e){
   var t=e.target,id=t.id,ch=e.type==='change';
-  if(fieldChecks(e))return true;
+  if(fieldChecks(e)||fieldSafety(e))return true;
   if(id==='venue-q'){S.venueQ=t.value;render();}
   else if(id.indexOf('vn-')===0&&S.venueForm){S.venueForm[id.slice(3)]=t.value;}
   else if(id==='co-active'&&S.coachForm){S.coachForm.active=t.checked;}
@@ -3221,6 +3670,7 @@ function fieldExtra(e){
   return true;
 }
 function submitExtra(id){
+  if(submitSafety(id))return true;
   if(id==='venue-form')saveVenue();
   else if(id==='coach-form')saveCoach();
   else if(id==='lesson-form')sendLesson();
@@ -4026,10 +4476,12 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
+    // 18+ only: anyone signed in who hasn't confirmed their age sees the check first (rules and mission stay readable)
+    if(needsAge()&&['about','rules','login'].indexOf(S.route)<0)html=viewAgeGate();
   }
   var act=document.activeElement,aid=act&&act.id,ss=null,se=null;
   try{if(aid&&act.selectionStart!=null){ss=act.selectionStart;se=act.selectionEnd;}}catch(e){}
@@ -4083,9 +4535,11 @@ function renderMenu(){
     item('leagues','#leagues',XI.league,'Leagues')+
     (S.uid&&CHECKS?item('checks','#checks',SHIELD,'Get checked'):'')+
     (S.isAdmin&&CHECKS?item('review','#review',SHIELD,'Review checks',reviewWaiting()):'')+
+    (S.isAdmin&&REPORTS?item('reports','#reports',RI.flag,'Reports',reportsOpen()):'')+
     (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
     '<span class="menu-sep" role="separator"></span>'+
     item('about','#about',MI.mission,'Our mission')+
+    item('rules','#rules',RI.rules,'Community rules')+
     '<a class="menu-item" href="mailto:benjibajout@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a>'+
     '</nav></div>';
   var was=root.innerHTML!=='';
@@ -4136,9 +4590,10 @@ function renderSide(){
   var el=document.getElementById('side-extra');if(!el)return;
   var mine=S.myClubs.filter(function(m){return m.club;}).slice(0,5);
   var nl=lessonsNew();
-  var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission]].map(function(x){
+  var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission],['rules','rules','Community rules',RI.rules]].map(function(x){
       var on=S.route===x[0]||S.route===x[1];return '<a class="side-club" href="#'+x[0]+'"'+(on?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+x[3]+'</span><span>'+x[2]+'</span></a>';}).join('')+
     (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+
+    (S.isAdmin&&REPORTS?'<a class="side-club" href="#reports"'+(S.route==='reports'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+RI.flag+'</span><span>Reports'+(reportsOpen()?' · '+reportsOpen():'')+'</span></a>':'')+
     (S.isAdmin&&CHECKS?'<a class="side-club" href="#review"'+(S.route==='review'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SHIELD+'</span><span>Review checks'+(reviewWaiting()?' · '+reviewWaiting():'')+'</span></a>':'')+'</div>'+
     '<div class="side-clubs">'+(mine.length?'<div class="side-label">Your clubs</div>'+mine.map(function(m){var c=normClub(m.club);
       return '<a class="side-club" href="#c-'+esc(c.id)+'"'+(S.route==='club'&&S.clubId===c.id?' aria-current="page"':'')+'>'+clubLogo(c,28)+'<span>'+esc(c.name)+'</span></a>';}).join(''):'')+
@@ -4177,9 +4632,11 @@ function renderSheet(){
       '<p class="meta">Both include the address and a reminder 1 hour before.</p><div class="sheet-foot"><button type="button" class="btn btn-line" data-act="sheet-close">Cancel</button></div>';
   }
   else if(S.sheet.type==='post'){
-    var po=findPost(S.sheet.id);if(!po||!canModerate(po)){S.sheet=null;root.innerHTML='';return;}
-    body='<div class="sheet-head"><h2 id="sheet-title">Post options</h2></div><div class="sheet-menu"><button type="button" class="btn btn-danger" data-act="post-del" data-id="'+esc(po.id)+'">Delete post</button></div>'+
+    var po=findPost(S.sheet.id);if(!po||!S.uid){S.sheet=null;root.innerHTML='';return;}
+    body='<div class="sheet-head"><h2 id="sheet-title">Post options</h2></div><div class="sheet-menu">'+(canModerate(po)?'<button type="button" class="btn btn-danger" data-act="post-del" data-id="'+esc(po.id)+'">Delete post</button>':'')+(po.authorId!==S.uid?'<button type="button" class="btn btn-line" data-act="report" data-v="post" data-id="'+esc(po.id)+'">'+RI.flag+'Report post</button>':'')+'</div>'+
       '<div class="sheet-foot"><button type="button" class="btn btn-line" data-act="sheet-close">Cancel</button></div>';
+  } else if(S.sheet.type==='report'||S.sheet.type==='block'){
+    body=safetySheet(S.sheet);
   } else if(S.sheet.type==='photo'){
     var ph=findPost(S.sheet.id);if(!ph||!ph.photos.length){S.sheet=null;root.innerHTML='';return;}
     var pi=Math.min(S.sheet.i,ph.photos.length-1);
@@ -4191,7 +4648,10 @@ function renderSheet(){
     if(S.sheetEnter){S.sheetEnter=false;var cb=root.querySelector('.lb-close');if(cb)try{cb.focus({preventScroll:true});}catch(e){}}
     return;
   }
+  var sAct=document.activeElement,sId=sAct&&root.contains(sAct)?sAct.id:'',sS=null,sE=null,sOld=root.querySelector('.sheet'),sTop=sOld?sOld.scrollTop:0;
+  try{if(sId&&sAct.selectionStart!=null){sS=sAct.selectionStart;sE=sAct.selectionEnd;}}catch(e){}
   root.innerHTML='<div class="sheet-back'+(S.sheetEnter?' enter':'')+'" data-act="sheet-close"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title"><div class="grab" aria-hidden="true"></div>'+body+'</div></div>';
+  if(!S.sheetEnter){var sNew=root.querySelector('.sheet');if(sNew)sNew.scrollTop=sTop;if(sId){var sEl=document.getElementById(sId);if(sEl)try{sEl.focus({preventScroll:true});if(sS!=null)sEl.setSelectionRange(sS,sE);}catch(e){}}}
   if(S.sheetEnter){S.sheetEnter=false;var first=root.querySelector('.sheet button, .sheet a');if(first)try{first.focus({preventScroll:true});}catch(e){}}
 }
 function openSheet(s){S.sheet=s;S.sheetEnter=true;render();}
@@ -4271,8 +4731,9 @@ function loadMine(){
 }
 function loadProfile(){
   if(!S.uid){S.profile=null;S.pf=null;return Promise.resolve();}
-  if(S.isAdmin==null&&typeof sb.rpc==='function')sb.rpc('am_app_admin').then(function(a){S.isAdmin=!a.error&&a.data===true;if(S.isAdmin){render();if(CHECKS)loadReview().then(render);}},function(){S.isAdmin=false;});
+  if(S.isAdmin==null&&typeof sb.rpc==='function')sb.rpc('am_app_admin').then(function(a){S.isAdmin=!a.error&&a.data===true;if(S.isAdmin){render();if(CHECKS)loadReview().then(render);if(REPORTS)loadReports().then(render);}},function(){S.isAdmin=false;});
   if(CHECKS)loadMyChecks();
+  probeReports();
   return sb.from('profiles').select('*').eq('id',S.uid).maybeSingle().then(function(r){
     S.profile=r.data||null;
     if(!S.pfDirty){var p=S.profile||{};S.pf={display_name:p.display_name||'',suburb:p.suburb||'',state:p.state||'',postcode:p.postcode||'',alertKm:KM_OPTIONS.indexOf(p.alert_km)>=0?p.alert_km:10,bio:p.bio||'',level:p.level||'All levels',sports:(p.sports||[]).slice(),duprId:p.dupr_id||'',duprDoubles:p.dupr_doubles!=null?String(Number(p.dupr_doubles)):'',duprSingles:p.dupr_singles!=null?String(Number(p.dupr_singles)):''};}
@@ -4626,7 +5087,7 @@ function route(){
     if(!S.league||S.league.id!==rest){S.league=null;S.leagueEntries=[];S.leagueMatches=[];S.leagueState='loading';}
     S.route='league';S.leagueId=rest;
   } else {
-    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about'].indexOf(h)>=0?h:'discover';
+    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports'].indexOf(h)>=0?h:'discover';
   }
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
@@ -4945,11 +5406,14 @@ function pwSignUp(){
   var L=S.login;L.error='';
   if(!emailOk(L.email)){L.error='Enter the email address you use every day.';render();return;}
   if(String(L.password).length<8){L.error='Choose a password of at least 8 characters.';render();return;}
+  var dob=L.dob||{},age=ageFrom(dob.d,dob.m,dob.y);
+  if(age==null){L.error='Enter your date of birth. For example 07 / 03 / 1990.';render();return;}
+  if(age<ADULT){setAgeBlock();L.dob={d:'',m:'',y:''};L.password='';render();return;}
   L.busy=true;render();
-  sb.auth.signUp({email:L.email.trim(),password:L.password,options:{emailRedirectTo:location.origin+location.pathname}}).then(function(r){
+  sb.auth.signUp({email:L.email.trim(),password:L.password,options:{emailRedirectTo:location.origin+location.pathname,data:{adult_confirmed_at:new Date().toISOString()}}}).then(function(r){
     L.busy=false;
     if(r.error){L.error=pwMsg(r.error);render();return;}
-    L.password='';
+    L.password='';L.dob={d:'',m:'',y:''};
     if(r.data&&r.data.session)return;
     var u=r.data&&r.data.user;
     if(u&&Array.isArray(u.identities)&&!u.identities.length){L.step='choose';L.mode='password';L.error='There’s already an account with that email. Sign in, or tap Forgot password to set a password.';render();return;}
@@ -5185,7 +5649,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.reports=null;S.del=null;S.age=null;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
