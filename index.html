@@ -1267,6 +1267,26 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .stats-table tr.now th,.stats-table tr.now td{font-weight:700;background:var(--brand-soft)}
 .day.soon small{color:var(--accent-text)}
 .day.soon[aria-pressed="true"] small{color:inherit}
+
+/* Retention: play again, streaks, regulars */
+.again-list{gap:8px}
+.again{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px 18px 18px 6px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+.again-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);flex:none}
+.again .gbody{min-width:0;display:flex;flex-direction:column;gap:1px}
+.again small{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text);font-weight:700}
+.again a{color:var(--ink);text-decoration:none}
+.again b{font-size:16px;line-height:1.25}
+.again .meta{overflow:hidden;text-overflow:ellipsis}
+.again .btn{flex:none}
+.streak{display:inline-flex;align-items:center;gap:6px;margin:6px 0 0;padding:5px 12px 5px 9px;border-radius:999px;background:var(--sun-soft,var(--accent-soft));color:var(--ink);font-size:13.5px;width:max-content;max-width:100%}
+.streak svg{color:var(--accent-text);flex:none}
+.streak-card{display:flex;flex-wrap:wrap;width:auto;border-radius:16px;padding:10px 14px;gap:6px 8px;font-size:15px}
+.streak-card .meta{flex-basis:100%;padding-left:22px}
+.regulars{display:flex;align-items:center;gap:10px;margin:0;font-size:14px;color:var(--muted)}
+.regulars b{color:var(--ink)}
+.reg-faces{display:flex;flex:none}
+.reg-faces > *{margin-left:-8px;border:2px solid var(--surface);border-radius:50%}
+.reg-faces > *:first-child{margin-left:0}
 </style>
 </head>
 <body>
@@ -1669,6 +1689,7 @@ function viewDiscover(){
   if(S.loadError)h+='<p class="notice">'+esc(S.loadError)+'</p>';
   if(!S.uid&&S.authReady)h+=missionStrip();
   if(nextG)h+='<a class="next-game only-phone" href="#g-'+esc(nextG.id)+'"><span class="gbody"><small>Your next game</small><b>'+esc(nextG.title)+'</b><span class="meta">'+esc(fmtDay(nextG.start)+', '+fmtTime(nextG.start)+' · '+place(nextG))+'</span></span><span class="ng-go" aria-hidden="true">›</span></a>';
+  if(S.uid)h+=playAgainHTML(1);
   // Phones and tablets: the first One Short alert sits at the top. Desktop lists them all in the right rail.
   if(alertG){
     var isNew=S.alertShown!==alertG.id;S.alertShown=alertG.id;
@@ -1739,7 +1760,7 @@ function viewGame(){
     '<p class="meta">'+(past?'<b>'+count+' of '+g.capacity+'</b> played':left>0?'<b>Looking for '+left+' more '+(left===1?'player':'players')+'</b> · '+count+' of '+g.capacity+' going'
       :'<b>Game is full</b> · '+(S.waiting.length?S.waiting.length+' on the waitlist':'waitlist open'))+'</p></div>';
   var cta;
-  if(past)cta='<span class="pill">This game has finished</span>';
+  if(past){var nxt=(mine||isHost)?nextAfter(g):null;cta='<span class="pill">This game has finished</span>'+(nxt&&!inGame(nxt)?'<a class="btn btn-accent" href="#g-'+esc(nxt.id)+'">'+AGAIN_ICON+'Next one: '+esc(shortDow(nxt.start)+' '+fmtTime(nxt.start))+'</a>':'');}
   else if(isHost)cta='<span class="pill">You’re hosting</span>';
   else if(mine)cta='<span class="pill">You’re in</span><button type="button" class="btn btn-line" data-act="leave" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>Leave game</button>';
   else if(left===0&&wPos)cta='<span class="pill" title="Your place on the waitlist">#'+wPos+' in line</span><button type="button" class="btn btn-line" data-act="wait-leave" data-id="'+esc(g.id)+'" aria-label="Leave the waitlist"'+(S.busy?' disabled':'')+'>Leave</button>';
@@ -1761,7 +1782,8 @@ function viewGame(){
       :'<button type="button" class="btn btn-danger self-start" data-act="del">Delete game</button>';
     h+='</section>';
   }
-  h+='<section class="stack-sm"><h2>Who’s going</h2><div class="people">';
+  if(S.uid)ensureMates();
+  h+='<section class="stack-sm"><h2>Who’s going</h2>'+regularsHTML(S.players.concat(S.waiting))+'<div class="people">';
   S.players.forEach(function(p){var nm=p.user_id===S.uid?'You':((p.profile&&p.profile.display_name)||'Player');
     h+='<a class="person" href="#p-'+esc(p.user_id)+'">'+avatar(p.user_id,p.profile&&p.profile.display_name,p.profile&&p.profile.avatar_url,50)+'<span>'+esc(nm)+(p.user_id===g.hostId?' (host)':'')+'</span></a>';});
   for(var k=0;k<Math.min(left,4);k++)h+='<div class="person"><span class="seat">Open</span><span>&nbsp;</span></div>';
@@ -1916,6 +1938,7 @@ function viewMine(){
     return '<section class="list"><div class="list-head"><h2>'+title+'</h2><span class="meta">'+list.length+'</span></div>'+(list.length?list.map(function(g){return cardHTML(g);}).join(''):'<p class="meta">'+emptyText+'</p>')+'</section>';
   }
   var upcomingMine=myUpcoming();
+  h+=streakHTML('mine')+playAgainHTML(3);
   h+='<div class="list-head mine-tools">'+viewToggle('mview',S.mview)+(upcomingMine.length?'<button type="button" class="btn btn-line btn-sm" data-act="ics-all">'+I.cal+'Add all to calendar</button>':'')+'</div>';
   if(S.mview==='cal'){
     var all={},pool=[];S.mine.concat(S.myWait||[]).forEach(function(g){if(!all[g.id]){all[g.id]=1;pool.push(g);}});
@@ -1938,7 +1961,7 @@ function viewProfile(){
   var pic=S.profile&&S.profile.avatar_url,pbusy=S.photoBusy==='me';
   var h='<section class="profile-head"><label class="photo-pick'+(pbusy?' busy':'')+'" for="pf-photo" aria-label="'+(pic?'Change your photo':'Add a profile photo')+'">'+avatar(S.uid,pf.display_name,pic,76)+'<span class="cam">'+I.photo+'</span></label>'+
     '<input id="pf-photo" class="sr" type="file" accept="image/*"'+(pbusy?' disabled':'')+'>'+
-    '<div><h1>'+esc(pf.display_name||'Your profile')+'</h1>'+(S.profile&&S.profile.founding?foundingBadge():'')+'<p class="meta">Signed in with '+prov+' · <button type="button" class="link-btn" data-act="set-password">Set a password</button></p>'+
+    '<div><h1>'+esc(pf.display_name||'Your profile')+'</h1>'+(S.profile&&S.profile.founding?foundingBadge():'')+streakHTML('profile')+'<p class="meta">Signed in with '+prov+' · <button type="button" class="link-btn" data-act="set-password">Set a password</button></p>'+
     '<div class="photo-actions"><label class="btn btn-line btn-sm" for="pf-photo">'+(pbusy?'Uploading…':pic?'Change photo':'Add photo')+'</label>'+
     (pic&&!pbusy?'<button type="button" class="btn btn-line btn-sm" data-act="pf-photo-remove">Remove</button>':'')+'</div></div></section>';
   h+='<form class="stack" id="profile-form">'+
@@ -3751,7 +3774,7 @@ function loadStats(){
   if(!S.isAdmin)return Promise.resolve();
   var from=weekStart(new Date(Date.now()-7*7*86400000));
   return Promise.all([
-    sb.from('games').select('id, host_id, series_id, starts_at, duration_min, capacity, created_at, game_players(count)').gte('starts_at',from.toISOString()).order('starts_at').limit(3000),
+    sb.from('games').select('id, host_id, series_id, starts_at, duration_min, capacity, created_at, game_players(user_id)').gte('starts_at',from.toISOString()).order('starts_at').limit(3000),
     sb.from('profiles').select('id, created_at').gte('created_at',from.toISOString()).limit(5000),
     sb.from('profiles').select('id',{count:'exact',head:true}),
     sb.from('profiles').select('id',{count:'exact',head:true}).eq('founding',true)
@@ -3766,7 +3789,7 @@ function statsWeeks(st){
   function wk(t){for(var i=0;i<weeks.length;i++)if(t>=weeks[i].start.getTime()&&t<weeks[i].end.getTime())return weeks[i];return null;}
   st.games.forEach(function(g){
     var t=new Date(g.starts_at).getTime(),w=wk(t);if(!w)return;
-    var cap=Math.max(1,Number(g.capacity)||1),n=(g.game_players&&g.game_players[0]&&g.game_players[0].count)||0;
+    var cap=Math.max(1,Number(g.capacity)||1),gp=Array.isArray(g.game_players)?g.game_players:[],n=gp.length&&gp[0]&&gp[0].user_id!==undefined?gp.length:((gp[0]&&gp[0].count)||0);
     w.games++;w.hosts[g.host_id]=1;
     if(t<=now){w.played++;w.filled+=Math.min(n,cap);w.offered+=cap;}
   });
@@ -3788,7 +3811,7 @@ function viewStats(){
   if(!S.isAdmin)return h+'<div class="empty"><strong>Only the Bounce Up team can see this</strong></div>';
   if(S.stats==null){if(!S.statsLoading){S.statsLoading=true;loadStats().then(function(){S.statsLoading=false;render();});}return h+skeletons(2);}
   if(S.stats.error)return h+'<div class="empty"><strong>Couldn’t load the numbers</strong><p>Check your connection and try again.</p><button type="button" class="btn btn-line" data-act="stats-refresh">Try again</button></div>';
-  var st=S.stats,weeks=statsWeeks(st),cur=weeks[7],prev=weeks[6],wh=weeklyHosts(st);
+  var st=S.stats,weeks=statsWeeks(st),cur=weeks[7],prev=weeks[6],wh=weeklyHosts(st),rc=retentionByWeek(st,weeks);
   var fullW=cur.played?cur:prev,fullNote=cur.played?'Games played so far this week':'Last week (none played yet this week)';
   h+='<section class="card checkpoint"><div class="list-head"><h2>15 November checkpoint</h2><span class="meta">'+wh+' of '+CHECKPOINT_GOAL+'</span></div>'+
     '<div class="meter" role="img" aria-label="'+wh+' of '+CHECKPOINT_GOAL+' organisers with a weekly game"><i style="width:'+Math.min(100,Math.round(100*wh/CHECKPOINT_GOAL))+'%"></i></div>'+
@@ -3798,16 +3821,120 @@ function viewStats(){
     statTile('How full',fullW.full==null?'–':fullW.full+'%',fullNote+'. Target 70%','')+
     statTile('Active organisers',String(cur.organisers),'Hosting a game this week',signed(cur.organisers-prev.organisers))+
     statTile('New players',String(cur.joined),st.players+' players in total',signed(cur.joined-prev.joined))+
+    statTile('Still playing after 4 weeks',rc?rc.ret+'%':'–',rc?rc.kept+' of '+rc.firsts+' who started the week of '+rc.start.getDate()+' '+MON[rc.start.getMonth()]:'Shows once players have 4 weeks of games','')+
     statTile('Paid spots and money in','–','Starts in January, once payments go live','')+
     '</div>';
-  h+='<section class="stack-sm"><div class="list-head"><h2>Last 8 weeks</h2><button type="button" class="linkish" data-act="stats-refresh">Refresh</button></div><div class="table-wrap"><table class="stats-table"><thead><tr><th scope="col">Week of</th><th scope="col">Games</th><th scope="col">How full</th><th scope="col">Organisers</th><th scope="col">New players</th></tr></thead><tbody>'+
-    weeks.slice().reverse().map(function(w,i){return '<tr'+(i===0?' class="now"':'')+'><th scope="row">'+esc(w.start.getDate()+' '+MON[w.start.getMonth()])+(i===0?' (this week)':'')+'</th><td>'+w.games+'</td><td>'+(w.full==null?'–':w.full+'%')+'</td><td>'+w.organisers+'</td><td>'+w.joined+'</td></tr>';}).join('')+
-    '</tbody></table></div><p class="meta">How full = spots taken ÷ spots offered, for games already played. Updated '+esc(fmtTime(st.at))+'.</p></section>';
+  h+='<section class="stack-sm"><div class="list-head"><h2>Last 8 weeks</h2><button type="button" class="linkish" data-act="stats-refresh">Refresh</button></div><div class="table-wrap"><table class="stats-table"><thead><tr><th scope="col">Week of</th><th scope="col">Games</th><th scope="col">How full</th><th scope="col">Organisers</th><th scope="col">New players</th><th scope="col">First game</th><th scope="col">Back in week 4</th></tr></thead><tbody>'+
+    weeks.slice().reverse().map(function(w,i){return '<tr'+(i===0?' class="now"':'')+'><th scope="row">'+esc(w.start.getDate()+' '+MON[w.start.getMonth()])+(i===0?' (this week)':'')+'</th><td>'+w.games+'</td><td>'+(w.full==null?'–':w.full+'%')+'</td><td>'+w.organisers+'</td><td>'+w.joined+'</td><td>'+w.firsts+'</td><td>'+(w.ret==null?'–':w.ret+'% ('+w.kept+')')+'</td></tr>';}).join('')+
+    '</tbody></table></div><p class="meta">How full = spots taken ÷ spots offered, for games already played. First game = players whose first game in these 8 weeks was that week; Back in week 4 = how many of them played again 4 weeks later. Updated '+esc(fmtTime(st.at))+'.</p></section>';
   return h;
 }
 function clickStats(a){
   if(a==='stats-refresh'){S.stats=null;S.statsLoading=false;render();return true;}
   return false;
+}
+
+/* ---------- Retention: play again, regulars, streaks ---------- */
+var AGAIN_ICON='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
+var FLAME='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4 0 7-2.7 7-6.6 0-3.1-2-5.4-3.6-7.2-.4 1.6-1.3 2.8-2.6 3.4.2-3.3-1.2-6.6-4.3-8.6.2 3.4-1.6 5.6-3.2 7.6C4.2 12.1 5 13.6 5 15.4 5 19.3 8 22 12 22z"/></svg>';
+function myPlayed(){
+  // Games I was in (or hosted) that have started, newest first
+  var now=Date.now();
+  return (S.mine||[]).filter(function(g){return g.start.getTime()<=now;}).sort(byStart).reverse();
+}
+/* The next game in the same weekly series, or the same host's next game at the same place and sport */
+function nextAfter(g){
+  if(!g)return null;
+  var pool=(S.games||[]).concat(S.mine||[]),best=null,limit=g.start.getTime()+16*86400000;
+  pool.forEach(function(x){
+    if(x.id===g.id||!isUpcoming(x)||x.start<=g.start)return;
+    var same=(g.seriesId&&x.seriesId===g.seriesId)||(!g.seriesId&&x.hostId===g.hostId&&x.sport===g.sport&&x.venue&&x.venue===g.venue&&x.start.getTime()<=limit);
+    if(same&&(!best||x.start<best.start))best=x;
+  });
+  return best;
+}
+function inGame(x){return !!(S.myIds[x.id]||S.waitIds[x.id]||(S.uid&&x.hostId===S.uid));}
+function playAgainOffers(max){
+  if(!S.uid||!S.mine)return [];
+  var seen={},out=[],cut=Date.now()-21*86400000;
+  myPlayed().forEach(function(g){
+    if(out.length>=(max||3)||g.start.getTime()<cut||g.hostId===S.uid)return;
+    var nx=nextAfter(g);
+    if(nx&&!seen[nx.id]&&!inGame(nx)&&!isBlocked(nx.hostId)){seen[nx.id]=1;out.push({from:g,next:nx});}
+  });
+  return out;
+}
+function againCard(o){
+  var g=o.next,left=spotsLeft(g);
+  return '<div class="again"><span class="again-ico" aria-hidden="true">'+AGAIN_ICON+'</span><div class="gbody"><small>Play again</small><a href="#g-'+esc(g.id)+'"><b>'+esc(g.title)+'</b></a>'+
+    '<span class="meta">'+esc(fmtDay(g.start)+', '+fmtTime(g.start)+' · '+place(g))+(left>0?' · '+left+(left===1?' spot left':' spots left'):' · full, waitlist open')+'</span></div>'+
+    '<button type="button" class="btn btn-accent btn-sm" data-act="'+(left>0?'join':'wait-join')+'" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(left>0?'I’m in':'Waitlist')+'</button></div>';
+}
+function playAgainHTML(max){
+  var offers=playAgainOffers(max);if(!offers.length)return '';
+  return '<section class="stack-sm again-list" aria-label="Play again">'+offers.map(againCard).join('')+'</section>';
+}
+
+/* Weeks in a row with at least one game played */
+function weekKey(d){var w=weekStart(d);return w.getFullYear()+'-'+pad(w.getMonth()+1)+'-'+pad(w.getDate());}
+function myStreak(){
+  var played=myPlayed();if(!played.length)return {weeks:0,games:0,thisWeek:false};
+  var wk={};played.forEach(function(g){wk[weekKey(g.start)]=1;});
+  var cur=weekStart(new Date()),thisWeek=!!wk[weekKey(cur)],d=new Date(cur),n=0;
+  if(!thisWeek)d.setDate(d.getDate()-7);
+  while(wk[weekKey(d)]){n++;d.setDate(d.getDate()-7);}
+  return {weeks:n,games:played.length,thisWeek:thisWeek};
+}
+function streakHTML(where){
+  var s=myStreak();if(!s.games)return '';
+  if(s.weeks>=2)return '<p class="streak'+(where==='mine'?' streak-card':'')+'">'+FLAME+'<b>'+s.weeks+' weeks in a row</b>'+(where==='mine'?'<span class="meta">'+(s.thisWeek?'You’ve played this week. See you next week!':'Play this week to keep it going.')+'</span>':'')+'</p>';
+  if(where==='profile')return '<p class="streak">'+FLAME+'<b>'+s.games+(s.games===1?' game played':' games played')+'</b></p>';
+  return '';
+}
+
+/* People you've played with before */
+function ensureMates(){
+  if(!S.uid||!S.mine)return;
+  var ids=myPlayed().slice(0,30).map(function(g){return g.id;}),key=ids.join(',');
+  if(S.matesKey===key||S.matesLoading)return;
+  if(!ids.length){S.mates={};S.matesKey=key;return;}
+  S.matesLoading=true;
+  sb.from('game_players').select('user_id, game_id, profile:profiles(id, display_name, avatar_url)').in('game_id',ids).then(function(r){
+    S.matesLoading=false;S.matesKey=key;var m={};
+    if(!r.error)(r.data||[]).forEach(function(p){if(!p.user_id||p.user_id===S.uid||isBlocked(p.user_id))return;var x=m[p.user_id]||(m[p.user_id]={n:0,profile:p.profile||null,games:{}});if(!x.games[p.game_id]){x.games[p.game_id]=1;x.n++;}});
+    S.mates=m;render();
+  },function(){S.matesLoading=false;});
+}
+function firstName(p){return String((p&&p.display_name)||'A player').split(' ')[0];}
+function regularsHTML(people){
+  if(!S.uid||!S.mates)return '';
+  var seen={},list=[];
+  people.forEach(function(p){var m=S.mates[p.user_id];if(m&&!seen[p.user_id]){seen[p.user_id]=1;list.push({id:p.user_id,profile:p.profile||m.profile,n:m.n});}});
+  if(!list.length)return '';
+  list.sort(function(a,b){return b.n-a.n;});
+  var names=list.slice(0,2).map(function(x){return '<b>'+esc(firstName(x.profile))+'</b>';}),more=list.length-names.length;
+  var text=names.join(names.length===2&&!more?' and ':', ')+(more?' and '+more+(more===1?' other':' others'):'');
+  return '<p class="regulars"><span class="reg-faces" aria-hidden="true">'+list.slice(0,3).map(function(x){return avatar(x.id,x.profile&&x.profile.display_name,x.profile&&x.profile.avatar_url,26);}).join('')+'</span><span>'+text+(list.length===1?' has':' have')+' played with you before</span></p>';
+}
+
+/* Admin numbers: week-4 retention (players whose first game in these 8 weeks was in week W, still playing in week W+4) */
+function retentionByWeek(st,weeks){
+  var now=Date.now(),first={},played={};
+  st.games.forEach(function(g){
+    var t=new Date(g.starts_at).getTime();if(t>now)return;
+    var wi=-1;for(var i=0;i<weeks.length;i++)if(t>=weeks[i].start.getTime()&&t<weeks[i].end.getTime()){wi=i;break;}
+    if(wi<0)return;
+    (Array.isArray(g.game_players)?g.game_players:[]).forEach(function(p){
+      if(!p||!p.user_id)return;
+      (played[p.user_id]=played[p.user_id]||{})[wi]=1;
+      if(first[p.user_id]==null||wi<first[p.user_id])first[p.user_id]=wi;
+    });
+  });
+  weeks.forEach(function(w){w.firsts=0;w.kept=0;w.ret=null;});
+  Object.keys(first).forEach(function(u){var w=weeks[first[u]];w.firsts++;if(first[u]+4<=6&&played[u][first[u]+4])w.kept++;});
+  weeks.forEach(function(w,i){if(i+4<=6&&w.firsts)w.ret=Math.round(100*w.kept/w.firsts);});
+  for(var i=2;i>=0;i--)if(weeks[i].ret!=null)return weeks[i];
+  return null;
 }
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
@@ -5858,7 +5985,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.mates=null;S.matesKey=null;S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
