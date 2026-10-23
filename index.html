@@ -13,9 +13,21 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bounce Up">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta property="og:title" content="Bounce Up: find a game">
-<meta property="og:description" content="Join pickup games, fill a spot when a team is one short, or host your own.">
-<meta property="og:image" content="icon-512.png">
+<link rel="canonical" href="https://bounceup.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bounce Up">
+<meta property="og:url" content="https://bounceup.app/">
+<meta property="og:locale" content="en_AU">
+<meta property="og:title" content="Bounce Up: find a game near you">
+<meta property="og:description" content="Join pickup games, fill a spot when a team is one short, or host your own. Free for players and organisers.">
+<meta property="og:image" content="https://bounceup.app/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bounce Up. One player short? Find a game near you, tap I’m in and play.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bounce Up: find a game near you">
+<meta name="twitter:description" content="Join pickup games, fill a spot when a team is one short, or host your own.">
+<meta name="twitter:image" content="https://bounceup.app/share.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Figtree:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@500&family=Unbounded:wght@800&display=swap">
@@ -1214,6 +1226,25 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .help-lines a{font-weight:700;color:var(--brand-text)}
 .rules-foot{margin:0}
 @media (prefers-reduced-motion:reduce){.rule{animation:none}}
+
+/* First-time welcome */
+.wel{display:grid;place-items:center;padding:6px 0 18px}
+.wel-card{width:100%;max-width:520px;background:var(--surface);border:1px solid var(--line);border-radius:28px 28px 28px 10px;overflow:hidden;box-shadow:var(--shadow)}
+.wel-band{background:var(--hero-bg);max-height:170px;overflow:hidden;display:flex;align-items:flex-end}
+.wel-band .wel-art{height:auto;min-height:0;aspect-ratio:400/150}
+.wel-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.wel-steps{display:flex;align-items:center;gap:6px}
+.wel-steps i{width:22px;height:6px;border-radius:99px;background:var(--line-strong);transition:background .2s,width .2s}
+.wel-steps i.done{background:var(--brand)}
+.wel-steps i.on{background:var(--accent);width:34px}
+.wel-steps span{margin-left:6px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wel h1{font-size:clamp(28px,7vw,36px);line-height:1.04;letter-spacing:-.02em;font-variation-settings:"SOFT" 100,"WONK" 1}
+.wel-lead{margin:0;color:var(--muted);line-height:1.55}
+.wel-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px;margin-top:4px}
+.wel-skip{margin:0;text-align:center}
+.wel-skip .link-btn{color:var(--muted)}
+.wel-ok{display:flex;align-items:center;gap:8px;margin:0;font-weight:700;color:var(--brand-text)}
+.wel-ok svg{width:20px;height:20px}
 </style>
 </head>
 <body>
@@ -3604,9 +3635,90 @@ function submitSafety(id){
   return false;
 }
 
+/* ---------- First-time welcome: name and sports, suburb, alerts ---------- */
+var WELCOME_ROUTES=['discover','mine','feed','clubs','inbox'];
+function profileDone(){var p=S.profile;return !!(p&&p.display_name&&p.suburb&&p.sports&&p.sports.length);}
+function needsWelcome(){
+  if(!S.uid||!S.profile||!S.pf||needsAge()||WELCOME_ROUTES.indexOf(S.route)<0)return false;
+  if(S.wel)return true;
+  return !S.welDone&&!userMeta().welcomed_at&&!profileDone();
+}
+function welArt(){
+  return '<svg class="mh-art wel-art" viewBox="0 0 400 150" aria-hidden="true" preserveAspectRatio="xMidYMax slice">'+
+    '<circle class="mh-ring" cx="312" cy="58" r="64"/><circle class="mh-sun" cx="312" cy="58" r="40"/>'+
+    '<path class="mh-hill1" d="M0 112C70 88 140 86 210 100S330 112 400 88V150H0z"/><path class="mh-hill2" d="M0 132C90 116 170 116 250 126S360 134 400 122V150H0z"/>'+
+    '<path class="mh-arc" d="M40 112Q100 20 160 104Q204 50 248 100"/><circle class="mh-ball" cx="248" cy="100" r="8"/></svg>';
+}
+function viewWelcome(){
+  var W=S.wel||(S.wel={step:0,busy:false,error:''}),pf=S.pf,P=S.push,step=W.step;
+  var heads=[['Let’s get you playing','Two quick questions, then you’ll see games near you.'],
+    ['Where do you play?','We show games near you first, and ping you when a game nearby is one player short.'],
+    ['Never miss a game','Turn on notifications for One Short alerts, reminders before your games, and a ping when a waitlist spot opens.']];
+  var h='<section class="wel"><div class="wel-card"><div class="wel-band">'+welArt()+'</div><div class="wel-body">'+
+    '<div class="wel-steps" aria-label="Step '+(step+1)+' of 3">'+[0,1,2].map(function(i){return '<i class="'+(i<step?'done':i===step?'on':'')+'"></i>';}).join('')+'<span>'+(step+1)+' of 3</span></div>'+
+    '<h1>'+esc(heads[step][0])+'</h1><p class="wel-lead">'+esc(heads[step][1])+'</p>';
+  if(step===0){
+    h+='<div class="field"><label for="wl-name">Your name</label><input id="wl-name" maxlength="40" autocomplete="name" placeholder="First name and last initial" value="'+esc(pf.display_name)+'"><span class="hint">Shown to players in the games you join.</span></div>'+
+      '<div class="field"><span class="lbl" id="wl-sports-l">What do you play?</span><div class="wrap-chips" role="group" aria-labelledby="wl-sports-l">'+
+      SPORTS.map(function(s){return '<button type="button" class="chip" data-act="pfsport" data-v="'+s[0]+'" aria-pressed="'+(pf.sports.indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div><span class="hint">Pick as many as you like.</span></div>';
+  } else if(step===1){
+    h+='<div class="field"><label for="pf-suburb">Home suburb</label>'+subInput('pf',pf,'Start typing, e.g. Deanside')+'<span class="hint">Pick it from the list.</span></div>'+kmPicker(pf.alertKm);
+  } else {
+    var needHome=P.ios&&!P.standalone;
+    if(P.subscribed)h+='<p class="wel-ok">'+I.bell+'Notifications are on</p>';
+    else if(needHome)h+='<div class="howto"><b>One step first on iPhone</b><ol><li>Tap <b>Share</b> at the bottom of Safari</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b></li><li>Open Bounce Up from the new icon and turn notifications on in your profile</li></ol></div>';
+    else if(!P.supported)h+='<p class="meta">This browser can’t show notifications. Try Safari or Chrome on your phone.</p>';
+    else if(P.permission==='denied')h+='<p class="meta">Notifications are blocked. You can turn them on later in your phone’s Settings.</p>';
+    else h+='<button type="button" class="btn btn-accent" data-act="push-on"'+(P.busy?' disabled':'')+'>'+I.bell+(P.busy?'Turning on…':'Turn on notifications')+'</button>';
+  }
+  if(W.error)h+='<p class="err" role="alert">'+esc(W.error)+'</p>';
+  h+='<div class="wel-actions">'+(step>0?'<button type="button" class="btn btn-line" data-act="wel-back"'+(W.busy?' disabled':'')+'>Back</button>':'')+
+    '<button type="button" class="btn btn-brand" data-act="wel-next"'+(W.busy?' disabled':'')+'>'+(W.busy?'Saving…':step===2?'Show me games':'Next')+'</button></div>';
+  if(step===0)h+='<p class="wel-skip"><button type="button" class="link-btn" data-act="wel-skip">Skip for now</button></p>';
+  return h+'</div></div></section>';
+}
+function welSave(upd){return Object.keys(upd).length?sb.from('profiles').update(upd).eq('id',S.uid):Promise.resolve({error:null});}
+function welNext(){
+  var W=S.wel,pf=S.pf;if(!W||!pf||W.busy)return;
+  W.error='';
+  var upd={};
+  if(W.step===0){
+    if(!pf.display_name.trim()){W.error='Add your name so players know who’s coming.';render();var n=document.getElementById('wl-name');if(n)n.focus();return;}
+    upd={display_name:pf.display_name.trim().slice(0,40),sports:pf.sports.slice()};
+  } else if(W.step===1){
+    if(pf.suburb.trim()&&!subPicked(pf)){W.error='Pick your suburb from the list so we know which one you mean.';render();var si=document.getElementById('pf-suburb');if(si)si.focus();return;}
+    upd={alert_km:KM_OPTIONS.indexOf(pf.alertKm)>=0?pf.alertKm:10};
+    if(subPicked(pf)){upd.suburb=pf.suburb.trim().slice(0,50);upd.state=pf.state;upd.postcode=pf.postcode;}
+  }
+  W.busy=true;render();
+  welSave(upd).then(function(r){
+    W.busy=false;
+    if(r.error){W.error='That didn’t save. Check your connection and try again.';render();return;}
+    if(S.profile)Object.assign(S.profile,upd);
+    if(W.step<2){W.step++;render();var f=document.querySelector('.wel input');if(f&&W.step===1)try{f.focus();}catch(e){}return;}
+    S.wel=null;S.welDone=true;S.pfDirty=false;
+    saveMeta({welcomed_at:new Date().toISOString()});
+    if(S.profile&&S.profile.suburb)S.near=true;
+    celebrate();toast(S.near?'You’re all set. Here are games near you.':'You’re all set.');
+    if(location.hash!=='#discover')location.hash='discover';else render();
+    refreshAll();
+  },function(){W.busy=false;W.error='That didn’t save. Check your connection and try again.';render();});
+}
+function clickWelcome(a){
+  if(a==='wel-next'){welNext();return true;}
+  if(a==='wel-back'&&S.wel){if(S.wel.step>0)S.wel.step--;S.wel.error='';render();return true;}
+  if(a==='wel-skip'){S.wel=null;S.welDone=true;saveMeta({welcomed_at:new Date().toISOString()});render();return true;}
+  return false;
+}
+function fieldWelcome(e){
+  var t=e.target;
+  if(t.id==='wl-name'&&S.pf){S.pf.display_name=t.value;S.pfDirty=true;if(S.wel&&S.wel.error){S.wel.error='';render();}return true;}
+  return false;
+}
+
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -3650,7 +3762,7 @@ function clickExtra(a,id,v){
 }
 function fieldExtra(e){
   var t=e.target,id=t.id,ch=e.type==='change';
-  if(fieldChecks(e)||fieldSafety(e))return true;
+  if(fieldChecks(e)||fieldSafety(e)||fieldWelcome(e))return true;
   if(id==='venue-q'){S.venueQ=t.value;render();}
   else if(id.indexOf('vn-')===0&&S.venueForm){S.venueForm[id.slice(3)]=t.value;}
   else if(id==='co-active'&&S.coachForm){S.coachForm.active=t.checked;}
@@ -4482,6 +4594,7 @@ function paint(){
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
     // 18+ only: anyone signed in who hasn't confirmed their age sees the check first (rules and mission stay readable)
     if(needsAge()&&['about','rules','login'].indexOf(S.route)<0)html=viewAgeGate();
+    else if(needsWelcome())html=viewWelcome();
   }
   var act=document.activeElement,aid=act&&act.id,ss=null,se=null;
   try{if(aid&&act.selectionStart!=null){ss=act.selectionStart;se=act.selectionEnd;}}catch(e){}
@@ -5649,7 +5762,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.reports=null;S.del=null;S.age=null;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
