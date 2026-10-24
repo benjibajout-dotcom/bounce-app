@@ -1422,6 +1422,18 @@ p.meta .link-btn{min-height:0;font-weight:600}
   .poster-sheet{border-radius:0;box-shadow:none;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .poster-sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* Promote your game */
+.promo{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;max-width:640px;margin-left:auto;margin-right:auto}
+.promo h1{margin:0}
+.promo>.meta{margin:0}
+.promo-msg{display:flex;flex-direction:column;gap:10px}
+.promo-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.promo-head h2{margin:0;font-size:18px}
+.promo-head .meta{margin:2px 0 0}
+.promo-head .btn{flex:none}
+.promo-text{margin:0;padding:12px 14px;border-radius:14px;background:var(--brand-soft);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:15px}
+.poster-tools h2{margin:0}
+.poster-tools{max-width:640px;margin-left:auto;margin-right:auto}
 </style>
 </head>
 <body>
@@ -1901,7 +1913,7 @@ function viewGame(){
   else if(left===0&&wPos)cta='<span class="pill" title="Your place on the waitlist">#'+wPos+' in line</span><button type="button" class="btn btn-line" data-act="wait-leave" data-id="'+esc(g.id)+'" aria-label="Leave the waitlist"'+(S.busy?' disabled':'')+'>Leave</button>';
   else if(left===0)cta='<button type="button" class="btn btn-brand btn-wide" data-act="wait-join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join waitlist':'Sign in to join the waitlist')+'</button>';
   else cta=g.payOnline&&g.price>0?payJoinCTA(g):'<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
-  var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button>'+((isHost||S.isAdmin)&&!past?'<a class="btn btn-line" href="#poster-'+esc(g.id)+'">'+POSTER_ICON+'Poster</a>':'')+'</div>';
+  var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button>'+((isHost||S.isAdmin)&&!past?'<a class="btn btn-line" href="#poster-'+esc(g.id)+'">'+POSTER_ICON+'Promote</a>':'')+'</div>';
   if(g.payOnline&&g.price>0){if(canAct&&left>0)side+=payNoteHTML(g);if(isHost)side+=hostPaidLine(g);if(mine&&S.confirmLeave)side+=leaveConfirmHTML(g);}
   side=payConfirmHTML()+side;
   if(!past&&(mine||isHost||wPos))side+=pushNudge('game');
@@ -4312,7 +4324,7 @@ function demoYourGame(g){
     '<li><b>Post it once.</b> It repeats every week, and your regulars get a “You in?” alert.</li>'+
     '<li><b>Players tap “I’m in”.</b> No more counting replies in the group chat.</li>'+
     '<li><b>Full?</b> A waitlist forms on its own.</li>'+
-    '<li><b>A QR poster for your court,</b> ready to print from your game.</li></ul>';
+    '<li><b>A promo pack for your game:</b> a court poster and ready-made messages for your group chat and Facebook.</li></ul>';
   return h+demoNav(true,'What if someone drops out?');
 }
 function demoDropout(g,d){
@@ -4364,7 +4376,7 @@ function demoPlace(g){
     '<li>'+STAR+'<span><b>The gold Founding Organiser badge</b> on your games and your profile.</span></li>'+
     '<li>'+STAR+'<span><b>Your games at the top of Discover</b> until 31 December.</span></li>'+
     '<li>'+STAR+'<span><b>A seat in the Founding Organisers group,</b> with a first look at what’s coming and a say in what gets built.</span></li>'+
-    '<li>'+STAR+'<span><b>Set up with you, in person:</b> your game, your court poster and your first players’ phones.</span></li></ul></section>';
+    '<li>'+STAR+'<span><b>Set up with you, in person:</b> your game, your promo pack and your first players’ phones.</span></li></ul></section>';
   h+='<section class="card stack-sm"><h2>How it works for both of us</h2><p>Bounce Up is free for players and organisers, and you keep 100% of your price. From January, players pay a small booking fee on games paid in the app. Fuller games mean more for you and for us.</p></section>';
   h+='<section class="card demo-scan"><div class="demo-qr">'+qrBlock(link,'QR code to set up your game on Bounce Up')+'</div><div><h2>Set up your real game now</h2><p>Scan with your phone camera. It takes about 2 minutes.</p>'+
     '<button type="button" class="btn btn-line btn-sm" data-act="demo-copy">Copy the link</button></div></section>';
@@ -4396,6 +4408,33 @@ function qrBlock(text,label){
   if(QR.state==='error')return '<p class="meta qr-fail">Couldn’t load the QR code. Check your connection and try again.</p>';
   loadQR();return '<div class="qr-wait" role="status" aria-label="Loading QR code"></div>';
 }
+/* Promote your game: ready-made messages for the host, filled with the game's details and link */
+function capFirst(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
+function promoMessages(g){
+  var url=posterURL(g),weekly=g.weekly&&g.seriesId,tm=fmtTime(g.start);
+  var when=weekly?'every '+DOW_LONG[g.start.getDay()]+' at '+tm:fmtDay(g.start)+' at '+tm;
+  var where=[g.venue,g.suburb].filter(Boolean).join(', ')||'the courts';
+  var sport=SPORT_LABEL[g.sport]||'Sport',lvl=g.level==='All levels'?'All levels welcome':g.level+' level';
+  var price=g.price>0?dollars(g.price)+' per player':'Free';
+  var featured=g.founding&&Date.now()<FEATURED_UNTIL;
+  return [
+    {k:'switch',t:'Move your group chat across',d:'Post this once in your group chat.',
+      x:'Hi all! From this week we’re using Bounce Up for '+g.title+'. Tap “I’m in” to grab your spot: '+url+'\nCan’t make it? Tap “Leave game” so the next person gets your spot. It’s free.'},
+    {k:'weekly',t:'Weekly invite',d:'For your group chat each week.',
+      x:sport+': '+g.title+'\n'+capFirst(when)+' at '+where+'\n'+price+' · '+g.capacity+' spots · '+lvl+'\nTap “I’m in”: '+url},
+    {k:'facebook',t:'Facebook group post',d:'For local community groups. Check each group’s rules first.',
+      x:'Looking for a social '+sport.toLowerCase()+' game in '+(g.suburb||'Melbourne’s west')+'? I run '+g.title+' '+when+' at '+where+'. '+lvl+'.\n\nSpots fill up, so tap “I’m in” on Bounce Up to grab one: '+url+'\nIf it’s full, join the waitlist and you’ll get the next spot that opens.'+
+        (featured?'\n\nI’m one of Bounce Up’s Founding Organisers, so you’ll find my game near the top of the app.':'')},
+    {k:'mate',t:'Bring a mate',d:'Ask your regulars to send it to a friend.',
+      x:'Bring a mate this week! Send them this link so they can grab a spot: '+url},
+    {k:'venue',t:'Ask your venue',d:'To get your poster up at the courts.',
+      x:'Hi, I run '+g.title+' here '+when+'. Could I put a poster on your noticeboard? Players scan the QR code to join, and it helps fill your courts.'}
+  ];
+}
+function promoHTML(g){
+  return '<section class="promo no-print" aria-label="Promote your game"><h1>Promote your game</h1><p class="meta">Ready-made messages for your group chat, Facebook and venue, and a poster for the court. Every link opens '+(g.weekly&&g.seriesId?'your next game, every week.':'this game.')+'</p>'+
+    promoMessages(g).map(function(m){return '<div class="card promo-msg"><div class="promo-head"><div><h2>'+esc(m.t)+'</h2><p class="meta">'+esc(m.d)+'</p></div><button type="button" class="btn btn-line btn-sm" data-act="promo-copy" data-v="'+m.k+'" aria-label="Copy: '+esc(m.t)+'">Copy</button></div><p class="promo-text">'+esc(m.x)+'</p></div>';}).join('')+'</section>';
+}
 /* Posters: a printable A4 page for any game, with a QR code that keeps working for weekly games */
 function posterURL(g){return location.origin+location.pathname+(g.weekly&&g.seriesId?'#s-'+g.seriesId:'#g-'+g.id);}
 function viewPoster(){
@@ -4404,7 +4443,8 @@ function viewPoster(){
   if(!g)return back+'<div class="empty"><strong>This game isn’t here anymore</strong><p>The host may have deleted it.</p><a class="btn btn-accent" href="#discover">Find another game</a></div>';
   var weekly=g.weekly&&g.seriesId;
   var when=weekly?'Every '+DOW_LONG[g.start.getDay()]+', '+fmtTime(g.start):fmtDay(g.start)+', '+fmtTime(g.start);
-  var h=back+'<div class="poster-tools no-print"><p class="meta">'+(weekly?'The QR code always opens the next game in this weekly series, so one poster keeps working.':'The QR code opens this game. For a weekly game, turn on Repeats every week first so one poster works every week.')+'</p>'+
+  var host=(!!S.uid&&g.hostId===S.uid)||S.isAdmin;
+  var h=back+(host?promoHTML(g):'')+'<div class="poster-tools no-print">'+(host?'<h2>Court poster</h2>':'')+'<p class="meta">'+(weekly?'The QR code always opens the next game in this weekly series, so one poster keeps working.':'The QR code opens this game. For a weekly game, turn on Repeats every week first so one poster works every week.')+'</p>'+
     '<div class="actions"><button type="button" class="btn btn-accent" data-act="poster-print">Print or save as PDF</button><button type="button" class="btn btn-line" data-act="poster-copy">Copy the link</button></div></div>';
   h+='<div class="poster-wrap"><article class="poster-sheet" aria-label="Poster for '+esc(g.title)+'">'+
     '<div class="poster-brand"><svg class="bu-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path class="bu-u" d="M18 42 C 18 80, 82 80, 82 42" fill="none" stroke-width="16" stroke-linecap="round"/><circle class="bu-ball" cx="50" cy="22" r="15"/></svg><span class="poster-wm">bounce<span>up</span></span></div>'+
@@ -4454,6 +4494,7 @@ function clickDemo(a){
   if(a==='demo-copy'){buCopy(location.origin+location.pathname+'#host','Link copied');return true;}
   if(a==='poster-print'){window.print();return true;}
   if(a==='poster-copy'){if(S.game)buCopy(posterURL(S.game),'Link copied');return true;}
+  if(a==='promo-copy'){var pv=arguments[1];if(S.game){var pm=promoMessages(S.game).filter(function(x){return x.k===pv;})[0];if(pm)buCopy(pm.x,pm.k==='facebook'?'Copied. Paste it in the Facebook group.':pm.k==='venue'?'Copied. Send it to the venue.':'Copied. Paste it in your group chat.');}return true;}
   return false;
 }
 function fieldDemo(e){
