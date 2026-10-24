@@ -1452,6 +1452,20 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .f-slip .btn{flex:none}
 .f-soon{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;line-height:1.4}
 .founder-locked .founder-seal{background:var(--muted)}
+/* Sponsor spots */
+.sp-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--surface);border:1px dashed var(--line);color:var(--ink);text-decoration:none}
+.sp-card .gbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sp-card b{font-size:15px}
+.sp-tag{align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sp-go{flex:none;font-size:13px;font-weight:800;color:var(--brand-text)}
+.sp-logo{flex:none;border-radius:12px;object-fit:cover}
+.sp-initials{display:grid;place-items:center;color:#13261E;font-weight:800;font-size:15px}
+.sp-line{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:14px;background:var(--brand-soft);color:var(--ink);text-decoration:none;font-size:14px;line-height:1.35}
+.sp-line .sp-tag{flex:none;align-self:center}
+.sp-line .sp-text{flex:1;min-width:0}
+.sp-perks{display:flex;flex-direction:column;gap:10px}
+.sp-sample{pointer-events:none}
+.list>.sp-card{margin:2px 0}
 </style>
 </head>
 <body>
@@ -1889,6 +1903,7 @@ function viewDiscover(){
     list.forEach(function(g){
       var dk=keyOf(g.start);if(S.day==='all'&&dk!==last){h+='<div class="group-label">'+esc(fmtDay(g.start))+'</div>';last=dk;}
       h+=cardHTML(g);n++;
+      if(n===5)h+=sponsorCardHTML(S.sport&&S.sport!=='all'?S.sport:null);
       if(nearClubs.length&&n===3)h+=clubsStrip(nearClubs,'only-phone');
       if(nearClubs.length&&n===4)h+=clubsStrip(nearClubs,'not-phone only-narrow');
     });
@@ -1934,6 +1949,7 @@ function viewGame(){
   var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button>'+((isHost||S.isAdmin)&&!past?'<a class="btn btn-line" href="#poster-'+esc(g.id)+'">'+POSTER_ICON+'Promote</a>':'')+'</div>';
   if(g.payOnline&&g.price>0){if(canAct&&left>0)side+=payNoteHTML(g);if(isHost)side+=hostPaidLine(g);if(mine&&S.confirmLeave)side+=leaveConfirmHTML(g);}
   side=payConfirmHTML()+side;
+  if(mine&&!past)side+=sponsorLineHTML(g);
   if(!past&&(mine||isHost||wPos))side+=pushNudge('game');
   if(!past&&(mine||isHost||wPos))side+='<div class="cal-add-row"><button type="button" class="btn btn-line btn-sm" data-act="cal-add" data-id="'+esc(g.id)+'" aria-haspopup="dialog">'+I.cal+'Add to calendar</button><span class="meta">Get a reminder 1 hour before</span></div>';
   if(S.inviteText)side+='<div class="field invite-field"><label for="invite">Invite text (select and copy)</label><textarea class="invite" id="invite" readonly>'+esc(S.inviteText)+'</textarea></div>';
@@ -4428,6 +4444,107 @@ function qrBlock(text,label){
   if(QR.state==='error')return '<p class="meta qr-fail">Couldn’t load the QR code. Check your connection and try again.</p>';
   loadQR();return '<div class="qr-wait" role="status" aria-label="Loading QR code"></div>';
 }
+/* Sponsors: one tasteful "Sponsored" spot, hidden until a sponsor is active.
+   Reads the sponsors table once Gaël adds it; until then the list below (empty = nothing shows). */
+var SPONSORS=[];
+var SPON={state:'idle',list:[],fromDb:false,seen:{}};
+var SP_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l14-6v14L3 13z"/><path d="M7 13.5V18a2 2 0 0 0 4 0v-3"/><path d="M20 9.5v5"/></svg>';
+var PERK_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2-3-6-3-6-.5S10 8 12 8zM12 8c2-3 6-3 6-.5S14 8 12 8z"/></svg>';
+function loadSponsors(){
+  if(SPON.state!=='idle'||!sb)return;SPON.state='loading';
+  var fallback=function(){SPON.list=SPONSORS.slice();SPON.fromDb=false;SPON.state='ready';if(spActive().length)render();};
+  sb.from('sponsors').select('id, name, logo_url, link_url, offer_text, sports, suburbs, placements, starts_on, ends_on, active').eq('active',true).limit(50).then(function(r){
+    if(r&&!r.error&&Array.isArray(r.data)&&r.data.length){SPON.list=r.data;SPON.fromDb=true;SPON.state='ready';render();}
+    else fallback();
+  },fallback);
+}
+function spActive(placement){
+  var today=dayKey(0);
+  return SPON.list.filter(function(x){
+    if(!x||!x.id||!x.name||!x.link_url||x.active===false||!ID_RE.test(String(x.id)))return false;
+    if(x.starts_on&&String(x.starts_on).slice(0,10)>today)return false;
+    if(x.ends_on&&String(x.ends_on).slice(0,10)<today)return false;
+    var pl=Array.isArray(x.placements)&&x.placements.length?x.placements:['discover','joined','perks'];
+    return !placement||pl.indexOf(placement)>=0;
+  });
+}
+function spMatch(list,sport,suburb){
+  var sub=String(suburb||'').trim().toLowerCase();
+  return list.filter(function(x){
+    var sp=Array.isArray(x.sports)?x.sports:[],sbs=Array.isArray(x.suburbs)?x.suburbs.map(function(s){return String(s).trim().toLowerCase();}):[];
+    return (!sport||!sp.length||sp.indexOf(sport)>=0)&&(!sub||!sbs.length||sbs.indexOf(sub)>=0);
+  });
+}
+function spPick(list,salt){if(!list.length)return null;var d=new Date(),k=d.getFullYear()*400+d.getMonth()*32+d.getDate();return list[(k+(salt||0))%list.length];}
+function spLink(x,placement){
+  var u=String(x.link_url||'');if(!/^https:\/\//i.test(u))return '';
+  try{var url=new URL(u);url.searchParams.set('utm_source','bounceup');url.searchParams.set('utm_medium','app');url.searchParams.set('utm_campaign',placement);return url.toString();}catch(e){return '';}
+}
+function spLogo(x,size){
+  return (typeof x.logo_url==='string'&&/^https:\/\//i.test(x.logo_url))
+    ?'<img class="sp-logo" src="'+esc(x.logo_url)+'" alt="" width="'+size+'" height="'+size+'" loading="lazy" referrerpolicy="no-referrer">'
+    :'<span class="sp-logo sp-initials" aria-hidden="true" style="width:'+size+'px;height:'+size+'px;background:'+colorFor('sp-'+x.id)+'">'+esc(initials(x.name))+'</span>';
+}
+function spCount(x,placement,kind){
+  if(!SPON.fromDb||!sb||!x||!x.id)return;
+  var k=x.id+'|'+placement+'|'+kind;if(kind==='view'){if(SPON.seen[k])return;SPON.seen[k]=1;}
+  try{sb.rpc('record_sponsor_event',{p_sponsor:x.id,p_placement:placement,p_kind:kind}).then(function(){},function(){});}catch(e){}
+}
+function spCardInner(x){return spLogo(x,44)+'<span class="gbody"><span class="sp-tag">Sponsored</span><b>'+esc(x.name)+'</b><span class="meta">'+esc(x.offer_text||'')+'</span></span><span class="sp-go">See offer</span>';}
+function spLineInner(x){return '<span class="sp-tag">Sponsored</span><span class="sp-text"><b>'+esc(x.name)+'</b> · '+esc(x.offer_text||'')+'</span><span aria-hidden="true">→</span>';}
+function spAnchor(x,placement,cls,inner){
+  var href=spLink(x,placement);if(!href)return '';
+  spCount(x,placement,'view');
+  return '<a class="'+cls+'" href="'+esc(href)+'" target="_blank" rel="sponsored noopener" data-act="sp-click" data-id="'+esc(x.id)+'" data-v="'+placement+'">'+inner+'</a>';
+}
+/* Discover: one card after the fifth game */
+function sponsorCardHTML(sport){
+  if(SPON.state==='idle')loadSponsors();
+  var x=spPick(spMatch(spActive('discover'),sport,S.profile&&S.profile.suburb));
+  return x?spAnchor(x,'discover','sp-card',spCardInner(x)):'';
+}
+/* Game page: one line under the buttons once you're in */
+function sponsorLineHTML(g){
+  if(SPON.state==='idle')loadSponsors();
+  var x=spPick(spMatch(spActive('joined'),g.sport,g.suburb),1);
+  return x?spAnchor(x,'joined','sp-line',spLineInner(x)):'';
+}
+function perksOn(){return spActive('perks').length>0;}
+function viewPerks(){
+  if(SPON.state==='idle')loadSponsors();
+  var h='<section class="hello"><h1>Player perks</h1><p class="meta">Deals for Bounce Up players from local sports and wellbeing businesses. They support Bounce Up, which helps keep it free.</p></section>';
+  if(SPON.state!=='ready')return h+skeletons(2);
+  var list=spActive('perks');
+  if(!list.length)return h+'<div class="empty"><strong>No perks yet</strong><p>Deals from local businesses are coming soon.</p><a class="btn btn-accent" href="#discover">Find a game</a></div>';
+  return h+'<div class="sp-perks">'+list.map(function(x){return spAnchor(x,'perks','sp-card',spCardInner(x));}).join('')+'</div>';
+}
+/* Admin: show a business how their spots would look */
+function spPreviewState(){if(!S.spPrev)S.spPrev={name:'Paddle Shop West',offer:'Show this at the counter for 10% off paddles',sport:'pickleball'};return S.spPrev;}
+function viewSponsorPreview(){
+  var h='<section class="hello"><h1>Sponsor preview</h1><p class="meta">Show a local business how their spots would look. Type their name and their offer for players.</p></section>';
+  if(!S.isAdmin)return h+'<div class="empty"><strong>Only the Bounce Up team can see this</strong></div>';
+  var p=spPreviewState(),x={id:'preview',name:String(p.name||'').trim()||'Your business',offer_text:String(p.offer||'').trim()||'Your offer for players'};
+  h+='<section class="card stack-sm"><div class="field"><label for="spp-name">Business name</label><input id="spp-name" maxlength="60" value="'+esc(p.name)+'"></div>'+
+    '<div class="field"><label for="spp-offer">Offer for players</label><input id="spp-offer" maxlength="90" value="'+esc(p.offer)+'"></div>'+
+    '<div class="field"><label for="spp-sport">Sport</label><select id="spp-sport">'+SPORTS.map(function(s){return '<option value="'+s[0]+'"'+(p.sport===s[0]?' selected':'')+'>'+esc(s[1])+'</option>';}).join('')+'</select></div>'+
+    '<button type="button" class="btn btn-accent self-start" data-act="spp-show">Update preview</button></section>';
+  h+='<section class="stack-sm"><h2>1. In Discover, after the fifth game</h2><p class="meta">Shown to players looking for '+esc((SPORT_LABEL[p.sport]||'sport').toLowerCase())+' games near the business.</p><div class="sp-card sp-sample">'+spCardInner(x)+'</div></section>';
+  h+='<section class="stack-sm"><h2>2. Right after a player taps “I’m in”</h2><p class="meta">The happiest moment in the app, so the offer feels like a perk.</p><div class="sp-line sp-sample">'+spLineInner(x)+'</div></section>';
+  h+='<section class="stack-sm"><h2>3. On the Player perks page</h2><p class="meta">Players come here looking for deals.</p><div class="sp-card sp-sample">'+spCardInner(x)+'</div></section>';
+  h+='<p class="meta">Every spot is labelled Sponsored. One per screen at most, never in alerts or chats, and sponsors never get anyone’s personal details.</p>';
+  return h;
+}
+function clickSponsor(a,id,v){
+  if(a==='sp-click'){var x=SPON.list.filter(function(s){return String(s.id)===id;})[0];if(x)spCount(x,v,'click');return true;}
+  if(a==='spp-show'){render();return true;}
+  return false;
+}
+function fieldSponsor(e){
+  var t=e.target,id=t.id;if(!id||id.indexOf('spp-')!==0)return false;
+  var p=spPreviewState(),k=id.slice(4);if(k==='name'||k==='offer'||k==='sport')p[k]=t.value;
+  if(k==='sport'&&e.type==='change')render();
+  return true;
+}
 /* Founder tools: extra powers for Founding Organisers on their own games (regulars, win-backs, more on the way) */
 function founderOn(){return !!(S.profile&&S.profile.founding)||!!S.isAdmin;}
 function founderStats(rows,hostId){
@@ -4689,7 +4806,7 @@ function retentionByWeek(st,weeks){
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id)||clickDemo(a,v,id))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id)||clickDemo(a,v,id)||clickSponsor(a,id,v))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -5548,7 +5665,7 @@ function kmPicker(cur){
     '</div><span class="hint">Near me and One Short alerts cover games within this distance of your suburb.</span></div>';
 }
 function paint(){
-  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'||S.route==='demo'||S.route==='poster'||S.route==='series'?'':S.route==='month'?(S.monthHash==='month'?'mine':''):S.route;
+  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'||S.route==='perks'||S.route==='sponsor-preview'||S.route==='demo'||S.route==='poster'||S.route==='series'?'':S.route==='month'?(S.monthHash==='month'?'mine':''):S.route;
   document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
   // Club members land on their feed; everyone else lands on the club directory.
   var ct=document.querySelector('.tab[data-tab="clubs"]');if(ct)ct.setAttribute('href',S.myClubs.length?'#feed':'#clubs');
@@ -5559,7 +5676,7 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='demo'?viewDemo():S.route==='poster'?viewPoster():S.route==='series'?viewSeries():S.route==='month'?viewMonth():S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='perks'?viewPerks():S.route==='sponsor-preview'?viewSponsorPreview():S.route==='demo'?viewDemo():S.route==='poster'?viewPoster():S.route==='series'?viewSeries():S.route==='month'?viewMonth():S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
@@ -5619,7 +5736,7 @@ function renderMenu(){
     item('leagues','#leagues',XI.league,'Leagues')+
     (S.uid&&CHECKS?item('checks','#checks',SHIELD,'Get checked'):'')+
     (S.isAdmin&&CHECKS?item('review','#review',SHIELD,'Review checks',reviewWaiting()):'')+
-    (S.isAdmin?item('stats','#stats',STATS_ICON,'Your numbers'):'')+(S.isAdmin?item('demo','#demo',DEMO_ICON,'Organiser demo'):'')+
+    (S.isAdmin?item('stats','#stats',STATS_ICON,'Your numbers'):'')+(S.isAdmin?item('demo','#demo',DEMO_ICON,'Organiser demo'):'')+(S.isAdmin?item('sponsor-preview','#sponsor-preview',SP_ICON,'Sponsor preview'):'')+(perksOn()?item('perks','#perks',PERK_ICON,'Player perks'):'')+
     (S.isAdmin&&REPORTS?item('reports','#reports',RI.flag,'Reports',reportsOpen()):'')+
     (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
     '<span class="menu-sep" role="separator"></span>'+
@@ -5678,7 +5795,7 @@ function renderSide(){
   var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission],['rules','rules','Community rules',RI.rules]].map(function(x){
       var on=S.route===x[0]||S.route===x[1];return '<a class="side-club" href="#'+x[0]+'"'+(on?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+x[3]+'</span><span>'+x[2]+'</span></a>';}).join('')+
     (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+
-    (S.isAdmin?'<a class="side-club" href="#stats"'+(S.route==='stats'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+STATS_ICON+'</span><span>Your numbers</span></a>':'')+(S.isAdmin?'<a class="side-club" href="#demo"'+(S.route==='demo'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+DEMO_ICON+'</span><span>Organiser demo</span></a>':'')+
+    (S.isAdmin?'<a class="side-club" href="#stats"'+(S.route==='stats'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+STATS_ICON+'</span><span>Your numbers</span></a>':'')+(S.isAdmin?'<a class="side-club" href="#demo"'+(S.route==='demo'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+DEMO_ICON+'</span><span>Organiser demo</span></a>':'')+(S.isAdmin?'<a class="side-club" href="#sponsor-preview"'+(S.route==='sponsor-preview'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SP_ICON+'</span><span>Sponsor preview</span></a>':'')+(perksOn()?'<a class="side-club" href="#perks"'+(S.route==='perks'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+PERK_ICON+'</span><span>Player perks</span></a>':'')+
     (S.isAdmin&&REPORTS?'<a class="side-club" href="#reports"'+(S.route==='reports'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+RI.flag+'</span><span>Reports'+(reportsOpen()?' · '+reportsOpen():'')+'</span></a>':'')+
     (S.isAdmin&&CHECKS?'<a class="side-club" href="#review"'+(S.route==='review'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SHIELD+'</span><span>Review checks'+(reviewWaiting()?' · '+reviewWaiting():'')+'</span></a>':'')+'</div>'+
     '<div class="side-clubs">'+(mine.length?'<div class="side-label">Your clubs</div>'+mine.map(function(m){var c=normClub(m.club);
@@ -6184,7 +6301,7 @@ function route(){
   } else if(h==='demo'){
     S.route='demo';
   } else {
-    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports','stats'].indexOf(h)>=0?h:'discover';
+    S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports','stats','perks','sponsor-preview'].indexOf(h)>=0?h:'discover';
   }
   if(S.route!=='venue-new')S.venueForm=null;
   if(S.route!=='coach-edit')S.coachForm=null;
@@ -6670,7 +6787,7 @@ document.addEventListener('click',function(e){
 });
 function onField(e){
   var t=e.target,id=t.id;if(!id)return;
-  if(fieldDemo(e)||fieldAU(e)||fieldBiz(e)||fieldExtra(e))return;
+  if(fieldDemo(e)||fieldSponsor(e)||fieldAU(e)||fieldBiz(e)||fieldExtra(e))return;
   if(id==='q'){S.q=t.value;render();}
   else if(id==='hq'){
     // Header search (desktop): typing anywhere takes you to Discover with the results.
