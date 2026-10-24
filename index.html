@@ -1331,6 +1331,97 @@ p.meta .link-btn{min-height:0;font-weight:600}
   .stat,.month-notes,.month-table tr{break-inside:avoid}
   .month-notes,.month-ico,.clublogo,.avatar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* Founding Organiser demo */
+.demo{display:flex;flex-direction:column;gap:16px;max-width:640px;margin:0 auto;width:100%}
+.demo-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.demo-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent-text);font-weight:800;font-size:13px}
+.demo-pill svg{color:var(--accent);flex:none}
+.demo-dots{display:flex;gap:6px;margin-top:-6px}
+.demo-dots i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.demo-dots i.on{background:var(--accent)}
+.demo-hero{position:relative;overflow:hidden;background:var(--brand);color:var(--on-brand);border-radius:24px 24px 24px 8px;padding:22px 20px;display:flex;flex-direction:column;gap:10px}
+.demo-hero h1{margin:0;font-size:30px;line-height:1.06;color:inherit}
+.demo-hero p{margin:0;line-height:1.45}
+.demo-eyebrow{margin:0;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.demo-head h1{margin:0 0 4px;font-size:26px;line-height:1.1}
+.demo-head p{margin:0}
+.demo-card .game{pointer-events:none}
+.demo-points{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.demo-points li{padding:12px 14px;border-radius:16px;background:var(--brand-soft);line-height:1.4}
+.demo-nav{display:flex;gap:10px;flex-wrap:wrap}
+.demo-nav .btn-wide{flex:1}
+.demo-note{margin:2px 0 0;font-size:12.5px;color:var(--muted);text-align:center}
+.demo-event{margin:0;padding:12px 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);line-height:1.4;animation:demoIn .35s ease both}
+.demo-wl{display:inline-flex;align-items:center;gap:10px}
+.demo-out .avatar{opacity:.35;filter:grayscale(1)}
+.demo-out>span:last-child{text-decoration:line-through;color:var(--muted)}
+.demo-new .avatar{box-shadow:0 0 0 3px var(--accent);animation:demoPop .5s cubic-bezier(.3,1.6,.5,1) both}
+.demo-alert{animation:demoDrop .45s cubic-bezier(.2,1.2,.4,1) both}
+.demo-alert .btn{pointer-events:none}
+.demo-win{margin:0;font-family:var(--display);font-size:24px;font-weight:800;line-height:1.15;color:var(--brand-text);animation:demoIn .4s ease .25s both}
+.demo-money .demo-sum{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0 10px;border-bottom:1px solid var(--line)}
+.demo-money .demo-sum b{font-size:28px;letter-spacing:-.01em}
+.demo-money p{margin:10px 0 0;line-height:1.45}
+.demo-invite{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 20px;border-radius:24px 24px 24px 8px;background:linear-gradient(160deg,var(--accent-soft),var(--surface) 70%);border:1px solid var(--line)}
+.demo-invite h1{margin:0;font-size:32px;line-height:1.05}
+.demo-invite p{margin:0}
+.demo-invite .founding-badge{margin:4px 0 0;align-self:center}
+.demo-seal{width:64px;height:64px;border-radius:50%;background:var(--accent);color:#FFF8E6;display:grid;place-items:center;animation:demoPop .6s cubic-bezier(.3,1.6,.5,1) both}
+.demo-seal svg{width:32px;height:32px;color:#FFF8E6}
+.demo-perks{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.demo-perks li{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.demo-perks svg{flex:none;margin-top:3px;color:var(--accent)}
+.demo-scan{display:flex;gap:16px;align-items:center}
+.demo-scan h2{margin:0 0 4px}
+.demo-scan p{margin:0 0 10px}
+.demo-qr{flex:none;width:132px}
+.qr-svg{display:block;width:100%;height:auto;border-radius:10px}
+.qr-wait{width:100%;aspect-ratio:1;border-radius:10px;background:var(--line);animation:qrWait 1.2s ease-in-out infinite alternate}
+.qr-fail{margin:0}
+@keyframes demoIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes demoPop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes demoDrop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes qrWait{from{opacity:.45}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.demo *,.qr-wait{animation:none!important}}
+@media (max-width:420px){.demo-scan{flex-direction:column;align-items:flex-start}.demo-qr{width:160px}}
+
+/* Game posters (A4, prints edge to edge inside the page margins) */
+.poster-tools{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.poster-tools p{margin:0}
+.poster-tools .actions{display:flex;gap:10px;flex-wrap:wrap}
+.poster-wrap{container-type:inline-size;width:100%;max-width:620px;margin:0 auto}
+.poster-sheet{background:#F6F0DC;color:#13261E;border-radius:18px;aspect-ratio:210/297;width:100%;margin:0;padding:6cqw 6.5cqw 5cqw;display:flex;flex-direction:column;gap:2.6cqw;box-shadow:0 1px 0 var(--line),0 12px 40px rgba(19,38,30,.14);overflow:hidden;box-sizing:border-box}
+.poster-brand{display:flex;align-items:center;gap:2.2cqw}
+.poster-brand .bu-mark{width:8.5cqw;height:8.5cqw}
+.poster-brand .bu-u{stroke:#1F5C4A}
+.poster-brand .bu-ball{fill:#EE8436}
+.poster-wm{font-family:'Unbounded',var(--display);font-weight:800;font-size:6.4cqw;letter-spacing:-.045em;line-height:1;color:#13261E}
+.poster-wm span{color:#B4500F}
+.poster-eyebrow{margin:1.6cqw 0 0;display:flex;align-items:center;gap:2.4cqw;flex-wrap:wrap;font-family:var(--mono);font-size:2.9cqw;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#8A3A08}
+.poster-eyebrow .founding-badge{margin:0;font-family:var(--body);font-weight:800;letter-spacing:0;text-transform:none;font-size:2.7cqw;padding:.7cqw 2cqw .7cqw 1.6cqw;background:#F7E0A3;color:#5A3B05;border-color:transparent}
+.poster-eyebrow .founding-badge svg{width:2.8cqw;height:2.8cqw;color:#C98A12}
+.poster-title{margin:0;font-family:var(--display);font-weight:900;font-variation-settings:"SOFT" 100,"WONK" 1;font-size:10cqw;line-height:.98;letter-spacing:-.025em;color:#13261E;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.poster-title.t-m{font-size:8.4cqw}
+.poster-title.t-l{font-size:6.8cqw}
+.poster-title.t-xl{font-size:5.6cqw}
+.poster-host{margin:-.6cqw 0 0;font-size:3.5cqw;font-weight:700;color:#1F5C4A}
+.poster-facts{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:2.4cqw 4cqw}
+.poster-facts dt{font-family:var(--mono);font-size:2.4cqw;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#4E5D50}
+.poster-facts dd{margin:.7cqw 0 0;font-size:3.9cqw;font-weight:700;line-height:1.2;color:#13261E;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.poster-scan{margin-top:auto;display:flex;align-items:center;gap:5cqw;padding:4cqw;border-radius:5cqw 5cqw 5cqw 1.6cqw;background:#1F5C4A;color:#F6F0DC}
+.poster-qr{flex:none;width:34cqw;background:#FFFFFF;border-radius:2.4cqw;padding:1.1cqw;box-sizing:border-box}
+.poster-qr .qr-svg{border-radius:0}
+.poster-qr .qr-fail{color:#13261E;font-size:3cqw}
+.poster-steps{margin:0;padding-left:5.2cqw;display:flex;flex-direction:column;gap:2.2cqw;font-size:4cqw;line-height:1.2}
+.poster-steps b{color:#F7E0A3}
+.poster-foot{margin:0;font-family:var(--mono);font-size:2.6cqw;font-weight:500;letter-spacing:.06em;color:#4E5D50;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media print{
+  @page{size:A4 portrait}
+  .poster-tools{display:none!important}
+  .poster-wrap{max-width:none}
+  .poster-sheet{border-radius:0;box-shadow:none;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .poster-sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
@@ -1804,13 +1895,13 @@ function viewGame(){
     '<p class="meta">'+(past?'<b>'+count+' of '+g.capacity+'</b> played':left>0?'<b>Looking for '+left+' more '+(left===1?'player':'players')+'</b> · '+count+' of '+g.capacity+' going'
       :'<b>Game is full</b> · '+(S.waiting.length?S.waiting.length+' on the waitlist':'waitlist open'))+'</p></div>';
   var cta;
-  if(past){var nxt=(mine||isHost)?nextAfter(g):null;cta='<span class="pill">This game has finished</span>'+(nxt&&!inGame(nxt)?'<a class="btn btn-accent" href="#g-'+esc(nxt.id)+'">'+AGAIN_ICON+'Next one: '+esc(shortDow(nxt.start)+' '+fmtTime(nxt.start))+'</a>':'');}
+  if(past){var nxt=(mine||isHost||g.seriesId)?nextAfter(g):null;cta='<span class="pill">This game has finished</span>'+(nxt&&!inGame(nxt)?'<a class="btn btn-accent" href="#g-'+esc(nxt.id)+'">'+AGAIN_ICON+'Next one: '+esc(shortDow(nxt.start)+' '+fmtTime(nxt.start))+'</a>':'');}
   else if(isHost)cta='<span class="pill">You’re hosting</span>';
   else if(mine)cta='<span class="pill">You’re in</span><button type="button" class="btn btn-line" data-act="leave" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>Leave game</button>';
   else if(left===0&&wPos)cta='<span class="pill" title="Your place on the waitlist">#'+wPos+' in line</span><button type="button" class="btn btn-line" data-act="wait-leave" data-id="'+esc(g.id)+'" aria-label="Leave the waitlist"'+(S.busy?' disabled':'')+'>Leave</button>';
   else if(left===0)cta='<button type="button" class="btn btn-brand btn-wide" data-act="wait-join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'Join waitlist':'Sign in to join the waitlist')+'</button>';
   else cta=g.payOnline&&g.price>0?payJoinCTA(g):'<button type="button" class="btn btn-accent btn-wide" data-act="join" data-id="'+esc(g.id)+'"'+(S.busy?' disabled':'')+'>'+(S.uid?'I’m in · '+esc(priceLabel(g)):'Sign in to join')+'</button>';
-  var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button></div>';
+  var side='<div class="cta'+(canAct?' actionbar':'')+'">'+cta+'<button type="button" class="btn btn-line" data-act="invite" data-id="'+esc(g.id)+'">'+I.share+'Invite</button>'+((isHost||S.isAdmin)&&!past?'<a class="btn btn-line" href="#poster-'+esc(g.id)+'">'+POSTER_ICON+'Poster</a>':'')+'</div>';
   if(g.payOnline&&g.price>0){if(canAct&&left>0)side+=payNoteHTML(g);if(isHost)side+=hostPaidLine(g);if(mine&&S.confirmLeave)side+=leaveConfirmHTML(g);}
   side=payConfirmHTML()+side;
   if(!past&&(mine||isHost||wPos))side+=pushNudge('game');
@@ -3813,7 +3904,7 @@ function fieldWelcome(e){
 
 /* ---------- Admin numbers: the Monday check ---------- */
 var STATS_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
-var CHECKPOINT_GOAL=20;
+var CHECKPOINT_GOAL=10;
 function weekStart(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
 function loadStats(){
   if(!S.isAdmin)return Promise.resolve();
@@ -3867,7 +3958,7 @@ function viewStats(){
     statTile('Active organisers',String(cur.organisers),'Hosting a game this week',signed(cur.organisers-prev.organisers))+
     statTile('New players',String(cur.joined),st.players+' players in total',signed(cur.joined-prev.joined))+
     statTile('Still playing after 4 weeks',rc?rc.ret+'%':'–',rc?rc.kept+' of '+rc.firsts+' who started the week of '+rc.start.getDate()+' '+MON[rc.start.getMonth()]:'Shows once players have 4 weeks of games','')+
-    statTile('Paid spots and money in','–','Starts in January, once payments go live','')+
+    crossTile(st)+statTile('Paid spots and money in','–','Starts in January, once payments go live','')+
     '</div>';
   h+=partnerWatchHTML(st);
   h+='<section class="stack-sm"><div class="list-head"><h2>Last 8 weeks</h2><button type="button" class="linkish" data-act="stats-refresh">Refresh</button></div><div class="table-wrap"><table class="stats-table"><thead><tr><th scope="col">Week of</th><th scope="col">Games</th><th scope="col">How full</th><th scope="col">Organisers</th><th scope="col">New players</th><th scope="col">First game</th><th scope="col">Back in week 4</th></tr></thead><tbody>'+
@@ -4146,6 +4237,231 @@ function clickPartners(a,id){
   return false;
 }
 
+/* ---------- Founding Organiser demo, QR posters and weekly series links ---------- */
+var DEMO_NAMES=['Sam T','Priya S','Mia R','Josh K','Ana L','Tom B','Lea W','Raj P','Kim N','Ollie D','Zara M','Chris C','Ivy H','Luca F','Nina G','Omar A'];
+var DEMO_STEPS=['Invitation','Your game','A dropout','Your month','Founding place'];
+var DEMO_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.8l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+var POSTER_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h3v-3"/></svg>';
+function demoDefaults(){return {name:'',title:'Sunday social doubles',sport:'pickleball',day:'0',time:'09:00',venue:'Your usual courts',suburb:'Ravenhall',price:'10',cap:'8'};}
+function demoState(){if(!S.demo)S.demo={step:0,phase:0,f:demoDefaults()};return S.demo;}
+function demoNum(v,min,max,dflt){var n=Number(v);if(v===''||!isFinite(n))return dflt;return Math.min(max,Math.max(min,n));}
+function demoGame(){
+  var f=demoState().f,cap=Math.round(demoNum(f.cap,2,50,8)),price=Math.round(demoNum(f.price,0,500,10)*100)/100;
+  var day=Number(f.day);if(!(day>=0&&day<=6))day=0;
+  var tm=/^(\d{1,2}):(\d{2})/.exec(f.time||'')||[0,'9','00'];
+  var d=new Date();d.setHours(Math.min(23,Number(tm[1])),Math.min(59,Number(tm[2])),0,0);
+  var add=(day-d.getDay()+7)%7;if(add===0&&d.getTime()<Date.now())add=7;d.setDate(d.getDate()+add);
+  return {id:'demo',sport:SPORT_LABEL[f.sport]?f.sport:'pickleball',title:String(f.title||'').trim()||'Your weekly game',start:d,durationMin:90,
+    venue:String(f.venue||'').trim()||'Your usual courts',suburb:String(f.suburb||'').trim()||'Melbourne’s west',level:'All levels',price:price,capacity:cap,
+    oneShort:false,weekly:true,founding:true,count:cap-1,club:null,kind:'social',hostName:String(f.name||'').trim().slice(0,40)};
+}
+function demoFirst(n){return String(n).split(' ')[0];}
+function demoField(id,label,type,val,ph,max){
+  return '<div class="field"><label for="'+id+'">'+esc(label)+'</label><input id="'+id+'" type="'+type+'"'+(type==='number'?' inputmode="decimal" min="0"':'')+(type==='text'?' maxlength="'+max+'"':'')+(ph?' placeholder="'+esc(ph)+'"':'')+' value="'+esc(val)+'"></div>';
+}
+function demoNav(back,next){
+  return '<div class="demo-nav">'+(back?'<button type="button" class="btn btn-line" data-act="demo-step" data-v="back">Back</button>':'')+
+    (next?'<button type="button" class="btn btn-accent btn-wide" data-act="demo-step" data-v="next">'+esc(next)+'</button>':'')+'</div>';
+}
+function demoMeter(count,cap,label){
+  return '<div class="meter-row"><div class="meter" role="img" aria-label="'+count+' of '+cap+' spots filled"><i style="width:'+Math.round(100*Math.min(count,cap)/cap)+'%"></i></div><p class="meta">'+label+'</p></div>';
+}
+function demoPeopleHTML(list,open){
+  var show=list.slice(0,9),h='<div class="people demo-people">';
+  show.forEach(function(p){h+='<div class="person'+(p.out?' demo-out':'')+(p.fresh?' demo-new':'')+'">'+avatar('demo-'+p.k,p.name,null,50)+'<span>'+esc(p.name)+'</span></div>';});
+  if(list.length>show.length)h+='<div class="person"><span class="seat">+'+(list.length-show.length)+'</span><span>&nbsp;</span></div>';
+  for(var i=0;i<Math.min(open||0,3);i++)h+='<div class="person"><span class="seat">Open</span><span>&nbsp;</span></div>';
+  return h+'</div>';
+}
+function demoPlayers(n,skip){var out=[];for(var i=0;out.length<n;i++){var k=i%DEMO_NAMES.length;if(skip!=null&&k===skip&&i<DEMO_NAMES.length)continue;out.push({k:k,name:DEMO_NAMES[k]});}return out;}
+function demoBand(g){
+  return '<section class="band">'+I.court+'<div class="eyebrow">'+esc(SPORT_LABEL[g.sport])+'</div><h1>'+esc(g.title)+'</h1>'+
+    '<div class="facts"><div><span>When</span><b>'+esc('Every '+DOW_LONG[g.start.getDay()]+', '+fmtTime(g.start))+'</b></div>'+
+    '<div><span>Where</span><b>'+esc(place(g,', '))+'</b></div><div><span>Level</span><b>All levels</b></div>'+
+    '<div><span>Cost</span><b>'+esc(g.price>0?dollars(g.price)+' per player':'Free')+'</b></div></div>'+
+    '<div class="hostline">'+avatar('demo-host',g.hostName||'You',null,26)+'<span>Hosted by '+esc(g.hostName||'you')+'</span>'+foundingBadge(true)+'</div></section>';
+}
+function viewDemo(){
+  var d=demoState(),st=d.step,g=demoGame();
+  var h='<div class="demo"><div class="demo-top"><span class="demo-pill">'+STAR+'Founding Organiser preview</span><span class="meta">'+(st+1)+' of '+DEMO_STEPS.length+'</span></div>'+
+    '<div class="demo-dots" aria-hidden="true">'+DEMO_STEPS.map(function(x,i){return '<i'+(i<=st?' class="on"':'')+'></i>';}).join('')+'</div>';
+  h+=[demoInvite,demoYourGame,demoDropout,demoMonth,demoPlace][st](g,d);
+  h+='<p class="demo-note">A preview with sample players and example numbers. Nothing here is posted or saved.</p>';
+  return h+'</div>';
+}
+function demoInvite(g,d){
+  var f=d.f;
+  var h='<section class="demo-hero"><p class="demo-eyebrow">By invitation</p><h1>You’re one of the first to see this</h1>'+
+    '<p>Bounce Up opens in Melbourne’s west on 16 November. Before anyone else, we’re inviting 20 local organisers to set up first and help shape it. Here’s how your game would run.</p></section>';
+  h+='<section class="card stack-sm demo-form"><h2>Your game</h2>'+
+    demoField('dm-name','Your first name (optional)','text',f.name,'Sarah',40)+
+    demoField('dm-title','Game name','text',f.title,'Sunday social doubles',80)+
+    '<div class="row2"><div class="field"><label for="dm-sport">Sport</label><select id="dm-sport">'+SPORTS.map(function(s){return '<option value="'+s[0]+'"'+(f.sport===s[0]?' selected':'')+'>'+esc(s[1])+'</option>';}).join('')+'</select></div>'+
+    '<div class="field"><label for="dm-day">Day</label><select id="dm-day">'+DOW_LONG.map(function(x,i){return '<option value="'+i+'"'+(String(f.day)===String(i)?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div></div>'+
+    '<div class="row2">'+demoField('dm-time','Start time','time',f.time,'',5)+demoField('dm-cap','Players','number',f.cap,'8',3)+'</div>'+
+    '<div class="row2">'+demoField('dm-venue','Venue','text',f.venue,'Court, park or centre',80)+demoField('dm-suburb','Suburb','text',f.suburb,'Ravenhall',40)+'</div>'+
+    demoField('dm-price','Price per player (AUD)','number',f.price,'10',6)+'</section>';
+  return h+demoNav(false,'Show me my game');
+}
+function demoYourGame(g){
+  var h='<section class="demo-head"><h1>Here’s your game on Bounce Up</h1><p class="meta">This is how players nearby find it in Discover, with your Founding badge.</p></section>';
+  h+='<div class="demo-card">'+cardHTML(g,true)+'</div>';
+  h+=demoBand(g)+demoMeter(g.capacity-1,g.capacity,'<b>Looking for 1 more player</b> · '+(g.capacity-1)+' of '+g.capacity+' going');
+  h+='<section class="stack-sm"><h2>Who’s going</h2>'+demoPeopleHTML(demoPlayers(g.capacity-1),1)+'</section>';
+  h+='<ul class="demo-points">'+
+    '<li><b>Post it once.</b> It repeats every week, and your regulars get a “You in?” alert.</li>'+
+    '<li><b>Players tap “I’m in”.</b> No more counting replies in the group chat.</li>'+
+    '<li><b>Full?</b> A waitlist forms on its own.</li>'+
+    '<li><b>A QR poster for your court,</b> ready to print from your game.</li></ul>';
+  return h+demoNav(true,'What if someone drops out?');
+}
+function demoDropout(g,d){
+  var cap=g.capacity,ph=d.phase,list=demoPlayers(cap,1),sam=list[0],priya={k:1,name:DEMO_NAMES[1]},count=cap,label,wait=true;
+  if(ph===0)label='<b>Game is full</b> · 1 on the waitlist';
+  else if(ph===1){sam.out=true;count=cap-1;label='<b>Looking for 1 more player</b> · '+(cap-1)+' of '+cap+' going';}
+  else{list=[{k:1,name:priya.name,fresh:true}].concat(list.slice(1));wait=false;label='<b>Game is full again</b> · '+cap+' of '+cap+' going';}
+  var h='<section class="demo-head"><h1>Someone drops out</h1><p class="meta">Two hours before '+esc(g.title)+'. Watch what happens.</p></section>';
+  h+=demoMeter(count,cap,label)+'<section class="stack-sm"><h2>Who’s going</h2>'+demoPeopleHTML(list,ph===1?1:0)+'</section>';
+  if(wait)h+='<section class="stack-sm"><div class="list-head"><h2>Waitlist</h2><span class="meta">1</span></div><div class="card waitlist"><div class="member-row"><span class="wpos">1</span><span class="demo-wl">'+avatar('demo-1',priya.name,null,36)+'<span>'+esc(priya.name)+'</span></span></div></div></section>';
+  if(ph>=1)h+='<p class="demo-event">'+esc(demoFirst(sam.name))+' can’t make it and taps “Leave game”.</p>';
+  if(ph>=2)h+='<p class="demo-event">'+esc(demoFirst(priya.name))+' was first on the waitlist, so she gets the spot automatically and sees it in My games.</p>';
+  if(ph>=3)h+='<p class="meta">No waitlist? Turn on One Short and your game jumps to the top of Discover for players nearby:</p>'+
+    '<div class="ralert demo-alert"><div class="row"><span class="flag">ONE SHORT</span><span class="sub">Starts in 2 hours</span></div><b>'+esc(SPORT_LABEL[g.sport]+': '+g.title)+'</b>'+
+    '<p class="sub">'+esc(place(g,', '))+' · needs 1</p><span class="btn btn-accent btn-sm self-start">I’m in · '+esc(priceLabel(g))+'</span></div>'+
+    '<p class="demo-win">You didn’t send a single message.</p>';
+  if(ph===0)h+='<button type="button" class="btn btn-accent btn-wide" data-act="demo-drop">'+esc(demoFirst(sam.name))+' can’t make it</button>'+demoNav(true,'');
+  else if(ph<3)h+=demoNav(true,'');
+  else h+='<button type="button" class="btn btn-line self-start" data-act="demo-drop">Watch again</button>'+demoNav(true,'See your first month');
+  return h;
+}
+function demoMonthNumbers(g){
+  var cap=g.capacity,offered=4*cap,drops=Math.max(2,Math.round(offered*0.15)),refilled=drops-1,filled=offered-1-(drops-refilled);
+  return {offered:offered,refilled:refilled,filled:filled,pct:Math.round(100*filled/offered),faces:Math.max(2,Math.round(cap*0.4)),regs:Math.max(2,Math.round(cap*0.75))};
+}
+function demoMonth(g){
+  var n=demoMonthNumbers(g);
+  var h='<section class="demo-head"><h1>Your first month, in numbers</h1><p class="meta">Example numbers for a game like yours. Your real ones show in My games → Your month, ready to share with your players.</p></section>';
+  h+='<div class="stats">'+statTile('Games played','4','One every '+DOW_LONG[g.start.getDay()],'')+
+    statTile('How full',n.pct+'%',n.filled+' of '+n.offered+' spots filled','')+
+    statTile('Dropped spots refilled',String(n.refilled),'By the waitlist and One Short','')+
+    statTile('New faces',String(n.faces),'Players who found you on Bounce Up','')+
+    statTile('Regulars',String(n.regs),'Played 3 or more times','')+'</div>';
+  if(g.price>0){
+    var p=dollars(g.price);
+    h+='<section class="card demo-money"><h2>Your money</h2>'+
+      '<div class="demo-sum"><span>'+esc(p)+' × '+n.filled+' players</span><b>'+esc(dollars(n.filled*g.price))+'</b></div>'+
+      '<p><b>You keep 100% of your price.</b> Bounce Up doesn’t take a cut of it.</p>'+
+      '<p>The '+n.refilled+' refilled spots were worth <b>'+esc(dollars(n.refilled*g.price))+'</b> to you: money you’d otherwise have lost or had to chase.</p>'+
+      '<p class="meta">From January you can switch on payments in the app if you want them. Players pay when they tap “I’m in”, so there’s no chasing cash. The player pays a small booking fee on top, so your '+esc(p)+' stays '+esc(p)+'.</p></section>';
+  } else h+='<section class="card demo-money"><h2>Your money</h2><p><b>Free games stay free.</b> No cost to you or your players.</p></section>';
+  return h+demoNav(true,'See your invitation');
+}
+function demoPlace(g){
+  var link=location.origin+location.pathname+'#host';
+  var h='<section class="demo-invite"><div class="demo-seal" aria-hidden="true">'+STAR+'</div><p class="demo-eyebrow">'+esc(g.hostName?'An invitation for '+g.hostName:'Your invitation')+'</p>'+
+    '<h1>Founding Organiser</h1><p>One of 20 founding places for organisers in Melbourne’s west.</p>'+foundingBadge(false)+'</section>';
+  h+='<section class="card stack-sm"><h2>What founders get</h2><ul class="demo-perks">'+
+    '<li>'+STAR+'<span><b>The gold Founding Organiser badge</b> on your games and your profile.</span></li>'+
+    '<li>'+STAR+'<span><b>Your games at the top of Discover</b> until 31 December.</span></li>'+
+    '<li>'+STAR+'<span><b>A seat in the Founding Organisers group,</b> with a first look at what’s coming and a say in what gets built.</span></li>'+
+    '<li>'+STAR+'<span><b>Set up with you, in person:</b> your game, your court poster and your first players’ phones.</span></li></ul></section>';
+  h+='<section class="card stack-sm"><h2>How it works for both of us</h2><p>Bounce Up is free for players and organisers, and you keep 100% of your price. From January, players pay a small booking fee on games paid in the app. Fuller games mean more for you and for us.</p></section>';
+  h+='<section class="card demo-scan"><div class="demo-qr">'+qrBlock(link,'QR code to set up your game on Bounce Up')+'</div><div><h2>Set up your real game now</h2><p>Scan with your phone camera. It takes about 2 minutes.</p>'+
+    '<button type="button" class="btn btn-line btn-sm" data-act="demo-copy">Copy the link</button></div></section>';
+  return h+'<div class="demo-nav"><button type="button" class="btn btn-line" data-act="demo-step" data-v="back">Back</button><button type="button" class="btn btn-line" data-act="demo-reset">Start again</button></div>';
+}
+function demoStop(d){if(!d)return;clearTimeout(d.t1);clearTimeout(d.t2);}
+function buCopy(t,msg){
+  try{navigator.clipboard.writeText(t).then(function(){toast(msg);},function(){toast(t);});}catch(e){toast(t);}
+}
+/* QR codes: the library loads only when a QR is first shown */
+var QR_SRC='https://cdn.jsdelivr.net/npm/qrcode-generator@2.0.4/dist/qrcode.js',QR={state:'idle',cache:{}};
+function loadQR(){
+  if(QR.state!=='idle')return;QR.state='loading';
+  var s=document.createElement('script');s.src=QR_SRC;s.async=true;
+  s.onload=function(){QR.state=typeof window.qrcode==='function'?'ready':'error';render();};
+  s.onerror=function(){QR.state='error';render();};
+  document.head.appendChild(s);
+}
+function qrSVG(text){
+  if(QR.cache[text])return QR.cache[text];
+  var q=window.qrcode(0,'M');q.addData(text);q.make();
+  var n=q.getModuleCount(),d='';
+  for(var r=0;r<n;r++){var c=0;while(c<n){if(q.isDark(r,c)){var s=c;while(c<n&&q.isDark(r,c))c++;d+='M'+s+' '+r+'h'+(c-s)+'v1h-'+(c-s)+'z';}else c++;}}
+  var svg='<svg class="qr-svg" viewBox="-4 -4 '+(n+8)+' '+(n+8)+'" shape-rendering="crispEdges" role="img" aria-label="@L@"><rect x="-4" y="-4" width="'+(n+8)+'" height="'+(n+8)+'" fill="#FFFFFF"/><path fill="#13261E" d="'+d+'"/></svg>';
+  QR.cache[text]=svg;return svg;
+}
+function qrBlock(text,label){
+  if(typeof window.qrcode==='function'){try{QR.state='ready';return qrSVG(text).replace('@L@',esc(label));}catch(e){return '<p class="meta qr-fail">'+esc(text)+'</p>';}}
+  if(QR.state==='error')return '<p class="meta qr-fail">Couldn’t load the QR code. Check your connection and try again.</p>';
+  loadQR();return '<div class="qr-wait" role="status" aria-label="Loading QR code"></div>';
+}
+/* Posters: a printable A4 page for any game, with a QR code that keeps working for weekly games */
+function posterURL(g){return location.origin+location.pathname+(g.weekly&&g.seriesId?'#s-'+g.seriesId:'#g-'+g.id);}
+function viewPoster(){
+  var g=S.game,back='<a class="back no-print" href="#g-'+esc(S.gameId||'')+'">'+I.back+'Back to the game</a>';
+  if(S.gameState==='loading'||(S.gameState==='idle'&&!g))return back+loader('Loading game…');
+  if(!g)return back+'<div class="empty"><strong>This game isn’t here anymore</strong><p>The host may have deleted it.</p><a class="btn btn-accent" href="#discover">Find another game</a></div>';
+  var weekly=g.weekly&&g.seriesId;
+  var when=weekly?'Every '+DOW_LONG[g.start.getDay()]+', '+fmtTime(g.start):fmtDay(g.start)+', '+fmtTime(g.start);
+  var h=back+'<div class="poster-tools no-print"><p class="meta">'+(weekly?'The QR code always opens the next game in this weekly series, so one poster keeps working.':'The QR code opens this game. For a weekly game, turn on Repeats every week first so one poster works every week.')+'</p>'+
+    '<div class="actions"><button type="button" class="btn btn-accent" data-act="poster-print">Print or save as PDF</button><button type="button" class="btn btn-line" data-act="poster-copy">Copy the link</button></div></div>';
+  h+='<div class="poster-wrap"><article class="poster-sheet" aria-label="Poster for '+esc(g.title)+'">'+
+    '<div class="poster-brand"><svg class="bu-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path class="bu-u" d="M18 42 C 18 80, 82 80, 82 42" fill="none" stroke-width="16" stroke-linecap="round"/><circle class="bu-ball" cx="50" cy="22" r="15"/></svg><span class="poster-wm">bounce<span>up</span></span></div>'+
+    '<p class="poster-eyebrow"><span>'+esc(SPORT_LABEL[g.sport]+(g.kind==='clinic'?' · Coaching clinic':''))+'</span>'+(g.founding?foundingBadge(true,!!(g.club&&g.club.founding&&!(g.host&&g.host.founding))):'')+'</p>'+
+    '<h1 class="poster-title'+(g.title.length>56?' t-xl':g.title.length>34?' t-l':g.title.length>20?' t-m':'')+'">'+esc(g.title)+'</h1>'+(g.club&&g.club.name?'<p class="poster-host">Hosted by '+esc(g.club.name)+'</p>':'')+
+    '<dl class="poster-facts"><div><dt>When</dt><dd>'+esc(when)+'</dd></div><div><dt>Where</dt><dd>'+esc([g.venue,g.suburb].filter(Boolean).join(', '))+'</dd></div>'+
+    '<div><dt>Level</dt><dd>'+esc(g.level)+'</dd></div><div><dt>Cost</dt><dd>'+esc(g.price>0?dollars(g.price)+' per player':'Free')+'</dd></div></dl>'+
+    '<div class="poster-scan"><div class="poster-qr">'+qrBlock(posterURL(g),'QR code that opens this game on Bounce Up')+'</div>'+
+    '<ol class="poster-steps"><li><b>Scan</b> with your phone camera</li><li><b>Tap “I’m in”</b></li><li><b>Come and play</b></li></ol></div>'+
+    '<p class="poster-foot">Free app · bounceup.app</p></article></div>';
+  return h;
+}
+/* #s-<series id> opens the next game of a weekly series (what weekly posters point to) */
+function openSeries(id){
+  sb.from('games').select('id, starts_at, duration_min').eq('series_id',id).gte('starts_at',new Date(Date.now()-6*3600000).toISOString()).order('starts_at').limit(6).then(function(r){
+    if(S.route!=='series'||S.seriesId!==id)return;
+    var now=Date.now(),hit=(r.data||[]).filter(function(x){return x&&x.id&&new Date(x.starts_at).getTime()+(Number(x.duration_min)||90)*60000>now;})[0];
+    if(hit&&ID_RE.test(String(hit.id))){location.replace('#g-'+hit.id);return;}
+    S.seriesState=r.error?'error':'none';render();
+  },function(){if(S.route==='series'){S.seriesState='error';render();}});
+}
+function viewSeries(){
+  if(S.seriesState==='none')return '<div class="empty"><strong>No game coming up in this series</strong><p>The organiser may have paused it. Have a look at other games near you.</p><a class="btn btn-accent" href="#discover">Find a game</a></div>';
+  if(S.seriesState==='error')return '<div class="empty"><strong>Couldn’t open this game</strong><p>Check your connection and try again.</p><a class="btn btn-line" href="#discover">Find a game</a></div>';
+  return loader('Opening the next game…');
+}
+/* Admin numbers: players who played with more than one organiser (word of mouth working) */
+function crossPlayers(st){
+  var now=Date.now(),by={};
+  st.games.forEach(function(g){var t=new Date(g.starts_at).getTime();if(isNaN(t)||t>now||!g.host_id)return;playersOf(g).forEach(function(u){if(u===g.host_id)return;var x=by[u]||(by[u]={});x[g.host_id]=1;});});
+  var all=Object.keys(by),multi=all.filter(function(u){return Object.keys(by[u]).length>=2;}).length;
+  return {all:all.length,multi:multi,pct:all.length?Math.round(100*multi/all.length):null};
+}
+function crossTile(st){
+  var c=crossPlayers(st);
+  return statTile('Played with 2+ organisers',c.pct==null?'–':c.pct+'%',c.pct==null?'Shows once players have played':c.multi+' of '+c.all+' players in the last 8 weeks. Word of mouth at work','');
+}
+function clickDemo(a){
+  if(a==='demo-step'){var d=demoState(),v=arguments[1];demoStop(d);if(v==='next'&&d.step<DEMO_STEPS.length-1)d.step++;else if(v==='back'&&d.step>0)d.step--;d.phase=0;S.resetScroll=true;render();return true;}
+  if(a==='demo-reset'){demoStop(S.demo);S.demo=null;demoState();S.resetScroll=true;render();return true;}
+  if(a==='demo-drop'){
+    var d2=demoState();demoStop(d2);d2.phase=1;render();
+    d2.t1=setTimeout(function(){if(S.demo!==d2||d2.step!==2||S.route!=='demo')return;d2.phase=2;render();},1600);
+    d2.t2=setTimeout(function(){if(S.demo!==d2||d2.step!==2||S.route!=='demo')return;d2.phase=3;render();},3600);
+    return true;
+  }
+  if(a==='demo-copy'){buCopy(location.origin+location.pathname+'#host','Link copied');return true;}
+  if(a==='poster-print'){window.print();return true;}
+  if(a==='poster-copy'){if(S.game)buCopy(posterURL(S.game),'Link copied');return true;}
+  return false;
+}
+function fieldDemo(e){
+  var t=e.target,id=t.id;if(!id||id.indexOf('dm-')!==0||!S.demo)return false;
+  var k=id.slice(3);if(Object.prototype.hasOwnProperty.call(S.demo.f,k))S.demo.f[k]=t.value;
+  return true;
+}
+
 /* ---------- Retention: play again, regulars, streaks ---------- */
 var AGAIN_ICON='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
 var FLAME='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4 0 7-2.7 7-6.6 0-3.1-2-5.4-3.6-7.2-.4 1.6-1.3 2.8-2.6 3.4.2-3.3-1.2-6.6-4.3-8.6.2 3.4-1.6 5.6-3.2 7.6C4.2 12.1 5 13.6 5 15.4 5 19.3 8 22 12 22z"/></svg>';
@@ -4251,7 +4567,7 @@ function retentionByWeek(st,weeks){
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id)||clickDemo(a,v))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -5110,7 +5426,7 @@ function kmPicker(cur){
     '</div><span class="hint">Near me and One Short alerts cover games within this distance of your suburb.</span></div>';
 }
 function paint(){
-  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'?'':S.route==='month'?(S.monthHash==='month'?'mine':''):S.route;
+  var r=['venues','venue','venue-new','coaches','coach','coach-edit','leagues','league','league-new'].indexOf(S.route)>=0?'discover':S.route==='lessons'?'inbox':S.route==='game'?'discover':(S.route==='club'||S.route==='clubbiz'||S.route==='club-new'||S.route==='feed')?'clubs':S.route==='clubchat'?'inbox':S.route==='player'||S.route==='demo'||S.route==='poster'||S.route==='series'?'':S.route==='month'?(S.monthHash==='month'?'mine':''):S.route;
   document.querySelectorAll('.tab').forEach(function(t){if(t.getAttribute('data-tab')===r)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
   // Club members land on their feed; everyone else lands on the club directory.
   var ct=document.querySelector('.tab[data-tab="clubs"]');if(ct)ct.setAttribute('href',S.myClubs.length?'#feed':'#clubs');
@@ -5121,12 +5437,12 @@ function paint(){
   if(!configured)html=viewSetup();
   else{
     html=S.route==='venues'?viewVenues():S.route==='venue-new'?viewVenueForm(false):S.route==='venue'?viewVenue():S.route==='coaches'?viewCoaches():S.route==='coach'?viewCoach():S.route==='coach-edit'?viewCoachEdit():
-      S.route==='month'?viewMonth():S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
+      S.route==='demo'?viewDemo():S.route==='poster'?viewPoster():S.route==='series'?viewSeries():S.route==='month'?viewMonth():S.route==='payouts'?viewPayouts():S.route==='about'?viewAbout():S.route==='rules'?viewRules():S.route==='reports'?viewReports():S.route==='stats'?viewStats():S.route==='checks'?viewChecks():S.route==='review'?viewReview():S.route==='clubbiz'?viewClubBiz():S.route==='lessons'?viewLessons():S.route==='leagues'?viewLeagues():S.route==='league'?viewLeague():S.route==='league-new'?viewLeagueForm():
       S.route==='game'?viewGame():S.route==='host'?viewHost():S.route==='mine'?viewMine():S.route==='profile'?viewProfile():S.route==='login'?viewLogin():
       S.route==='clubs'?viewClubs():S.route==='feed'?viewFeed():S.route==='inbox'?viewInbox():S.route==='clubchat'?viewClubChat():S.route==='club-new'?viewClubForm(false):S.route==='club'?viewClub():S.route==='player'?viewPlayer():viewDiscover();
     if(S.uid&&S.profile&&!S.profile.display_name&&S.route!=='profile'&&S.route!=='login')html='<a class="notice" href="#profile">Add your name so players know who’s coming →</a>'+html;
     // 18+ only: anyone signed in who hasn't confirmed their age sees the check first (rules and mission stay readable)
-    if(needsAge()&&['about','rules','login'].indexOf(S.route)<0)html=viewAgeGate();
+    if(needsAge()&&['about','rules','login','demo','poster','series'].indexOf(S.route)<0)html=viewAgeGate();
     else if(needsWelcome())html=viewWelcome();
   }
   var act=document.activeElement,aid=act&&act.id,ss=null,se=null;
@@ -5181,7 +5497,7 @@ function renderMenu(){
     item('leagues','#leagues',XI.league,'Leagues')+
     (S.uid&&CHECKS?item('checks','#checks',SHIELD,'Get checked'):'')+
     (S.isAdmin&&CHECKS?item('review','#review',SHIELD,'Review checks',reviewWaiting()):'')+
-    (S.isAdmin?item('stats','#stats',STATS_ICON,'Your numbers'):'')+
+    (S.isAdmin?item('stats','#stats',STATS_ICON,'Your numbers'):'')+(S.isAdmin?item('demo','#demo',DEMO_ICON,'Organiser demo'):'')+
     (S.isAdmin&&REPORTS?item('reports','#reports',RI.flag,'Reports',reportsOpen()):'')+
     (S.uid?item('payouts','#payouts','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>','Get paid'):'')+
     '<span class="menu-sep" role="separator"></span>'+
@@ -5240,7 +5556,7 @@ function renderSide(){
   var h='<div class="side-clubs"><div class="side-label">Explore</div>'+[['venues','venue','Venues',XI.venue],['coaches','coach','Coaches',XI.coach],['leagues','league','Leagues',XI.league],['about','about','Our mission',MI.mission],['rules','rules','Community rules',RI.rules]].map(function(x){
       var on=S.route===x[0]||S.route===x[1];return '<a class="side-club" href="#'+x[0]+'"'+(on?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+x[3]+'</span><span>'+x[2]+'</span></a>';}).join('')+
     (S.uid&&(S.myCoach||(S.lessons&&S.lessons.length))?'<a class="side-club" href="#lessons"'+(S.route==='lessons'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+XI.lesson+'</span><span>Lessons'+(nl?' · '+nl:'')+'</span></a>':'')+
-    (S.isAdmin?'<a class="side-club" href="#stats"'+(S.route==='stats'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+STATS_ICON+'</span><span>Your numbers</span></a>':'')+
+    (S.isAdmin?'<a class="side-club" href="#stats"'+(S.route==='stats'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+STATS_ICON+'</span><span>Your numbers</span></a>':'')+(S.isAdmin?'<a class="side-club" href="#demo"'+(S.route==='demo'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+DEMO_ICON+'</span><span>Organiser demo</span></a>':'')+
     (S.isAdmin&&REPORTS?'<a class="side-club" href="#reports"'+(S.route==='reports'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+RI.flag+'</span><span>Reports'+(reportsOpen()?' · '+reportsOpen():'')+'</span></a>':'')+
     (S.isAdmin&&CHECKS?'<a class="side-club" href="#review"'+(S.route==='review'?' aria-current="page"':'')+'><span class="side-ico" aria-hidden="true">'+SHIELD+'</span><span>Review checks'+(reviewWaiting()?' · '+reviewWaiting():'')+'</span></a>':'')+'</div>'+
     '<div class="side-clubs">'+(mine.length?'<div class="side-label">Your clubs</div>'+mine.map(function(m){var c=normClub(m.club);
@@ -5389,7 +5705,7 @@ function loadProfile(){
   });
 }
 function loadGame(){
-  if(S.route!=='game'||!S.gameId)return Promise.resolve();
+  if((S.route!=='game'&&S.route!=='poster')||!S.gameId)return Promise.resolve();
   var id=S.gameId;
   return Promise.all([
     sb.from('games').select('*, host:profiles!games_host_id_fkey(id, display_name, avatar_url, founding'+ckCols()+'), club:clubs(id, name, logo_url, founding), series:game_series!games_series_id_fkey(active, last_error)').eq('id',id).maybeSingle(),
@@ -5737,6 +6053,14 @@ function route(){
   } else if(h==='month'||/^month-[cvp]-[A-Za-z0-9-]{1,60}$/.test(h)){
     if(S.monthHash!==h)S.monthAt=null;
     S.route='month';S.monthHash=h;S.month=null;
+  } else if(h.indexOf('poster-')===0&&ID_RE.test(h.slice(7))){
+    var pid=h.slice(7);
+    if(!S.game||S.game.id!==pid){S.game=null;S.players=[];S.messages=[];S.waiting=[];S.gameState='loading';S.draft='';}
+    S.route='poster';S.gameId=pid;
+  } else if(pre==='s-'&&ID_RE.test(rest)){
+    S.route='series';S.seriesId=rest;S.seriesState='loading';
+  } else if(h==='demo'){
+    S.route='demo';
   } else {
     S.route=['discover','mine','host','profile','login','clubs','club-new','feed','inbox','venues','venue-new','coaches','coach-edit','lessons','leagues','league-new','payouts','checks','review','about','rules','reports','stats'].indexOf(h)>=0?h:'discover';
   }
@@ -5751,6 +6075,8 @@ function route(){
   render();
   if(sb){
     if(S.route==='game')loadGame().then(loadGamePayments).then(render);
+    if(S.route==='poster')loadGame().then(render);
+    if(S.route==='series')openSeries(S.seriesId);
     if(S.route==='payouts')Promise.all([loadPayout(),loadHostPayments()]).then(render);
     if(S.route==='club')Promise.all([loadClub(),loadClubBiz()]).then(render);
     if(S.route==='clubbiz')Promise.all([loadClub(),loadClubBiz(),loadClubPayouts(),loadClubPayments()]).then(render);
@@ -6222,7 +6548,7 @@ document.addEventListener('click',function(e){
 });
 function onField(e){
   var t=e.target,id=t.id;if(!id)return;
-  if(fieldAU(e)||fieldBiz(e)||fieldExtra(e))return;
+  if(fieldDemo(e)||fieldAU(e)||fieldBiz(e)||fieldExtra(e))return;
   if(id==='q'){S.q=t.value;render();}
   else if(id==='hq'){
     // Header search (desktop): typing anywhere takes you to Discover with the results.
