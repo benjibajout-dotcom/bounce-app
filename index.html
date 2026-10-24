@@ -1434,6 +1434,24 @@ p.meta .link-btn{min-height:0;font-weight:600}
 .promo-text{margin:0;padding:12px 14px;border-radius:14px;background:var(--brand-soft);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:15px}
 .poster-tools h2{margin:0}
 .poster-tools{max-width:640px;margin-left:auto;margin-right:auto}
+/* Founder tools */
+.founder{display:flex;flex-direction:column;gap:12px;border:1px solid var(--line);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:linear-gradient(160deg,var(--accent-soft),var(--surface) 62%)}
+.founder-head{display:flex;gap:12px;align-items:center}
+.founder-head h2{margin:0}
+.founder-head p{margin:2px 0 0}
+.founder-seal{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#FFF8E6;display:grid;place-items:center}
+.founder-seal svg{width:20px;height:20px;color:#FFF8E6}
+.founder-links{display:flex;gap:8px;flex-wrap:wrap}
+.founder h3{margin:4px 0 0;font-size:15px}
+.f-regs{display:flex;flex-wrap:wrap;gap:8px}
+.f-reg{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--ink);text-decoration:none}
+.f-reg small{color:var(--muted);font-weight:500}
+.f-slip{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.f-slip li{display:flex;align-items:center;gap:10px}
+.f-slip .gbody{flex:1;min-width:0;display:flex;flex-direction:column}
+.f-slip .btn{flex:none}
+.f-soon{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;line-height:1.4}
+.founder-locked .founder-seal{background:var(--muted)}
 </style>
 </head>
 <body>
@@ -1929,6 +1947,7 @@ function viewGame(){
       :'<button type="button" class="btn btn-danger self-start" data-act="del">Delete game</button>';
     h+='</section>';
   }
+  if(isHost)h+=founderToolsHTML(g);
   if(S.uid)ensureMates();
   h+='<section class="stack-sm"><h2>Who’s going</h2>'+regularsHTML(S.players.concat(S.waiting))+'<div class="people">';
   S.players.forEach(function(p){var nm=p.user_id===S.uid?'You':((p.profile&&p.profile.display_name)||'Player');
@@ -4375,6 +4394,7 @@ function demoPlace(g){
   h+='<section class="card stack-sm"><h2>What founders get</h2><ul class="demo-perks">'+
     '<li>'+STAR+'<span><b>The gold Founding Organiser badge</b> on your games and your profile.</span></li>'+
     '<li>'+STAR+'<span><b>Your games at the top of Discover</b> until 31 December.</span></li>'+
+    '<li>'+STAR+'<span><b>Founder tools on your games:</b> see your regulars, win back the ones you haven’t seen, and new powers before other organisers.</span></li>'+
     '<li>'+STAR+'<span><b>A seat in the Founding Organisers group,</b> with a first look at what’s coming and a say in what gets built.</span></li>'+
     '<li>'+STAR+'<span><b>Set up with you, in person:</b> your game, your promo pack and your first players’ phones.</span></li></ul></section>';
   h+='<section class="card stack-sm"><h2>How it works for both of us</h2><p>Bounce Up is free for players and organisers, and you keep 100% of your price. From January, players pay a small booking fee on games paid in the app. Fuller games mean more for you and for us.</p></section>';
@@ -4407,6 +4427,66 @@ function qrBlock(text,label){
   if(typeof window.qrcode==='function'){try{QR.state='ready';return qrSVG(text).replace('@L@',esc(label));}catch(e){return '<p class="meta qr-fail">'+esc(text)+'</p>';}}
   if(QR.state==='error')return '<p class="meta qr-fail">Couldn’t load the QR code. Check your connection and try again.</p>';
   loadQR();return '<div class="qr-wait" role="status" aria-label="Loading QR code"></div>';
+}
+/* Founder tools: extra powers for Founding Organisers on their own games (regulars, win-backs, more on the way) */
+function founderOn(){return !!(S.profile&&S.profile.founding)||!!S.isAdmin;}
+function founderStats(rows,hostId){
+  var now=Date.now(),cut8=now-56*DAY_MS,by={},upcoming={};
+  (rows||[]).forEach(function(g){
+    var t=new Date(g.starts_at).getTime();if(isNaN(t))return;var ps=playersOf(g);
+    if(t>now){ps.forEach(function(u){upcoming[u]=1;});return;}
+    ps.forEach(function(u){if(!u||u===hostId)return;var x=by[u]||(by[u]={id:String(u),n8:0,n:0,last:0});x.n++;if(t>=cut8)x.n8++;if(t>x.last)x.last=t;});
+  });
+  var all=Object.keys(by).map(function(k){return by[k];});
+  var regulars=all.filter(function(x){return x.n8>=2;}).sort(function(a,b){return b.n8-a.n8||b.last-a.last;});
+  var slipping=all.filter(function(x){return x.n>=2&&now-x.last>=21*DAY_MS&&!upcoming[x.id];}).sort(function(a,b){return b.n-a.n||b.last-a.last;});
+  return {regulars:regulars.slice(0,8),slipping:slipping.slice(0,6),players:all.length};
+}
+function loadFounder(){
+  if(!S.uid||S.fLoading)return;
+  S.fLoading=true;var uid=S.uid;
+  sb.from('games').select('id, title, series_id, starts_at, duration_min, game_players(user_id)').eq('host_id',uid).gte('starts_at',new Date(Date.now()-84*DAY_MS).toISOString()).order('starts_at').limit(300).then(function(r){
+    if(S.uid!==uid){S.fLoading=false;return;}
+    if(r.error){S.fLoading=false;S.founderData={error:true};render();return;}
+    var st=founderStats(r.data,uid),ids=[];
+    st.regulars.concat(st.slipping).forEach(function(x){if(ids.indexOf(x.id)<0)ids.push(x.id);});
+    var done=function(names){if(S.uid!==uid){S.fLoading=false;return;}S.fLoading=false;S.founderData={st:st,names:names||{}};render();};
+    if(!ids.length)return done({});
+    sb.from('profiles').select('id, display_name, avatar_url').in('id',ids).then(function(p){var m={};((p&&p.data)||[]).forEach(function(x){m[String(x.id)]=x;});done(m);},function(){done({});});
+  },function(){S.fLoading=false;S.founderData={error:true};render();});
+}
+function founderName(id){var p=S.founderData&&S.founderData.names[id];return (p&&p.display_name)||'A player';}
+function founderNudgeText(g,id){
+  var first=String(founderName(id)).trim().split(/\s+/)[0];if(first==='A')first='there';
+  var when=g.weekly&&g.seriesId?'this '+DOW_LONG[g.start.getDay()]:fmtDay(g.start);
+  return 'Hi '+first+', we’ve missed you at '+g.title+'! Spots are open for '+when+'. Tap “I’m in” to grab one: '+posterURL(g);
+}
+function founderToolsHTML(g){
+  var head='<div class="founder-head"><span class="founder-seal" aria-hidden="true">'+STAR+'</span><div><h2>Founder tools</h2><p class="meta">';
+  if(!founderOn()){
+    if(Date.now()>=FEATURED_UNTIL)return '';
+    return '<section class="card founder founder-locked" aria-label="Founder tools">'+head+'Only for Founding Organisers: see your regulars, win back the ones you haven’t seen, and get new powers before other organisers. Places are limited to the first 20 organisers.</p></div></div>'+
+      '<a class="btn btn-line btn-sm self-start" href="mailto:benjibajout@gmail.com?subject=Founding%20Organiser%20place">Ask about a Founding place</a></section>';
+  }
+  if(S.founderData==null&&!S.fLoading)loadFounder();
+  var h='<section class="card founder" aria-label="Founder tools">'+head+'Only Founding Organisers see this.</p></div></div>'+
+    '<div class="founder-links"><a class="btn btn-line btn-sm" href="#poster-'+esc(g.id)+'">'+POSTER_ICON+'Promote</a><a class="btn btn-line btn-sm" href="#month">'+STATS_ICON+'Your month</a></div>';
+  var fd=S.founderData;
+  if(!fd)h+='<p class="meta">Loading your regulars…</p>';
+  else if(fd.error)h+='<p class="meta">Couldn’t load your regulars. Check your connection and try again later.</p>';
+  else{
+    var st=fd.st;
+    h+='<h3>Your regulars</h3>'+(st.regulars.length?'<div class="f-regs">'+st.regulars.map(function(x){var p=fd.names[x.id]||{};
+        return '<a class="f-reg" href="#p-'+esc(x.id)+'">'+avatar(x.id,p.display_name,p.avatar_url,28)+'<span>'+esc(p.display_name||'A player')+'</span><small>'+x.n8+(x.n8===1?' game':' games')+'</small></a>';}).join('')+'</div>'
+      :'<p class="meta">Players who come twice or more in 8 weeks show here.</p>');
+    h+='<h3>Not seen lately</h3>'+(st.slipping.length?'<ul class="f-slip">'+st.slipping.map(function(x){var p=fd.names[x.id]||{};
+        return '<li>'+avatar(x.id,p.display_name,p.avatar_url,36)+'<div class="gbody"><b>'+esc(p.display_name||'A player')+'</b><span class="meta">Last played '+esc(daysAgo(x.last))+' · '+x.n+' games with you</span></div>'+
+          '<button type="button" class="btn btn-line btn-sm" data-act="founder-nudge" data-id="'+esc(x.id)+'" aria-label="Copy a message for '+esc(p.display_name||'this player')+'">Copy a message</button></li>';}).join('')+'</ul>'
+      :'<p class="meta">Nobody’s slipping away. Regulars you haven’t seen for 3 weeks show here, with a message ready to send.</p>');
+  }
+  h+='<h3>Founder powers on the way</h3><ul class="f-soon"><li>Regulars first: your regulars get first pick of each week’s spots</li><li>Co-hosts who can run the game with you</li><li>Remove a player from your game</li><li>Pin a message in your game chat</li><li>New features before other organisers</li></ul>'+
+    '<p class="meta">They switch on for founders with the next update.</p>';
+  return h+'</section>';
 }
 /* Promote your game: ready-made messages for the host, filled with the game's details and link */
 function capFirst(s){s=String(s||'');return s.charAt(0).toUpperCase()+s.slice(1);}
@@ -4494,6 +4574,7 @@ function clickDemo(a){
   if(a==='demo-copy'){buCopy(location.origin+location.pathname+'#host','Link copied');return true;}
   if(a==='poster-print'){window.print();return true;}
   if(a==='poster-copy'){if(S.game)buCopy(posterURL(S.game),'Link copied');return true;}
+  if(a==='founder-nudge'){if(S.game&&S.founderData&&S.founderData.names){buCopy(founderNudgeText(S.game,arguments[2]),'Copied. Send it to them on WhatsApp or by text.');}return true;}
   if(a==='promo-copy'){var pv=arguments[1];if(S.game){var pm=promoMessages(S.game).filter(function(x){return x.k===pv;})[0];if(pm)buCopy(pm.x,pm.k==='facebook'?'Copied. Paste it in the Facebook group.':pm.k==='venue'?'Copied. Send it to the venue.':'Copied. Paste it in your group chat.');}return true;}
   return false;
 }
@@ -4608,7 +4689,7 @@ function retentionByWeek(st,weeks){
 
 /* ---------- Clicks, fields and forms for these screens ---------- */
 function clickExtra(a,id,v){
-  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id)||clickDemo(a,v))return true;
+  if(clickChecks(a,id,v)||clickSafety(a,id,v)||clickWelcome(a)||clickStats(a)||clickPartners(a,id)||clickDemo(a,v,id))return true;
   if(a==='admin-founding')setFounding('player',id);
   else if(a==='admin-club-founding')setFounding('club',id);
   else if(a==='venue-sport'){S.venueSport=v;render();}
@@ -6667,7 +6748,7 @@ function setSession(session){
   S.uid=session&&session.user?session.user.id:null;
   if(S.uid&&S.uid!==before&&swReg&&S.push.supported)swReg.pushManager.getSubscription().then(function(sub){if(sub)saveSub(sub);}).catch(function(){});
   S.provider=session&&session.user&&session.user.app_metadata?session.user.app_metadata.provider||'':'';
-  if(!S.uid){S.month=null;S.monthView=null;S.pn=null;S.pnKey=null;S.joinNo=null;S.mates=null;S.matesKey=null;S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
+  if(!S.uid){S.founderData=null;S.fLoading=false;S.month=null;S.monthView=null;S.pn=null;S.pnKey=null;S.joinNo=null;S.mates=null;S.matesKey=null;S.stats=null;S.reports=null;S.del=null;S.age=null;S.wel=null;S.welDone=false;S.blockedPeople=null;S.reportsProbe=false;S.isAdmin=null;S.myChecks=undefined;S.ck=null;S.review=null;S.profile=null;S.pf=null;S.mine=null;S.myIds={};S.myCoach=null;S.lessons=null;S.payout=null;S.clubPayouts={};}
 }
 function cleanUrl(){
   try{
