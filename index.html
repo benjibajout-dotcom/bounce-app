@@ -2271,7 +2271,7 @@ function viewClubForm(editing){
   if(!S.uid)return h+signInPrompt('Sign in to start a club','It takes a few seconds with your email.','club-new');
   h+='<form class="stack" id="club-form" novalidate>';
   if(editing)h+='<h2>Edit club</h2>';
-  h+='<div class="field"><label for="cf-name">Club name</label><input id="cf-name" maxlength="60" placeholder="Inner West Paddlers" value="'+esc(f.name)+'"></div>';
+  h+='<div class="field"><label for="cf-name">Club name</label><input id="cf-name" maxlength="60" placeholder="Western Dinkers" value="'+esc(f.name)+'"></div>';
   var lg=f.logoPreview||(!f.logoRemove&&f.logo)||'';
   h+='<div class="field"><span class="lbl">Club logo (optional)</span><div class="logo-field">'+clubLogo({id:editing?S.clubId:'new',name:f.name||'Club',preview:f.logoPreview,logo:f.logoRemove?'':f.logo},60)+
     '<div class="photo-actions" style="margin:0"><label class="btn btn-line btn-sm" for="cf-logofile">'+(f.logoBusy?'Preparing…':lg?'Change logo':'Upload logo')+'</label><input id="cf-logofile" class="sr" type="file" accept="image/*">'+
@@ -2281,7 +2281,7 @@ function viewClubForm(editing){
   h+='<div class="field"><span class="lbl" id="cf-sports-l">Sports</span><div class="wrap-chips" role="group" aria-labelledby="cf-sports-l">'+
     SPORTS.map(function(s){return '<button type="button" class="chip" data-act="cf-sport" data-v="'+s[0]+'" aria-pressed="'+((f.sports||[]).indexOf(s[0])>=0)+'">'+esc(s[1])+'</button>';}).join('')+'</div></div>';
   h+='<div class="field"><label for="cf-about">About the club</label><textarea id="cf-about" maxlength="600" placeholder="Who you are, when you play, who’s welcome">'+esc(f.about)+'</textarea></div>';
-  h+='<div class="row2"><div class="field"><label for="cf-venue">Home court (optional)</label><input id="cf-venue" maxlength="80" placeholder="Marrickville Tennis Centre" value="'+esc(f.venue)+'"></div>'+
+  h+='<div class="row2"><div class="field"><label for="cf-venue">Home court (optional)</label><input id="cf-venue" maxlength="80" placeholder="Caroline Springs Leisure Centre" value="'+esc(f.venue)+'"></div>'+
     '<div class="field"><label for="cf-address">Street address</label><input id="cf-address" maxlength="160" autocomplete="street-address" placeholder="12 Court St" value="'+esc(f.address)+'"></div></div>'+
     '<p class="meta">Shown on a map on your club page, and filled in for you when the committee posts a club game.</p>';
   h+='<div class="row2"><div class="field"><label for="cf-website">Website (optional)</label><input id="cf-website" type="url" inputmode="url" maxlength="200" placeholder="https://" value="'+esc(f.website)+'"></div>'+
@@ -2939,7 +2939,7 @@ function viewVenueForm(editing){
   var h=editing?'':'<a class="back" href="#venues">'+I.back+'Venues</a><section class="hello"><h1>Add a venue</h1><p class="meta">A court, park or centre where people play. Anyone on Bounce Up can then host games there.</p></section>';
   if(!S.uid)return h+signInPrompt('Sign in to add a venue','It takes a few seconds.','venue-new');
   h+='<form class="stack" id="venue-form" novalidate>'+(editing?'<h2>Edit venue</h2>':'')+
-    '<div class="field"><label for="vn-name">Venue name</label><input id="vn-name" maxlength="80" placeholder="Marrickville Tennis Centre" value="'+esc(f.name)+'"></div>'+
+    '<div class="field"><label for="vn-name">Venue name</label><input id="vn-name" maxlength="80" placeholder="Caroline Springs Leisure Centre" value="'+esc(f.name)+'"></div>'+
     '<div class="row2"><div class="field"><label for="vn-suburb">Suburb</label>'+subInput('vn',f,'Start typing, e.g. Werribee')+'</div>'+
     '<div class="field"><label for="vn-setting">Courts are</label><select id="vn-setting">'+SETTINGS.map(function(s){return '<option value="'+s[0]+'"'+(f.setting===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join('')+'</select></div></div>'+
     '<div class="field"><label for="vn-address">Street address</label><input id="vn-address" maxlength="160" autocomplete="street-address" placeholder="52 Centennial St" value="'+esc(f.address)+'"><span class="hint">Used for the map and directions.</span></div>'+
@@ -3129,7 +3129,7 @@ function viewCoachEdit(){
     '<div class="field"><span class="lbl" id="co-levels-l">Levels you coach</span><div class="wrap-chips" role="group" aria-labelledby="co-levels-l">'+
       COACH_LEVELS.map(function(l){return '<button type="button" class="chip" data-act="co-level" data-v="'+l+'" aria-pressed="'+(f.levels.indexOf(l)>=0)+'">'+esc(l)+'</button>';}).join('')+'</div></div>'+
     '<div class="row2"><div class="field"><label for="co-price">Private lesson per hour (AUD)</label><input id="co-price" type="number" inputmode="decimal" min="0" max="999" placeholder="70" value="'+esc(f.price)+'"></div>'+
-    '<div class="field"><label for="co-areas">Where you coach</label><input id="co-areas" maxlength="120" placeholder="Inner West, Marrickville courts" value="'+esc(f.areas)+'"></div></div>'+
+    '<div class="field"><label for="co-areas">Where you coach</label><input id="co-areas" maxlength="120" placeholder="Ravenhall, Caroline Springs courts" value="'+esc(f.areas)+'"></div></div>'+
     '<div class="field"><label for="co-accreditation">Accreditation (optional)</label><input id="co-accreditation" maxlength="120" placeholder="Pickleball Australia coach, Working with Children Check" value="'+esc(f.accreditation)+'"></div>'+
     '<div class="field"><label for="co-bio">About your coaching</label><textarea id="co-bio" maxlength="600" placeholder="How you run lessons, what players get out of them">'+esc(f.bio)+'</textarea></div>'+
     '<div class="field"><label for="co-website">Website or booking page (optional)</label><input id="co-website" type="url" inputmode="url" maxlength="200" placeholder="https://" value="'+esc(f.website)+'"></div>'+
@@ -3209,7 +3209,7 @@ function viewLessons(){
       var body='<div class="lesson-top">'+avatar(x.player_id,nm,p.avatar_url,40)+'<div class="gbody"><b><a href="#p-'+esc(x.player_id)+'">'+esc(nm)+'</a></b><span class="meta">'+esc([SPORT_LABEL[x.sport],x.sport==='pickleball'&&d!=null?'DUPR '+duprTxt(d):'',timeAgo(new Date(x.created_at))].filter(Boolean).join(' · '))+'</span></div>'+lessonStatus(x.status)+'</div>'+
         '<p class="notes">'+esc(x.message)+'</p>'+(x.timing?'<p class="meta">When: '+esc(x.timing)+'</p>':'');
       if(x.status==='new'){
-        body+='<div class="field"><label for="lrr-'+esc(x.id)+'">Reply (optional)</label><textarea id="lrr-'+esc(x.id)+'" maxlength="500" placeholder="Saturday 9am at Marrickville courts, $70. See you there!" style="min-height:64px">'+esc(S.lessonReply[x.id]||'')+'</textarea></div>'+
+        body+='<div class="field"><label for="lrr-'+esc(x.id)+'">Reply (optional)</label><textarea id="lrr-'+esc(x.id)+'" maxlength="500" placeholder="Saturday 9am at Ravenhall courts, $70. See you there!" style="min-height:64px">'+esc(S.lessonReply[x.id]||'')+'</textarea></div>'+
           '<div class="cta"><button type="button" class="btn btn-accent" data-act="lesson-accept" data-id="'+esc(x.id)+'"'+(S.busy?' disabled':'')+'>Accept</button><button type="button" class="btn btn-line" data-act="lesson-decline" data-id="'+esc(x.id)+'"'+(S.busy?' disabled':'')+'>Decline</button></div>';
       } else if(x.reply)body+='<p class="reply"><b>You replied:</b> '+esc(x.reply)+'</p>';
       return '<article class="card lesson">'+body+'</article>';
@@ -3298,7 +3298,7 @@ function viewLeagueForm(){
     '<div class="field"><label for="lg-endsOn">Ends (optional)</label><input id="lg-endsOn" type="date" value="'+esc(f.endsOn)+'"></div></div>'+
     '<div class="field"><label for="lg-schedule">When matches are played</label><input id="lg-schedule" maxlength="80" placeholder="Tuesdays 7–9pm" value="'+esc(f.schedule)+'"></div>'+
     (S.venues&&S.venues.length?'<div class="field"><label for="lg-venueId">Venue</label><select id="lg-venueId"><option value="">Somewhere else (type it below)</option>'+S.venues.map(function(v){return '<option value="'+esc(v.id)+'"'+(f.venueId===v.id?' selected':'')+'>'+esc(v.name+' · '+v.suburb)+'</option>';}).join('')+'</select></div>':'')+
-    (f.venueId?'':'<div class="field"><label for="lg-venue">Venue name</label><input id="lg-venue" maxlength="80" placeholder="Marrickville courts" value="'+esc(f.venue)+'"></div>')+
+    (f.venueId?'':'<div class="field"><label for="lg-venue">Venue name</label><input id="lg-venue" maxlength="80" placeholder="Ravenhall courts" value="'+esc(f.venue)+'"></div>')+
     '<div class="row2"><div class="field"><label for="lg-max">Most entries</label><input id="lg-max" type="number" inputmode="numeric" min="2" max="64" value="'+esc(f.max)+'"></div>'+
     '<div class="field"><label for="lg-fee">Entry fee (AUD)</label><input id="lg-fee" type="number" inputmode="numeric" min="0" max="1000" value="'+esc(f.fee)+'"><span class="hint">Use 0 for free. Collect it at the venue for now.</span></div></div>'+
     (f.sport==='pickleball'?'<div class="row2"><div class="field"><label for="lg-duprMin">DUPR from (optional)</label><input id="lg-duprMin" type="number" inputmode="decimal" min="2" max="8" step="0.25" placeholder="3.0" value="'+esc(f.duprMin)+'"></div>'+
